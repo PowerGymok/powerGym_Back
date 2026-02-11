@@ -1,55 +1,43 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { Role } from './enums/role.enum';
 
 @Injectable()
 export class AuthService {
-  // Inyectamos JwtService para poder firmar (crear) los tokens
+  // inyecto JwtService para poder crear el token
   constructor(private readonly jwtService: JwtService) {}
 
-  /**
-   * MÉTODO TEMPORAL
-   * ----------------------------------------------------------------------------
-   * Como todavía no existe el módulo Users ni la base de datos,
-   * simulamos usuarios "en memoria".
-   *
-   * Esto SOLO sirve para poder:
-   * - probar el login
-   * - generar JWT
-   * - avanzar con guards y roles
-   *
-   * Más adelante este método se va a reemplazar por:
-   * 1) buscar el usuario en la DB por email
-   * 2) comparar la contraseña con bcrypt
-   */
+  // por ahora simulo usuarios porque todavía no tenemos DB
+  // esto después se reemplaza buscando en la base de datos
   validateUser(email: string, password: string) {
-    // normalizamos el email (evita problemas de mayúsculas/minúsculas)
     const e = (email || '').trim().toLowerCase();
 
-    // usuario administrador de prueba
+    // admin de prueba
     if (e === 'admin@mail.com' && password === '1234')
-      return { email: e, role: 'ADMIN' };
+      return { id: '1', email: e, role: Role.Admin };
 
-    // usuario normal de prueba
+    // coach de prueba
+    if (e === 'coach@mail.com' && password === '1234')
+      return { id: '2', email: e, role: Role.Coach };
+
+    // usuario común de prueba
     if (e === 'user@mail.com' && password === '1234')
-      return { email: e, role: 'USER' };
+      return { id: '3', email: e, role: Role.User };
 
-    // si no coincide, devolvemos 401
+    // si no coincide → 401
     throw new UnauthorizedException('Credenciales incorrectas');
   }
 
-  /**
-   * Genera el JWT
-   * ----------------------------------------------------------------------------
-   * El payload es la información que viajará dentro del token.
-   * Este payload después el AuthGuard lo va a leer y lo guardo en req.user.
-   */
-  login(user: { email: string; role: string }) {
+  // acá creo el JWT
+  // el payload es la info mínima del usuario que va dentro del token
+  login(user: { id: string; email: string; role: Role }) {
     const payload = {
-      email: user.email,
-      role: user.role,
+      sub: user.id, // id del usuario
+      email: user.email, // para identificarlo
+      role: user.role, // después lo usan los roles/guards
     };
 
-    // firmo el token
+    // firmo el token y lo devuelvo
     return {
       accessToken: this.jwtService.sign(payload),
     };
