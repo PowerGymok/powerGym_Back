@@ -7,7 +7,7 @@ import {
   Matches,
 } from 'class-validator';
 
-export class UpdateUserDto {
+export class UpdateCoachDto {
   @IsOptional()
   @IsNotEmpty({ message: 'El nombre no puede estar vacio' })
   @IsString({ message: 'El nombre debe ser una cadena de texto' })
