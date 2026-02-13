@@ -17,6 +17,7 @@ export class usersRepository {
     const allUsers = await this.usersRepository.find({
       skip: skip,
       take: limit,
+      where: { role: Role.User },
     });
 
     return allUsers.map(({ password, ...userNoPassword }) => userNoPassword);
@@ -48,6 +49,7 @@ export class usersRepository {
   }
 
   async inactiveUser(id: string) {
+    // Hace falta hacer borrado logico
     const user = await this.usersRepository.findOneBy({ id });
     if (!user || user.isActive !== true)
       throw new NotFoundException('No se encontró al usuario');
