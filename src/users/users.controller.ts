@@ -1,14 +1,20 @@
-/* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable prettier/prettier */
-import { Controller, Get, Put, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
+import { UpdateUserDto } from './dto/updateUser.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get()
+  @Get() //Hacer guardian para que solo admin pueda ingresar
   getAllUsers(@Query('page') page: string, @Query('limit') limit: string) {
     const pageNum = Number(page);
     const limitNum = Number(limit);
@@ -19,12 +25,21 @@ export class UsersController {
     return this.usersService.getAllUsers(validPage, validLimit);
   }
 
-  @Get()
-  getUserById() {}
+  @Get(':id') //Hacer guardian para que solo admin y usuario propietario de la cuenta pueda ingresar
+  getUserById(@Param('id', ParseUUIDPipe) id: string) {
+    return this.usersService.getUserById(id);
+  }
 
-  @Put()
-  updateUser() {}
+  @Put('update/:id') //Es necesario hacer un Guard para que un admin o un usuario solo pueda modificar SU información y no la de otro usuario.
+  updateUser(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() newUserData: UpdateUserDto,
+  ) {
+    return this.usersService.updateUser(id, newUserData);
+  }
 
-  @Put()
-  inactiveUser() {}
+  @Put('inactive/:id') //Hacer un guardian para que solamente un usuario propietario de la cuenta o el admin puedan desactivar.
+  inactiveUser(@Param('id', ParseUUIDPipe) id: string) {
+    return this.usersService.inactiveUser(id);
+  }
 }
