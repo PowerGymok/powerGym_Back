@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { usersRepository } from './users.repository';
 import { UpdateUserDto } from './dto/updateUser.dto';
+import { GetByEmailDto } from './dto/getByEmail.dto';
 
 @Injectable()
 export class UsersService {
@@ -22,5 +23,9 @@ export class UsersService {
 
   inactiveUser(id: string) {
     return this.usersRepository.inactiveUser(id);
+  }
+
+  getByEmail(email: GetByEmailDto) {
+    return this.usersRepository.getByEmail(email);
   }
 }

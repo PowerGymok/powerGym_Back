@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-base-to-string */
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -5,6 +7,7 @@ import { User } from '../users/users.entity';
 import { Repository } from 'typeorm';
 import { Role } from 'src/common/roles.enum';
 import { UpdateCoachDto } from './dto/updateCoach.dto';
+import { GetByEmailDto } from 'src/users/dto/getByEmail.dto';
 
 @Injectable()
 export class coachRepository {
@@ -58,5 +61,16 @@ export class coachRepository {
     coach.isActive = false;
     await this.coachesRepository.save(coach);
     return 'El entrenador ha sido desactivado exitosamente';
+  }
+
+  async getByEmail(searchEmail: GetByEmailDto) {
+    const coach = await this.coachesRepository.findOne({
+      where: { email: searchEmail.email },
+    });
+    if (!coach)
+      throw new NotFoundException(
+        `El entrenador con el email ${searchEmail} no se encuentra en la base de datos`,
+      );
+    return coach;
   }
 }

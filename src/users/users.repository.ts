@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-base-to-string */
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -5,6 +7,7 @@ import { User } from './users.entity';
 import { Repository } from 'typeorm';
 import { Role } from 'src/common/roles.enum';
 import { UpdateUserDto } from './dto/updateUser.dto';
+import { GetByEmailDto } from './dto/getByEmail.dto';
 
 @Injectable()
 export class usersRepository {
@@ -56,5 +59,16 @@ export class usersRepository {
     user.isActive = false;
     await this.usersRepository.save(user);
     return 'El usuario ha sido eliminado exitosamente';
+  }
+
+  async getByEmail(searchEmail: GetByEmailDto) {
+    const user = await this.usersRepository.findOne({
+      where: { email: searchEmail.email },
+    });
+    if (!user)
+      throw new NotFoundException(
+        `El usuario con el email ${searchEmail} no se encuentra en la base de datos`,
+      );
+    return user;
   }
 }
