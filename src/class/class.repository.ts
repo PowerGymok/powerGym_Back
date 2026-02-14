@@ -20,21 +20,31 @@ export class ClassRepository {
   find_class_by_id(id: string) {
     return this.classRepository.findOne({
       where: { id },
-    });
-  }
-
-  get_classes() {
-    return this.classRepository.find({
+      relations: ['Class_schedule'],
       select: {
         id: true,
         name: true,
         duration: true,
         description: true,
         capacity: true,
+        class_schedule: true,
       },
     });
   }
-  // falta que traiga la relacion
+
+  get_classes() {
+    return this.classRepository.find({
+      relations: ['Class_schedule'],
+      select: {
+        id: true,
+        name: true,
+        duration: true,
+        description: true,
+        capacity: true,
+        class_schedule: true,
+      },
+    });
+  }
 
   async create_class(clase: ResponseClass) {
     await this.classRepository.save(clase);
@@ -54,7 +64,7 @@ export class ClassRepository {
 
     const update = this.classRepository.merge(find_clase, clase);
 
-    const update_save = this.classRepository.save(update);
+    await this.classRepository.save(update);
 
     return {
       success: true,
@@ -70,7 +80,7 @@ export class ClassRepository {
     }
 
     // No borramos la clase ya que preservamos informacion que puede ser valiosa en un futuro
-    const class_deleted = await this.classRepository.update(find_clase, {
+    await this.classRepository.update(find_clase, {
       isActive: false,
     });
 

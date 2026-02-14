@@ -1,3 +1,4 @@
+import { Class_schedule } from 'src/class_schedule/class_schedule.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({
@@ -22,6 +23,6 @@ export class Class {
   @Column('boolean', { default: true, nullable: false })
   isActive: boolean;
 
-  //@OneToMany(() => class_schedule, (schedule) => schedule.class)
-  // schedules: class_schedule[];
+  @OneToMany(() => Class_schedule, (schedule) => schedule.class_id)
+  class_schedule: Class_schedule[];
 }
