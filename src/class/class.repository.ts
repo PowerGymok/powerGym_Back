@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Class } from './class.entity';
 import { Repository } from 'typeorm';
+import { ResponseClass } from './dtos/ResponseClass.dto';
 
 @Injectable({})
 export class ClassRepository {
@@ -10,8 +11,16 @@ export class ClassRepository {
     private readonly classRepository: Repository<Class>,
   ) {}
 
-  async load_seeder(seed_classes): Promise<Class[]> {
-    return this.classRepository.save(seed_classes);
+  async load_seeder(seed_classes) {
+    await this.classRepository.save(seed_classes);
+
+    return { message: 'Seeder de clases cargado correctamente' };
+  }
+
+  find_class_by_id(id: string) {
+    return this.classRepository.findOne({
+      where: { id },
+    });
   }
 
   get_classes() {
@@ -26,4 +35,48 @@ export class ClassRepository {
     });
   }
   // falta que traiga la relacion
+
+  async create_class(clase: ResponseClass) {
+    await this.classRepository.save(clase);
+
+    return {
+      success: true,
+      message: 'Clase creada correctamente',
+    };
+  }
+
+  async update(id: string, clase: ResponseClass) {
+    const find_clase = await this.find_class_by_id(id);
+
+    if (!find_clase) {
+      throw new UnauthorizedException('Clase no encontrada');
+    }
+
+    const update = this.classRepository.merge(find_clase, clase);
+
+    const update_save = this.classRepository.save(update);
+
+    return {
+      success: true,
+      message: 'Clase actualizada correctamente',
+    };
+  }
+
+  async deleted_class(id: string) {
+    const find_clase = await this.find_class_by_id(id);
+
+    if (!find_clase) {
+      throw new UnauthorizedException('Clase no encontrada');
+    }
+
+    // No borramos la clase ya que preservamos informacion que puede ser valiosa en un futuro
+    const class_deleted = await this.classRepository.update(find_clase, {
+      isActive: false,
+    });
+
+    return {
+      success: true,
+      message: 'Clase borrada correctamente',
+    };
+  }
 }

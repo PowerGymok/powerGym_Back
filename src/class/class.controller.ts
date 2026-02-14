@@ -10,7 +10,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { ClassService } from './class.service';
-import { CreateClass } from 'src/class/dtos/ResponseClass.dto';
+import { ResponseClass } from 'src/class/dtos/ResponseClass.dto';
 
 @Controller('clases')
 export class ClassController {
@@ -30,7 +30,7 @@ export class ClassController {
   // Rol de admin puede hacer esto
   @Post('crear')
   @HttpCode(201)
-  create_new_class(@Body() clase: CreateClass) {
+  create_new_class(@Body() clase: ResponseClass) {
     return this.classService.create_new_class(clase);
   }
 
@@ -38,7 +38,7 @@ export class ClassController {
   @Put(':id')
   update_a_class(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() clase: CreateClass,
+    @Body() clase: ResponseClass,
   ) {
     return this.classService.update_class(id, clase);
   }
