@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { CoachService } from './coach.service';
 import { UpdateCoachDto } from './dto/updateCoach.dto';
+import { GetByEmailDto } from 'src/users/dto/getByEmail.dto';
 
 @Controller('coach')
 export class CoachController {
@@ -23,6 +24,11 @@ export class CoachController {
     const validLimit = !isNaN(limitNum) && limitNum > 0 ? limitNum : 10;
 
     return this.coachService.getAllCoaches(validPage, validLimit);
+  }
+
+  @Get('/email')
+  getByEmail(@Query('email') email: GetByEmailDto) {
+    return this.coachService.getByEmail(email);
   }
 
   @Get(':id') //Hacer guardian para que solo admin y coach propietario de la cuenta pueda ingresar

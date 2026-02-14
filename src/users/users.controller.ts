@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/updateUser.dto';
+import { GetByEmailDto } from './dto/getByEmail.dto';
 
 @Controller('users')
 export class UsersController {
@@ -23,6 +24,11 @@ export class UsersController {
     const validLimit = !isNaN(limitNum) && limitNum > 0 ? limitNum : 10;
 
     return this.usersService.getAllUsers(validPage, validLimit);
+  }
+
+  @Get('/email')
+  getByEmail(@Query('email') email: GetByEmailDto) {
+    return this.usersService.getByEmail(email);
   }
 
   @Get(':id') //Hacer guardian para que solo admin y usuario propietario de la cuenta pueda ingresar
