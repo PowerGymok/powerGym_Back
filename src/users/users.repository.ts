@@ -1,13 +1,18 @@
 /* eslint-disable @typescript-eslint/no-base-to-string */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './users.entity';
 import { Repository } from 'typeorm';
 import { Role } from 'src/common/roles.enum';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import { GetByEmailDto } from './dto/getByEmail.dto';
+import { CreateUserDto } from './dto/createUser.dto';
 
 @Injectable()
 export class usersRepository {
@@ -70,5 +75,32 @@ export class usersRepository {
         `El usuario con el email ${searchEmail} no se encuentra en la base de datos`,
       );
     return user;
+  }
+
+  async createUser(dto: CreateUserDto) {
+    const email = (dto.email || '').trim().toLowerCase();
+
+    const exists = await this.usersRepository.findOne({ where: { email } });
+    if (exists) {
+      throw new BadRequestException('El email ya está registrado');
+    }
+
+    const user = this.usersRepository.create({
+      ...dto,
+      email,
+      role: dto.role ?? Role.User,
+      isActive: dto.isActive ?? true,
+    });
+
+    return this.usersRepository.save(user);
+  }
+  //busco usuario activos por lo que charlamos de la duracion del token .. si esta en false no puede hacer nada
+  async findIsActiveById(id: string): Promise<boolean> {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      select: ['id', 'isActive'],
+    });
+
+    return !!user?.isActive;
   }
 }

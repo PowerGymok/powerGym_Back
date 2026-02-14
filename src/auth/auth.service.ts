@@ -1,45 +1,72 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Role } from './enums/role.enum';
+import { Role } from '../common/roles.enum';
+import { UsersService } from '../users/users.service';
+import { User } from '../users/users.entity';
+import { CreateUserDto } from '../users/dto/createUser.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-  // inyecto JwtService para poder crear el token
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly usersService: UsersService,
+  ) {}
 
-  // por ahora simulo usuarios porque todavía no tenemos DB
-  // esto después se reemplaza buscando en la base de datos
-  validateUser(email: string, password: string) {
+  async validateUser(
+    email: string,
+    password: string,
+  ): Promise<{
+    id: string;
+    email: string;
+    role: Role;
+  }> {
     const e = (email || '').trim().toLowerCase();
 
-    // admin de prueba
-    if (e === 'admin@mail.com' && password === '1234')
-      return { id: '1', email: e, role: Role.Admin };
+    let user: User;
+    try {
+      user = await this.usersService.getByEmail({ email: e });
+    } catch {
+      throw new UnauthorizedException('Credenciales incorrectas');
+    }
 
-    // coach de prueba
-    if (e === 'coach@mail.com' && password === '1234')
-      return { id: '2', email: e, role: Role.Coach };
+    if (!user.isActive) {
+      throw new UnauthorizedException('Usuario dado de baja');
+    }
 
-    // usuario común de prueba
-    if (e === 'user@mail.com' && password === '1234')
-      return { id: '3', email: e, role: Role.User };
+    //  comparar contraseña con bcrypt
+    const passwordValida = await bcrypt.compare(password, user.password);
 
-    // si no coincide → 401
-    throw new UnauthorizedException('Credenciales incorrectas');
+    if (!passwordValida) {
+      throw new UnauthorizedException('Credenciales incorrectas');
+    }
+
+    return { id: user.id, email: user.email, role: user.role };
   }
 
-  // acá creo el JWT
-  // el payload es la info mínima del usuario que va dentro del token
   login(user: { id: string; email: string; role: Role }) {
-    const payload = {
-      sub: user.id, // id del usuario
-      email: user.email, // para identificarlo
-      role: user.role, // después lo usan los roles/guards
-    };
+    const payload = { sub: user.id, email: user.email, role: user.role };
+    return { accessToken: this.jwtService.sign(payload) };
+  }
 
-    // firmo el token y lo devuelvo
-    return {
-      accessToken: this.jwtService.sign(payload),
-    };
+  // SIGNUP REAL + bcrypt hash
+  async signup(dto: CreateUserDto) {
+    const email = (dto.email || '').trim().toLowerCase();
+
+    const passwordHasheada = await bcrypt.hash(dto.password, 10);
+
+    const created = await this.usersService.createUser({
+      ...dto,
+      email,
+      password: passwordHasheada,
+      role: Role.User,
+      isActive: true,
+    });
+
+    return this.login({
+      id: created.id,
+      email: created.email,
+      role: created.role,
+    });
   }
 }
