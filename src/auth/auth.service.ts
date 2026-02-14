@@ -1,57 +1,72 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { Role } from '../common/roles.enum';
+import { UsersService } from '../users/users.service';
+import { User } from '../users/users.entity';
+import { CreateUserDto } from '../users/dto/createUser.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-  // Inyectamos JwtService para poder firmar (crear) los tokens
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly usersService: UsersService,
+  ) {}
 
-  /**
-   * MÉTODO TEMPORAL
-   * ----------------------------------------------------------------------------
-   * Como todavía no existe el módulo Users ni la base de datos,
-   * simulamos usuarios "en memoria".
-   *
-   * Esto SOLO sirve para poder:
-   * - probar el login
-   * - generar JWT
-   * - avanzar con guards y roles
-   *
-   * Más adelante este método se va a reemplazar por:
-   * 1) buscar el usuario en la DB por email
-   * 2) comparar la contraseña con bcrypt
-   */
-  validateUser(email: string, password: string) {
-    // normalizamos el email (evita problemas de mayúsculas/minúsculas)
+  async validateUser(
+    email: string,
+    password: string,
+  ): Promise<{
+    id: string;
+    email: string;
+    role: Role;
+  }> {
     const e = (email || '').trim().toLowerCase();
 
-    // usuario administrador de prueba
-    if (e === 'admin@mail.com' && password === '1234')
-      return { email: e, role: 'ADMIN' };
+    let user: User;
+    try {
+      user = await this.usersService.getByEmail({ email: e });
+    } catch {
+      throw new UnauthorizedException('Credenciales incorrectas');
+    }
 
-    // usuario normal de prueba
-    if (e === 'user@mail.com' && password === '1234')
-      return { email: e, role: 'USER' };
+    if (!user.isActive) {
+      throw new UnauthorizedException('Usuario dado de baja');
+    }
 
-    // si no coincide, devolvemos 401
-    throw new UnauthorizedException('Credenciales incorrectas');
+    //  comparar contraseña con bcrypt
+    const passwordValida = await bcrypt.compare(password, user.password);
+
+    if (!passwordValida) {
+      throw new UnauthorizedException('Credenciales incorrectas');
+    }
+
+    return { id: user.id, email: user.email, role: user.role };
   }
 
-  /**
-   * Genera el JWT
-   * ----------------------------------------------------------------------------
-   * El payload es la información que viajará dentro del token.
-   * Este payload después el AuthGuard lo va a leer y lo guardo en req.user.
-   */
-  login(user: { email: string; role: string }) {
-    const payload = {
-      email: user.email,
-      role: user.role,
-    };
+  login(user: { id: string; email: string; role: Role }) {
+    const payload = { sub: user.id, email: user.email, role: user.role };
+    return { accessToken: this.jwtService.sign(payload) };
+  }
 
-    // firmo el token
-    return {
-      accessToken: this.jwtService.sign(payload),
-    };
+  // SIGNUP REAL + bcrypt hash
+  async signup(dto: CreateUserDto) {
+    const email = (dto.email || '').trim().toLowerCase();
+
+    const passwordHasheada = await bcrypt.hash(dto.password, 10);
+
+    const created = await this.usersService.createUser({
+      ...dto,
+      email,
+      password: passwordHasheada,
+      role: Role.User,
+      isActive: true,
+    });
+
+    return this.login({
+      id: created.id,
+      email: created.email,
+      role: created.role,
+    });
   }
 }

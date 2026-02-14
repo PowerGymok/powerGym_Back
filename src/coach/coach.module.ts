@@ -9,5 +9,6 @@ import { coachRepository } from './coach.repository';
   imports: [TypeOrmModule.forFeature([User])],
   controllers: [CoachController],
   providers: [CoachService, coachRepository],
+  exports: [coachRepository],
 })
 export class CoachModule {}
