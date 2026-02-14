@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { usersRepository } from './users.repository';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import { GetByEmailDto } from './dto/getByEmail.dto';
+import { CreateUserDto } from './dto/createUser.dto'; // 👈 nuevo import
 
 @Injectable()
 export class UsersService {
@@ -27,5 +28,14 @@ export class UsersService {
 
   getByEmail(email: GetByEmailDto) {
     return this.usersRepository.getByEmail(email);
+  }
+
+  //  lo usa Auth para el signup
+  createUser(dto: CreateUserDto) {
+    return this.usersRepository.createUser(dto);
+  }
+
+  findIsActiveById(id: string): Promise<boolean> {
+    return this.usersRepository.findIsActiveById(id);
   }
 }
