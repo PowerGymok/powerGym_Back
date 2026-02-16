@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Class } from './class.entity';
 import { Repository } from 'typeorm';
-import { ResponseClass } from './dtos/ResponseClass.dto';
+import { CreateClass } from './dtos/CreateClass.dto';
 
 @Injectable({})
 export class ClassRepository {
@@ -11,10 +11,8 @@ export class ClassRepository {
     private readonly classRepository: Repository<Class>,
   ) {}
 
-  async load_seeder(seed_classes) {
-    await this.classRepository.save(seed_classes);
-
-    return { message: 'Seeder de clases cargado correctamente' };
+  async load_seeder(seed_classes: CreateClass[]): Promise<Class[]> {
+    return await this.classRepository.save(seed_classes);
   }
 
   find_class_by_id(id: string) {
@@ -46,7 +44,7 @@ export class ClassRepository {
     });
   }
 
-  async create_class(clase: ResponseClass) {
+  async create_class(clase: CreateClass) {
     await this.classRepository.save(clase);
 
     return {
@@ -55,7 +53,7 @@ export class ClassRepository {
     };
   }
 
-  async update(id: string, clase: ResponseClass) {
+  async update(id: string, clase: CreateClass) {
     const find_clase = await this.find_class_by_id(id);
 
     if (!find_clase) {

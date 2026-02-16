@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { ClassService } from './class.service';
 import { ResponseClass } from 'src/class/dtos/ResponseClass.dto';
+import { CreateClass } from './dtos/CreateClass.dto';
 
 @Controller('clases')
 export class ClassController {
@@ -30,7 +31,7 @@ export class ClassController {
   // Rol de admin puede hacer esto
   @Post('crear')
   @HttpCode(201)
-  create_new_class(@Body() clase: ResponseClass) {
+  create_new_class(@Body() clase: CreateClass) {
     return this.classService.create_new_class(clase);
   }
 
