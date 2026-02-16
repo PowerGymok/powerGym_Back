@@ -22,7 +22,7 @@ export class ClassController {
   }
 
   @Get('/')
-  @HttpCode(200) //ver si esta bien
+  @HttpCode(200)
   get_all_classes() {
     return this.classService.get_classes();
   }

@@ -11,4 +11,4 @@ import { ClassScheduleRepository } from './class_schedule.repository';
   providers: [ClassScheduleService, ClassScheduleRepository],
   exports: [ClassScheduleService, ClassScheduleRepository],
 })
-export class ClassSchedule {}
+export class ClassScheduleModule {}

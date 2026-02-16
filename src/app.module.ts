@@ -7,6 +7,7 @@ import { ClassModule } from './class/class.module';
 import { CoachModule } from './coach/coach.module';
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
+import { ClassScheduleModule } from './class_schedule/class_schedule.module';
 
 @Module({
   imports: [
@@ -27,7 +28,7 @@ import databaseConfig from './config/database.config';
         },
       }),
     }),
-
+    ClassScheduleModule,
     UsersModule,
     AuthModule,
     ClassModule,
