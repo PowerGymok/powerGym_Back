@@ -57,6 +57,6 @@ export class UpdateCoachDto {
   city: string;
 
   @IsOptional()
-  //revisar si hay un decorador para este atributo
+  //revisar si hay un decorador para este atributo ---> @isURL puede ser
   profileImg: string;
 }
