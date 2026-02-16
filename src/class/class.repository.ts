@@ -62,6 +62,7 @@ export class ClassRepository {
       throw new UnauthorizedException('Clase no encontrada');
     }
 
+    // Mezclamos la informacion que tenemos del usuario no modificada con la que si esta modificada
     const update = this.classRepository.merge(find_clase, clase);
 
     await this.classRepository.save(update);
@@ -89,4 +90,6 @@ export class ClassRepository {
       message: 'Clase borrada correctamente',
     };
   }
+
+  async assigned_student() {}
 }

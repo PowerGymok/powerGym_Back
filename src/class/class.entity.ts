@@ -14,10 +14,10 @@ export class Class {
   @Column('varchar', { length: 10, nullable: false })
   duration: string;
 
-  @Column('text')
+  @Column('varchar', { length: 200 })
   description: string;
 
-  @Column('numeric')
+  @Column('numeric', { nullable: false })
   capacity: number;
 
   @Column('boolean', { default: true, nullable: false })

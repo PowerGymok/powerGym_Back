@@ -7,4 +7,6 @@ export class ClassScheduleRepository {
     @InjectRepository(Class_schedule)
     private readonly classScheduleRepository: Repository<Class_schedule>,
   ) {}
+
+  class_appmnt(id: string) {}
 }
