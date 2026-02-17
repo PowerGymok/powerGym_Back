@@ -1,0 +1,76 @@
+/* eslint-disable @typescript-eslint/no-base-to-string */
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from '../users/users.entity';
+import { Repository } from 'typeorm';
+import { Role } from 'src/common/roles.enum';
+import { UpdateCoachDto } from './dto/updateCoach.dto';
+import { GetByEmailDto } from 'src/users/dto/getByEmail.dto';
+
+@Injectable()
+export class coachRepository {
+  constructor(
+    @InjectRepository(User) private coachesRepository: Repository<User>,
+  ) {}
+
+  async getAllCoaches(page: number, limit: number) {
+    const skip: number = (page - 1) * limit;
+    const allCoaches = await this.coachesRepository.find({
+      skip: skip,
+      take: limit,
+      where: { role: Role.Coach },
+    });
+
+    return allCoaches.map(
+      ({ password, ...coachNoPassword }) => coachNoPassword,
+    );
+  } //Falta verificar si va a traer los coachs activos o los activos e inactivos
+
+  async getCoachById(id: string) {
+    const coach = await this.coachesRepository.findOne({
+      where: { id: id, role: Role.Coach },
+    });
+
+    if (!coach)
+      throw new NotFoundException(`No se encontró el entrenador con id ${id}`);
+
+    const { password, ...coachNoPassword } = coach;
+    return coachNoPassword;
+  } //Incluir las relaciones necesarias al traer el usuario. Por ejemplo, reservas de clases, id´s de chats.
+
+  async updateCoach(id: string, newCoachData: UpdateCoachDto) {
+    const coach = await this.coachesRepository.findOneBy({ id });
+    if (!coach || coach.isActive !== true)
+      throw new NotFoundException('No se encontró el entrenador');
+    //encriptar contraseña del nuevo usuario
+    //if(newUserData.password){
+    //  const hashedPassword
+    //}
+    const mergedcoach = this.coachesRepository.merge(coach, newCoachData);
+    const savedCoach = await this.coachesRepository.save(mergedcoach);
+    return 'El entrenador ha sido actualizado exitosamente';
+  }
+
+  async inactiveCoach(id: string) {
+    //Hace falta hacer borrado logico
+    const coach = await this.coachesRepository.findOneBy({ id });
+    if (!coach || coach.isActive !== true)
+      throw new NotFoundException('No se encontró al usuario');
+    coach.isActive = false;
+    await this.coachesRepository.save(coach);
+    return 'El entrenador ha sido desactivado exitosamente';
+  }
+
+  async getByEmail(searchEmail: GetByEmailDto) {
+    const coach = await this.coachesRepository.findOne({
+      where: { email: searchEmail.email },
+    });
+    if (!coach)
+      throw new NotFoundException(
+        `El entrenador con el email ${searchEmail} no se encuentra en la base de datos`,
+      );
+    return coach;
+  }
+}

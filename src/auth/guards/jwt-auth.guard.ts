@@ -7,14 +7,17 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
+import { UsersService } from '../../users/users.service'; // ajustá el path si es necesario
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly usersService: UsersService,
+  ) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
-
     const authHeader = request.headers.authorization;
 
     if (!authHeader) {
@@ -30,24 +33,13 @@ export class JwtAuthGuard implements CanActivate {
     try {
       const payload = this.jwtService.verify<JwtPayload>(token);
 
-      // guardo el usuario autenticado en la request
-      request.user = payload;
-
-      /*
-       (cuando exista UsersService y DB):
-    
-      Acá voy a buscar el usuario real en la base de datos usando payload.sub.
-      Si el usuario está desactivado (isActive = false) voy a rechazar la request.
-
-      Ejemplo:
-      const user = await usersService.findById(payload.sub);
-      if (!user || !user.isActive) {
+      //  SIMPLE: si está inactivo, no entra
+      const activo = await this.usersService.findIsActiveById(payload.sub);
+      if (!activo) {
         throw new UnauthorizedException('Usuario desactivado');
       }
 
-      Esto evita que un usuario dado de baja siga usando un token válido.
-      */
-
+      request.user = payload;
       return true;
     } catch {
       throw new UnauthorizedException('Token invalido o expirado');
