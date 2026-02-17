@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Role } from 'src/common/roles.enum';
 
 @Entity({ name: 'users' })
@@ -38,8 +38,18 @@ export class User {
 
   @Column({ default: true })
   courtesyClass: boolean;
+  // Balance de tokens internos del usuario
+  // Empieza en 0. Aumenta al comprar un paquete, disminuye al usarlos
+  @Column({ type: 'int', default: 0 })
+  tokenBalance: number;
 
-  //   tokenPackId: FK
-  // reservationId: FK
-  // chatId: Fk
+  // OneToMany = un usuario → muchas suscripciones a membresías
+  // { lazy: false } = TypeORM NO carga las membresías automáticamente,
+  // solo las trae si explícitamente usas relations: ['memberships'] en la query
+  @OneToMany(() => UserMembership, (um) => um.user)
+  memberships: UserMembership[];
+
+  // OneToMany = un usuario → muchas transacciones (historial completo)
+  @OneToMany(() => Transaction, (transaction) => transaction.user)
+  transactions: Transaction[];
 }
