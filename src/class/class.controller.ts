@@ -50,3 +50,5 @@ export class ClassController {
     return this.classService.delete_class(id);
   }
 }
+
+// postgresql://postgres:YOUR_PASSWORD@db.YOUR_PROJECT_REF.supabase.co:5432/postgres estaba antes en url .env.example
