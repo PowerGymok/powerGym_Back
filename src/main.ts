@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { setDefaultResultOrder } from 'dns';
 import { ValidationPipe } from '@nestjs/common';
+import { LoggerGlobal } from './middleware/logger.middleware';
 
 async function bootstrap() {
   setDefaultResultOrder('ipv4first');
@@ -12,6 +13,8 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+  app.use(LoggerGlobal);
+
   await app.listen(process.env.PORT ?? 3000);
   console.log(`App listening on port ${process.env.PORT ?? 3000}`);
 }

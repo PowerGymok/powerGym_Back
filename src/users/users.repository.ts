@@ -88,8 +88,6 @@ export class usersRepository {
     const user = this.usersRepository.create({
       ...dto,
       email,
-      role: dto.role ?? Role.User,
-      isActive: dto.isActive ?? true,
     });
 
     return this.usersRepository.save(user);

@@ -59,8 +59,6 @@ export class AuthService {
       ...dto,
       email,
       password: passwordHasheada,
-      role: Role.User,
-      isActive: true,
     });
 
     return this.login({
