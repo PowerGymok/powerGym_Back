@@ -20,7 +20,7 @@ import { ClassScheduleModule } from './class_schedule/class_schedule.module';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         type: 'postgres',
-        url: config.get<string>('DATABASE_URL'),
+        url: config.get<string>('database.url'),
         autoLoadEntities: true,
         synchronize: true,
         ssl: {
