@@ -32,8 +32,6 @@ export class UsersService {
 
   //  lo usa Auth para el signup
   createUser(dto: CreateUserDto) {
-    if (dto.password !== dto.confirmPassword)
-      throw new BadRequestException('Las contraseñas no coinciden');
     return this.usersRepository.createUser(dto);
   }
 

@@ -26,8 +26,8 @@ export class CoachController {
     return this.coachService.getAllCoaches(validPage, validLimit);
   }
 
-  @Get('/email')
-  getByEmail(@Query('email') email: GetByEmailDto) {
+  @Get('email')
+  getByEmail(@Query() email: GetByEmailDto) {
     return this.coachService.getByEmail(email);
   }
 
