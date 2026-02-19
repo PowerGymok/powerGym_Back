@@ -34,7 +34,7 @@ export class UpdateUserDto {
   @Length(8, 60, {
     message: 'La contraseña debe tener entre 3 y 60 caracteres',
   })
-  confirmPassword: string;
+  confirmPassword?: string;
 
   @IsOptional()
   @IsNotEmpty({ message: 'El número de teléfono no puede estar vacio' })

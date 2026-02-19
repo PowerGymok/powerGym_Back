@@ -47,10 +47,6 @@ export class usersRepository {
     const user = await this.usersRepository.findOneBy({ id });
     if (!user || user.isActive !== true)
       throw new NotFoundException('No se encontró el usuario');
-    //encriptar contraseña del nuevo usuario
-    //if(newUserData.password){
-    //  const hashedPassword
-    //}
     const mergedUser = this.usersRepository.merge(user, newUserData);
     const savedUser = await this.usersRepository.save(mergedUser);
     return 'El usuario ha sido actualizado exitosamente';
