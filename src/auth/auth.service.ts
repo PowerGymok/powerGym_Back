@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Role } from '../common/roles.enum';
 import { UsersService } from '../users/users.service';
@@ -52,6 +56,8 @@ export class AuthService {
   // SIGNUP REAL + bcrypt hash
   async signup(dto: CreateUserDto) {
     const email = (dto.email || '').trim().toLowerCase();
+    if (dto.password !== dto.confirmPassword)
+      throw new BadRequestException('Las contraseñas no coinciden');
 
     const passwordHasheada = await bcrypt.hash(dto.password, 10);
 
@@ -59,8 +65,6 @@ export class AuthService {
       ...dto,
       email,
       password: passwordHasheada,
-      role: Role.User,
-      isActive: true,
     });
 
     return this.login({
