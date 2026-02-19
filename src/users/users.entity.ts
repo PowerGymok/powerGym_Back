@@ -1,5 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Role } from 'src/common/roles.enum';
+import { UserMembership } from '../user-membership/user-membership.entity';
+import { Transaction } from 'src/transactions/transactions.entity';
 
 @Entity({ name: 'users' })
 export class User {
