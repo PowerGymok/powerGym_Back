@@ -44,13 +44,18 @@ export class coachRepository {
     const coach = await this.coachesRepository.findOneBy({ id });
     if (!coach || coach.isActive !== true)
       throw new NotFoundException('No se encontró el entrenador');
-    //encriptar contraseña del nuevo usuario
-    //if(newUserData.password){
-    //  const hashedPassword
-    //}
     const mergedcoach = this.coachesRepository.merge(coach, newCoachData);
-    const savedCoach = await this.coachesRepository.save(mergedcoach);
+    await this.coachesRepository.save(mergedcoach);
     return 'El entrenador ha sido actualizado exitosamente';
+  }
+
+  async promoteCoach(id: string) {
+    const coach = await this.coachesRepository.findOneBy({ id });
+    if (!coach)
+      throw new NotFoundException('No se encontró el usuario solicitado');
+    coach.role = Role.Coach;
+    await this.coachesRepository.save(coach);
+    return 'El usuario ahora es un nuevo entrenador en el gimnasio';
   }
 
   async inactiveCoach(id: string) {

@@ -32,8 +32,8 @@ export class User {
   @Column({ type: 'enum', enum: Role, default: Role.User })
   role: Role;
 
-  @Column({ type: 'text' })
-  profileImg: string;
+  @Column({ type: 'text', nullable: true })
+  profileImg: string | null;
 
   @Column({ default: true })
   isActive: boolean;

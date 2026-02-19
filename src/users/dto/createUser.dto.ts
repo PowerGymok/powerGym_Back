@@ -7,6 +7,7 @@ import {
   IsDateString,
   Length,
   Matches,
+  IsOptional,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -67,7 +68,7 @@ export class CreateUserDto {
   @IsNotEmpty({ message: 'La fecha de nacimiento no puede estar vacía' })
   Birthdate: Date;
 
+  @IsOptional()
   @IsString({ message: 'La imagen de perfil debe ser una cadena de texto' })
-  @IsNotEmpty({ message: 'La imagen de perfil no puede estar vacía' })
   profileImg: string;
 }

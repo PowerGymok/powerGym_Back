@@ -56,6 +56,11 @@ export class CoachController {
     return this.coachService.updateCoach(id, newCoachData);
   }
 
+  @Put('promte/:id')
+  promoteCoach(@Param('id', ParseUUIDPipe) id: string) {
+    return this.coachService.promoteCoach(id);
+  }
+
   @Put('inactive/:id')
   @UseGuards(JwtAuthGuard, OwnerOrAdminGuard)
   inactiveCoach(@Param('id', ParseUUIDPipe) id: string) {
