@@ -26,8 +26,8 @@ export class UsersController {
     return this.usersService.getAllUsers(validPage, validLimit);
   }
 
-  @Get('/email')
-  getByEmail(@Query('email') email: GetByEmailDto) {
+  @Get('email')
+  getByEmail(@Query() email: GetByEmailDto) {
     return this.usersService.getByEmail(email);
   }
 

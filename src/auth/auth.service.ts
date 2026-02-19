@@ -34,9 +34,7 @@ export class AuthService {
       throw new UnauthorizedException('Usuario dado de baja');
     }
 
-    //  comparar contraseña con bcrypt
     const passwordValida = await bcrypt.compare(password, user.password);
-
     if (!passwordValida) {
       throw new UnauthorizedException('Credenciales incorrectas');
     }
@@ -49,18 +47,13 @@ export class AuthService {
     return { accessToken: this.jwtService.sign(payload) };
   }
 
-  // SIGNUP REAL + bcrypt hash
+  // SIGNUP + bcrypt hash
   async signup(dto: CreateUserDto) {
-    const email = (dto.email || '').trim().toLowerCase();
-
-    const passwordHasheada = await bcrypt.hash(dto.password, 10);
+    const hashedPassword = await bcrypt.hash(dto.password, 10);
 
     const created = await this.usersService.createUser({
       ...dto,
-      email,
-      password: passwordHasheada,
-      role: Role.User,
-      isActive: true,
+      password: hashedPassword,
     });
 
     return this.login({

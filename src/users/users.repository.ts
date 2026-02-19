@@ -70,6 +70,7 @@ export class usersRepository {
     const user = await this.usersRepository.findOne({
       where: { email: searchEmail.email },
     });
+
     if (!user)
       throw new NotFoundException(
         `El usuario con el email ${searchEmail} no se encuentra en la base de datos`,
@@ -88,8 +89,6 @@ export class usersRepository {
     const user = this.usersRepository.create({
       ...dto,
       email,
-      role: dto.role ?? Role.User,
-      isActive: dto.isActive ?? true,
     });
 
     return this.usersRepository.save(user);
