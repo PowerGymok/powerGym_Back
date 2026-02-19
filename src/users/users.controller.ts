@@ -6,16 +6,24 @@ import {
   ParseUUIDPipe,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import { GetByEmailDto } from './dto/getByEmail.dto';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Role } from 'src/common/roles.enum';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { OwnerOrAdminGuard } from 'src/auth/guards/ownership.guard';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get() //Hacer guardian para que solo admin pueda ingresar
+  @Get()
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   getAllUsers(@Query('page') page: string, @Query('limit') limit: string) {
     const pageNum = Number(page);
     const limitNum = Number(limit);
@@ -27,16 +35,20 @@ export class UsersController {
   }
 
   @Get('email')
+  @Roles(Role.Admin, Role.Coach)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   getByEmail(@Query() email: GetByEmailDto) {
     return this.usersService.getByEmail(email);
   }
 
-  @Get(':id') //Hacer guardian para que solo admin y usuario propietario de la cuenta pueda ingresar
+  @Get(':id')
+  @UseGuards(JwtAuthGuard, OwnerOrAdminGuard)
   getUserById(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.getUserById(id);
   }
 
-  @Put('update/:id') //Es necesario hacer un Guard para que un admin o un usuario solo pueda modificar SU información y no la de otro usuario.
+  @Put('update/:id')
+  @UseGuards(JwtAuthGuard, OwnerOrAdminGuard)
   updateUser(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() newUserData: UpdateUserDto,
@@ -44,7 +56,8 @@ export class UsersController {
     return this.usersService.updateUser(id, newUserData);
   }
 
-  @Put('inactive/:id') //Hacer un guardian para que solamente un usuario propietario de la cuenta o el admin puedan desactivar.
+  @Put('inactive/:id')
+  @UseGuards(JwtAuthGuard, OwnerOrAdminGuard)
   inactiveUser(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.inactiveUser(id);
   }
