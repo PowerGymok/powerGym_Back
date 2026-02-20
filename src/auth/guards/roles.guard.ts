@@ -26,7 +26,6 @@ export class RolesGuard implements CanActivate {
     //  Traigo el usuario que ya metió JwtAuthGuard en la request
     const request = context.switchToHttp().getRequest<Request>();
     const user = (request as Request & { user: JwtPayload }).user;
-
     // Comparo rol del usuario vs roles permitidos
     if (!requiredRoles.includes(user.role)) {
       throw new ForbiddenException('No tenes permisos');

@@ -20,7 +20,7 @@ export class UpdateUserDto {
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,15}$/, {
     message: 'La contraseña no cumple con los requisitos',
   })
-  @Length(3, 60, {
+  @Length(8, 60, {
     message: 'La contraseña debe tener entre 3 y 60 caracteres',
   })
   password: string;
@@ -31,10 +31,10 @@ export class UpdateUserDto {
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,15}$/, {
     message: 'La contraseña no cumple con los requisitos',
   })
-  @Length(3, 60, {
+  @Length(8, 60, {
     message: 'La contraseña debe tener entre 3 y 60 caracteres',
   })
-  confirmPassword: string;
+  confirmPassword?: string;
 
   @IsOptional()
   @IsNotEmpty({ message: 'El número de teléfono no puede estar vacio' })

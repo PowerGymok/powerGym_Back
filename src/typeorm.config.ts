@@ -1,18 +1,14 @@
-/* eslint-disable prettier/prettier */
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+import { config } from 'dotenv';
 
-export const typeOrmConfig: TypeOrmModuleOptions = {
+config(); // carga el .env manualmente, porque este archivo corre fuera de NestJS
+
+export default new DataSource({
   type: 'postgres',
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT),
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  autoLoadEntities: true,
-  synchronize: true,
-
-  ssl: process.env.DB_SSL === 'true'
-    ? { rejectUnauthorized: false }
-    : false,
-};
-
+  url: process.env.DATABASE_URL,
+  entities: ['src/**/*.entity.ts'],
+  migrations: ['src/migrations/*.ts'],
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});

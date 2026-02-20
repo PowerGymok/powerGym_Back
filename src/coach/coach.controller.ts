@@ -6,16 +6,24 @@ import {
   ParseUUIDPipe,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { CoachService } from './coach.service';
 import { UpdateCoachDto } from './dto/updateCoach.dto';
 import { GetByEmailDto } from 'src/users/dto/getByEmail.dto';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Role } from 'src/common/roles.enum';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { OwnerOrAdminGuard } from 'src/auth/guards/ownership.guard';
 
 @Controller('coach')
 export class CoachController {
   constructor(private readonly coachService: CoachService) {}
 
-  @Get() //Hacer guardian para que solo admin pueda ingresar
+  @Get()
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   getAllCoaches(@Query('page') page: string, @Query('limit') limit: string) {
     const pageNum = Number(page);
     const limitNum = Number(limit);
@@ -26,17 +34,21 @@ export class CoachController {
     return this.coachService.getAllCoaches(validPage, validLimit);
   }
 
-  @Get('/email')
-  getByEmail(@Query('email') email: GetByEmailDto) {
+  @Get('email')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  getByEmail(@Query() email: GetByEmailDto) {
     return this.coachService.getByEmail(email);
   }
 
-  @Get(':id') //Hacer guardian para que solo admin y coach propietario de la cuenta pueda ingresar
+  @Get(':id')
+  @UseGuards(JwtAuthGuard, OwnerOrAdminGuard)
   getCoachById(@Param('id', ParseUUIDPipe) id: string) {
     return this.coachService.getCoachById(id);
   }
 
-  @Put('update/:id') //Es necesario hacer un Guard para que un admin o un coach solo pueda modificar SU información y no la de otro usuario o coach.
+  @Put('update/:id')
+  @UseGuards(JwtAuthGuard, OwnerOrAdminGuard)
   updateCoach(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() newCoachData: UpdateCoachDto,
@@ -44,7 +56,13 @@ export class CoachController {
     return this.coachService.updateCoach(id, newCoachData);
   }
 
-  @Put('inactive/:id') //Hacer un guardian para que solamente el admin o coach propietario puedan desactivar.
+  @Put('promte/:id')
+  promoteCoach(@Param('id', ParseUUIDPipe) id: string) {
+    return this.coachService.promoteCoach(id);
+  }
+
+  @Put('inactive/:id')
+  @UseGuards(JwtAuthGuard, OwnerOrAdminGuard)
   inactiveCoach(@Param('id', ParseUUIDPipe) id: string) {
     return this.coachService.inactiveCoach(id);
   }

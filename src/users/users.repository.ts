@@ -47,10 +47,6 @@ export class usersRepository {
     const user = await this.usersRepository.findOneBy({ id });
     if (!user || user.isActive !== true)
       throw new NotFoundException('No se encontró el usuario');
-    //encriptar contraseña del nuevo usuario
-    //if(newUserData.password){
-    //  const hashedPassword
-    //}
     const mergedUser = this.usersRepository.merge(user, newUserData);
     const savedUser = await this.usersRepository.save(mergedUser);
     return 'El usuario ha sido actualizado exitosamente';
@@ -70,6 +66,7 @@ export class usersRepository {
     const user = await this.usersRepository.findOne({
       where: { email: searchEmail.email },
     });
+
     if (!user)
       throw new NotFoundException(
         `El usuario con el email ${searchEmail} no se encuentra en la base de datos`,
@@ -88,8 +85,6 @@ export class usersRepository {
     const user = this.usersRepository.create({
       ...dto,
       email,
-      role: dto.role ?? Role.User,
-      isActive: dto.isActive ?? true,
     });
 
     return this.usersRepository.save(user);
