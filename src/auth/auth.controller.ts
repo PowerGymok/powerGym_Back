@@ -2,7 +2,9 @@ import { Body, Controller, Post, Get, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dto/createUser.dto';
 import type { Request } from 'express';
-import { JwtAuthGuard } from './guards/jwt-auth.guard'; // ajustá el path si tu guard está en otra carpeta
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { AuthGuard } from '@nestjs/passport';
+import { GoogleUser } from './interfaces/google-user.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -26,5 +28,23 @@ export class AuthController {
   @Get('me')
   me(@Req() req: Request) {
     return req.user;
+  }
+
+  //GOOGLE
+
+  //  esta ruta NO hace nada visible
+  // solo dispara a Passport → Google
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  async googleLogin() {
+    // passport automáticamente redirige a Google
+  }
+
+  //  Google vuelve acá después del login
+  @Get('google/callback')
+  @UseGuards(AuthGuard('google'))
+  googleCallback(@Req() req: { user: GoogleUser }) {
+    console.log('USER FROM GOOGLE:', req.user);
+    return req.user; // por ahora mostramos lo que vino de Google
   }
 }
