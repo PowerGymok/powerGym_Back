@@ -14,6 +14,12 @@ import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
+    //  GOOGLE (IMPORTANTE):
+    // Acá es donde se carga el .env para TODA la app.
+    // GoogleStrategy usa ConfigService.get('GOOGLE_CLIENT_ID/SECRET/CALLBACK_URL').
+    // Si esto NO estuviera (o no fuera global), ConfigService podría devolver undefined
+    // y Google responde con: invalid_client.
+    // isGlobal:true = todos los módulos (AuthModule incluido) pueden leer variables del .env.
     ConfigModule.forRoot({
       isGlobal: true,
       load: [appConfig, databaseConfig],
@@ -33,6 +39,14 @@ import { PaymentsModule } from './payments/payments.module';
       }),
     }),
 
+    //  GOOGLE (IMPORTANTE):
+    // Cuando Nest carga AuthModule, ahí se crea GoogleStrategy.
+    // En ese momento GoogleStrategy lee del .env:
+    // - GOOGLE_CLIENT_ID
+    // - GOOGLE_CLIENT_SECRET
+    // - GOOGLE_CALLBACK_URL
+    // Si el server no se reinició después de setear el .env,
+    // puede quedar leyendo valores viejos/undefined.
     ClassScheduleModule,
     UsersModule,
     AuthModule,
