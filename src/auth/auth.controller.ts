@@ -43,8 +43,8 @@ export class AuthController {
   //  Google vuelve acá después del login
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
-  googleCallback(@Req() req: { user: GoogleUser }) {
-    console.log('USER FROM GOOGLE:', req.user);
-    return req.user; // por ahora mostramos lo que vino de Google
+  async googleCallback(@Req() req: { user: GoogleUser }) {
+    // req.user viene de GoogleStrategy.validate()
+    return this.authService.googleLogin(req.user);
   }
 }

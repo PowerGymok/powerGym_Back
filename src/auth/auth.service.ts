@@ -102,9 +102,13 @@ export class AuthService {
     picture?: string;
   }) {
     const email = (googleUser.email || '').trim().toLowerCase();
+    const googleId = (googleUser.googleId || '').trim();
+
     if (!email) {
       throw new UnauthorizedException('Google no devolvió email');
     }
+    if (!googleId)
+      throw new UnauthorizedException('Google no devolvió googleId');
 
     const dto: CreateUserGoogleDto = {
       email,
