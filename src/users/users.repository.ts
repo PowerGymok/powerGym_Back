@@ -52,7 +52,7 @@ export class usersRepository {
       throw new NotFoundException('No se encontró el usuario');
     const mergedUser = this.usersRepository.merge(user, newUserData);
     const savedUser = await this.usersRepository.save(mergedUser);
-    return 'El usuario ha sido actualizado exitosamente';
+    return savedUser;
   }
 
   async inactiveUser(id: string) {
@@ -62,7 +62,7 @@ export class usersRepository {
       throw new NotFoundException('No se encontró al usuario');
     user.isActive = false;
     await this.usersRepository.save(user);
-    return 'El usuario ha sido eliminado exitosamente';
+    return user;
   }
 
   async getByEmail(searchEmail: GetByEmailDto) {

@@ -3,10 +3,14 @@ import { coachRepository } from './coach.repository';
 import { UpdateCoachDto } from './dto/updateCoach.dto';
 import { GetByEmailDto } from 'src/users/dto/getByEmail.dto';
 import * as bcrypt from 'bcrypt';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class CoachService {
-  constructor(private readonly coachRepository: coachRepository) {}
+  constructor(
+    private readonly coachRepository: coachRepository,
+    private readonly notificationsService: NotificationsService,
+  ) {}
 
   getAllCoaches(page: number, limit: number) {
     return this.coachRepository.getAllCoaches(page, limit);
@@ -24,15 +28,21 @@ export class CoachService {
       newCoachData.password = hashedPassword;
     }
     delete newCoachData.confirmPassword;
-    return this.coachRepository.updateCoach(id, newCoachData);
+    const coach = await this.coachRepository.updateCoach(id, newCoachData);
+    await this.notificationsService.sendUpdateEmail(coach.name, coach.email);
+    return 'El perfil se ha actualizado exitosamente';
   }
 
-  promoteCoach(id: string) {
-    return this.coachRepository.promoteCoach(id);
+  async promoteCoach(id: string) {
+    const coach = await this.coachRepository.promoteCoach(id);
+    await this.notificationsService.promoteCoachEmail(coach.name, coach.email);
+    return 'El usuario ahora hace parte de los entrenadores del gimnasio';
   }
 
-  inactiveCoach(id: string) {
-    return this.coachRepository.inactiveCoach(id);
+  async inactiveCoach(id: string) {
+    const coach = await this.coachRepository.inactiveCoach(id);
+    await this.notificationsService.inactiveUserEmail(coach.name, coach.email);
+    return 'Su cuenta ha sido desactivada exitosamente';
   }
 
   getByEmail(email: GetByEmailDto) {

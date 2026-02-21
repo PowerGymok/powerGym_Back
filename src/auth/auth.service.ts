@@ -80,13 +80,11 @@ export class AuthService {
       password: passwordHasheada,
     });
 
-    console.log(created.name);
-    console.log(created.email);
     await this.notificationsService.sendWelcomeEmail(
       created.name,
       created.email,
     );
-    // await this.notificationsService.sendWelcomeEmail()
+
     return this.login({
       id: created.id,
       email: created.email,
