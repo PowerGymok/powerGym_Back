@@ -5,7 +5,7 @@ import { transporter } from '../config/mailer.config';
 
 @Injectable()
 export class NotificationsService {
-  async sendWelcomeEmail(email: string, name: string) {
+  async sendWelcomeEmail(name: string, email: string) {
     await transporter.sendMail({
       from: '"PowerGym" <powergym@gmail.com>',
       to: email,

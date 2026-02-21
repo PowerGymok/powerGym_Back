@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import {
   BadRequestException,
   Injectable,
@@ -76,8 +79,13 @@ export class AuthService {
       email,
       password: passwordHasheada,
     });
-    console.log(created);
 
+    console.log(created.name);
+    console.log(created.email);
+    await this.notificationsService.sendWelcomeEmail(
+      created.name,
+      created.email,
+    );
     // await this.notificationsService.sendWelcomeEmail()
     return this.login({
       id: created.id,
