@@ -4,9 +4,11 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UsersModule } from '../users/users.module';
 import { CoachModule } from '../coach/coach.module';
+import { NotificationsModule } from 'src/notifications/notifications.module';
 
 @Module({
   imports: [
+    NotificationsModule,
     forwardRef(() => UsersModule),
     forwardRef(() => CoachModule),
     JwtModule.register({

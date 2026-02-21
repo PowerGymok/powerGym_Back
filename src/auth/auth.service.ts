@@ -9,12 +9,14 @@ import { UsersService } from '../users/users.service';
 import { User } from '../users/users.entity';
 import { CreateUserDto } from '../users/dto/createUser.dto';
 import * as bcrypt from 'bcrypt';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   async validateUser(
@@ -39,6 +41,11 @@ export class AuthService {
     }
 
     //  comparar contraseña con bcrypt
+    if (!user.password) {
+      throw new UnauthorizedException(
+        'Esta cuenta fue creada con Google, inicia sesión con Google',
+      );
+    }
     const passwordValida = await bcrypt.compare(password, user.password);
 
     if (!passwordValida) {
@@ -66,7 +73,9 @@ export class AuthService {
       email,
       password: passwordHasheada,
     });
+    console.log(created);
 
+    // await this.notificationsService.sendWelcomeEmail()
     return this.login({
       id: created.id,
       email: created.email,
