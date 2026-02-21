@@ -4,8 +4,10 @@ import {
   Get,
   Param,
   ParseUUIDPipe,
+  Patch,
   Put,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -16,6 +18,11 @@ import { Role } from 'src/common/roles.enum';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { OwnerOrAdminGuard } from 'src/auth/guards/ownership.guard';
+import { CompleteProfileDto } from 'src/auth/dto/completeProfile.dto';
+import type {
+  AuthenticatedRequest,
+  AuthRequest,
+} from '../auth/interfaces/auth-request.interface';
 
 @Controller('users')
 export class UsersController {
@@ -60,5 +67,15 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, OwnerOrAdminGuard)
   inactiveUser(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.inactiveUser(id);
+  }
+  // completa perfil incompleto
+  @Patch('complete-profile')
+  @UseGuards(JwtAuthGuard)
+  completeProfile(
+    @Req() req: AuthenticatedRequest,
+    @Body() dto: CompleteProfileDto,
+  ) {
+    const userId = req.user.sub;
+    return this.usersService.completeGoogleProfile(userId, dto);
   }
 }

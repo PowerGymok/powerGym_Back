@@ -4,6 +4,8 @@ import { UpdateUserDto } from './dto/updateUser.dto';
 import { GetByEmailDto } from './dto/getByEmail.dto';
 import { CreateUserDto } from './dto/createUser.dto';
 import * as bcrypt from 'bcrypt';
+import { CreateUserGoogleDto } from './dto/createUser-google.dto';
+import type { CompleteProfileDto } from 'src/auth/dto/completeProfile.dto';
 
 @Injectable()
 export class UsersService {
@@ -43,5 +45,16 @@ export class UsersService {
 
   findIsActiveById(id: string): Promise<boolean> {
     return this.usersRepository.findIsActiveById(id);
+  }
+
+  findOrCreateByGoogle(dto: CreateUserGoogleDto) {
+    return this.usersRepository.findOrCreateByGoogle(dto);
+  }
+  completeGoogleProfile(userId: string, dto: CompleteProfileDto) {
+    return this.usersRepository.completeGoogleProfile(userId, dto);
+  }
+
+  getUserEntityById(id: string) {
+    return this.usersRepository.getUserEntityById(id);
   }
 }

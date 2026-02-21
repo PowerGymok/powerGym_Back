@@ -14,20 +14,28 @@ export class User {
   @Column({ type: 'varchar', length: 50, nullable: false, unique: true })
   email: string;
 
-  @Column({ type: 'varchar', length: 60, nullable: false })
-  password: string;
+  // usuario google no tiene contraseña
+  @Column({ type: 'varchar', nullable: true })
+  password: string | null;
 
-  @Column({ type: 'bigint' })
-  phone: number;
+  // ─────────────────────────
+  // CAMPOS PERFIL (nullable porque google no los trae)
+  // ─────────────────────────
 
-  @Column({ type: 'text' })
-  address: string;
+  @Column({ type: 'bigint', nullable: true })
+  phone: number | null;
 
-  @Column({ type: 'varchar', length: 50 })
-  city: string;
+  @Column({ type: 'text', nullable: true })
+  address: string | null;
 
-  @Column()
-  Birthdate: Date;
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  city: string | null;
+
+  // IMPORTANTISIMO:
+  // usamos 'date' (no timestamp) porque es cumpleaños
+  // evita problemas de timezone en producción
+  @Column({ type: 'date', nullable: true })
+  Birthdate: Date | null;
 
   @Column({ type: 'enum', enum: Role, default: Role.User })
   role: Role;
@@ -40,18 +48,31 @@ export class User {
 
   @Column({ default: true })
   courtesyClass: boolean;
-  // Balance de tokens internos del usuario
-  // Empieza en 0. Aumenta al comprar un paquete, disminuye al usarlos
+
   @Column({ type: 'int', default: 0 })
   tokenBalance: number;
 
-  // OneToMany = un usuario → muchas suscripciones a membresías
-  // { lazy: false } = TypeORM NO carga las membresías automáticamente,
-  // solo las trae si explícitamente usas relations: ['memberships'] en la query
   @OneToMany(() => UserMembership, (um) => um.user)
   memberships: UserMembership[];
 
-  // OneToMany = un usuario → muchas transacciones (historial completo)
   @OneToMany(() => Transaction, (transaction) => transaction.user)
   transactions: Transaction[];
+
+  // ─────────────────────────
+  // GOOGLE LOGIN
+  // ─────────────────────────
+
+  // quién creó la cuenta
+  // local → signup normal
+  // google → oauth
+  @Column({ type: 'varchar', default: 'local' })
+  authProvider: 'local' | 'google';
+
+  // id único que manda google
+  @Column({ type: 'varchar', nullable: true, unique: true })
+  googleId: string | null;
+
+  // si es false → lo vamos a obligar a completar perfil
+  @Column({ type: 'boolean', default: true })
+  isProfileComplete: boolean;
 }
