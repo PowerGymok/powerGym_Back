@@ -19,10 +19,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { OwnerOrAdminGuard } from 'src/auth/guards/ownership.guard';
 import { CompleteProfileDto } from 'src/auth/dto/completeProfile.dto';
-import type {
-  AuthenticatedRequest,
-  AuthRequest,
-} from '../auth/interfaces/auth-request.interface';
+import type { AuthenticatedRequest } from '../auth/interfaces/auth-request.interface';
 
 @Controller('users')
 export class UsersController {
