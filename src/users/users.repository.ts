@@ -127,7 +127,7 @@ export class usersRepository {
         user = await this.usersRepository.save(user);
       }
 
-      return user;
+      return { user, isNew: false };
     }
 
     // 3) si no existe, creo usuario Google con perfil incompleto
@@ -141,7 +141,8 @@ export class usersRepository {
       isProfileComplete: false,
     });
 
-    return this.usersRepository.save(newUser);
+    const savedUser = await this.usersRepository.save(newUser);
+    return { user: savedUser, isNew: true };
   }
 
   async completeGoogleProfile(userId: string, data: CompleteProfileDto) {

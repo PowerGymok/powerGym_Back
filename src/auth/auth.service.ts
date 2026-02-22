@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import {
   BadRequestException,
   Injectable,
@@ -116,11 +113,15 @@ export class AuthService {
     };
 
     // 1 creo o linkeo usuario en DB
-    const user = await this.usersService.findOrCreateByGoogle(dto);
+    const { user, isNew } = await this.usersService.findOrCreateByGoogle(dto);
 
     // 2 si está inactivo, no lo dejo loguearse
     if (!user.isActive) {
       throw new UnauthorizedException('Usuario dado de baja');
+    }
+
+    if (isNew) {
+      await this.notificationsService.sendWelcomeEmail(user.name, user.email);
     }
 
     // 3 firmo token real (sub = user.id)

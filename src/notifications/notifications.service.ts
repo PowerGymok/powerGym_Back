@@ -62,5 +62,76 @@ export class NotificationsService {
     });
   }
 
-  async createMembershipPaymentEmail() {}
+  async confirmMembershipEmail(
+    name: string,
+    email: string,
+    planName: string,
+    price: number,
+    endDate: Date,
+  ) {
+    await transporter.sendMail({
+      from: '"PowerGym" <powergym@gmail.com>',
+      to: email,
+      subject: '¡Tu membresía está activa!',
+      html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #ff6600;">¡Pago confirmado, ${name}!</h2>
+            <p style="font-size: 16px; line-height: 1.6;">Tu membresía ha sido activada exitosamente.</p>
+            <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 20px 0;">
+              <p style="margin: 0; font-size: 16px;"><strong>Plan:</strong> ${planName}</p>
+              <p style="margin: 8px 0 0 0; font-size: 16px;"><strong>Precio pagado:</strong> $${price} USD</p>
+              <p style="margin: 8px 0 0 0; font-size: 16px;"><strong>Válida hasta:</strong> ${endDate.toLocaleDateString('es-CO')}</p>
+            </div>
+            <p style="font-size: 16px; line-height: 1.6;">¡Ya puedes comenzar a reservar tus clases!</p>
+            <p style="font-size: 14px; color: #888;">El equipo de PowerGym</p>
+          </div>`,
+    });
+  }
+
+  async confirmTokenEmail(
+    name: string,
+    email: string,
+    packageName: string,
+    tokenAmount: number,
+  ) {
+    await transporter.sendMail({
+      from: '"PowerGym" <powergym@gmail.com>',
+      to: email,
+      subject: '¡Tokens añadidos a tu cuenta!',
+      html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h2 style="color: #ff6600;">¡Compra exitosa, ${name}!</h2>
+      <p style="font-size: 16px; line-height: 1.6;">Tu compra de tokens se realizó correctamente.</p>
+      <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 20px 0;">
+      <p style="margin: 0; font-size: 16px;"><strong>Paquete:</strong> ${packageName}</p>
+      <p style="margin: 8px 0 0 0; font-size: 16px;"><strong>Tokens añadidos:</strong> ${tokenAmount}</p>
+      </div>
+      <p style="font-size: 16px; line-height: 1.6;">¡Úsalos para reservar tus clases favoritas!</p>
+      <p style="font-size: 14px; color: #888;">El equipo de PowerGym</p>
+      </div>`,
+    });
+  }
+
+  async spendTokenEmail(
+    name: string,
+    email: string,
+    amount: number,
+    newBalance: number,
+    description: string,
+  ) {
+    await transporter.sendMail({
+      from: '"PowerGym" <powergym@gmail.com>',
+      to: email,
+      subject: '¡Clase reservada exitosamente!',
+      html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h2 style="color: #ff6600;">¡Reserva confirmada, ${name}!</h2>
+      <p style="font-size: 16px; line-height: 1.6;">Tus tokens han sido descontados exitosamente.</p>
+      <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 20px 0;">
+      <p style="margin: 0; font-size: 16px;"><strong>Detalle:</strong> ${description}</p>
+      <p style="margin: 8px 0 0 0; font-size: 16px;"><strong>Tokens descontados:</strong> ${amount}</p>
+      <p style="margin: 8px 0 0 0; font-size: 16px;"><strong>Saldo restante:</strong> ${newBalance} tokens</p>
+      </div>
+      <p style="font-size: 16px; line-height: 1.6;">¡Te esperamos! Recuerda llegar 10 minutos antes.</p>
+      <p style="font-size: 14px; color: #888;">El equipo de PowerGym</p>
+      </div>`,
+    });
+  }
 }
