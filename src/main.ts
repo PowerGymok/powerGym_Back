@@ -21,7 +21,7 @@ async function bootstrap() {
 
   app.use(LoggerGlobal);
 
-  const port = Number(process.env.PORT) || 3000;
+  const port = Number(process.env.PORT) || 3002;
   await app.listen(port);
   console.log(`App listening on port ${port}`);
 }

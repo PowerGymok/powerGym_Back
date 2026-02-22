@@ -11,6 +11,7 @@ import databaseConfig from './config/database.config';
 import { MembershipModule } from './membership/membership.module';
 import { TokenPackageModule } from './token-package/token-package.module';
 import { PaymentsModule } from './payments/payments.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { PaymentsModule } from './payments/payments.module';
     MembershipModule,
     TokenPackageModule,
     PaymentsModule,
+    ChatModule,
   ],
 })
 export class AppModule {}
