@@ -15,7 +15,7 @@ export class User {
   email: string;
 
   // usuario google no tiene contraseña
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: 'varchar', length: 60, nullable: true })
   password: string | null;
 
   // ─────────────────────────

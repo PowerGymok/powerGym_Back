@@ -7,6 +7,7 @@ import { UserMembership } from '../user-membership/user-membership.entity';
 import { User } from '../users/users.entity';
 import { MembershipModule } from '../membership/membership.module';
 import { TokenPackageModule } from '../token-package/token-package.module';
+import { NotificationsModule } from 'src/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { TokenPackageModule } from '../token-package/token-package.module';
     // TokenPackageModule exporta TokenPackageService → lo usamos para saber el precio del paquete
     MembershipModule,
     TokenPackageModule,
+    NotificationsModule,
   ],
   controllers: [PaymentsController],
   providers: [PaymentsService],

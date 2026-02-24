@@ -15,6 +15,7 @@ import {
 import { User } from '../users/users.entity';
 import { MembershipService } from '../membership/membership.service';
 import { TokenPackageService } from '../token-package/token-package.service';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class PaymentsService {
@@ -22,6 +23,7 @@ export class PaymentsService {
   private stripe: Stripe;
 
   constructor(
+    private readonly notificationsService: NotificationsService,
     private configService: ConfigService,
     private membershipService: MembershipService,
     private tokenPackageService: TokenPackageService,
@@ -100,6 +102,10 @@ export class PaymentsService {
       // Buscamos la membresía para saber cuántos días de acceso dar
       const membership = await this.membershipService.findOne(membershipId);
 
+      //Busqueda del usuario para enviar la notificación
+      const user = await this.userRepository.findOne({ where: { id: userId } });
+      if (!user) throw new BadRequestException('Usuario no encontrado');
+
       // Calculamos las fechas de inicio y fin de la suscripción
       const startDate = new Date();
       const endDate = new Date();
@@ -122,6 +128,14 @@ export class PaymentsService {
         Transaction,
         { stripePaymentIntentId },
         { status: TransactionStatus.COMPLETED },
+      );
+
+      await this.notificationsService.confirmMembershipEmail(
+        user.name,
+        user.email,
+        membership.name,
+        membership.price,
+        endDate,
       );
     });
   }
@@ -172,6 +186,10 @@ export class PaymentsService {
       const { userId, packageId } = paymentIntent.metadata;
       const pkg = await this.tokenPackageService.findOne(packageId);
 
+      //Busqueda del usuario para enviar la notificación
+      const user = await this.userRepository.findOne({ where: { id: userId } });
+      if (!user) throw new BadRequestException('Usuario no encontrado');
+
       // increment suma los tokens al balance actual sin necesidad de leer el valor primero
       // Es más seguro porque evita condiciones de carrera si dos peticiones llegan a la vez
       await manager.increment(
@@ -185,6 +203,13 @@ export class PaymentsService {
         Transaction,
         { stripePaymentIntentId },
         { status: TransactionStatus.COMPLETED },
+      );
+
+      await this.notificationsService.confirmTokenEmail(
+        user.name,
+        user.email,
+        pkg.name,
+        pkg.tokenAmount,
       );
     });
   }
@@ -219,6 +244,13 @@ export class PaymentsService {
       });
       await manager.save(transaction);
     });
+    await this.notificationsService.spendTokenEmail(
+      user.name,
+      user.email,
+      amount,
+      user.tokenBalance - amount,
+      description,
+    );
 
     return { newBalance: user.tokenBalance - amount };
   }

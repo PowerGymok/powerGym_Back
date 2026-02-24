@@ -45,8 +45,8 @@ export class coachRepository {
     if (!coach || coach.isActive !== true)
       throw new NotFoundException('No se encontró el entrenador');
     const mergedcoach = this.coachesRepository.merge(coach, newCoachData);
-    await this.coachesRepository.save(mergedcoach);
-    return 'El entrenador ha sido actualizado exitosamente';
+    const savedCoach = await this.coachesRepository.save(mergedcoach);
+    return savedCoach;
   }
 
   async promoteCoach(id: string) {
@@ -55,7 +55,7 @@ export class coachRepository {
       throw new NotFoundException('No se encontró el usuario solicitado');
     coach.role = Role.Coach;
     await this.coachesRepository.save(coach);
-    return 'El usuario ahora es un nuevo entrenador en el gimnasio';
+    return coach;
   }
 
   async inactiveCoach(id: string) {
@@ -65,7 +65,7 @@ export class coachRepository {
       throw new NotFoundException('No se encontró al usuario');
     coach.isActive = false;
     await this.coachesRepository.save(coach);
-    return 'El entrenador ha sido desactivado exitosamente';
+    return coach;
   }
 
   async getByEmail(searchEmail: GetByEmailDto) {

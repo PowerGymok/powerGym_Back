@@ -52,7 +52,7 @@ export class usersRepository {
       throw new NotFoundException('No se encontró el usuario');
     const mergedUser = this.usersRepository.merge(user, newUserData);
     const savedUser = await this.usersRepository.save(mergedUser);
-    return 'El usuario ha sido actualizado exitosamente';
+    return savedUser;
   }
 
   async inactiveUser(id: string) {
@@ -62,7 +62,7 @@ export class usersRepository {
       throw new NotFoundException('No se encontró al usuario');
     user.isActive = false;
     await this.usersRepository.save(user);
-    return 'El usuario ha sido eliminado exitosamente';
+    return user;
   }
 
   async getByEmail(searchEmail: GetByEmailDto) {
@@ -127,7 +127,7 @@ export class usersRepository {
         user = await this.usersRepository.save(user);
       }
 
-      return user;
+      return { user, isNew: false };
     }
 
     // 3) si no existe, creo usuario Google con perfil incompleto
@@ -141,7 +141,8 @@ export class usersRepository {
       isProfileComplete: false,
     });
 
-    return this.usersRepository.save(newUser);
+    const savedUser = await this.usersRepository.save(newUser);
+    return { user: savedUser, isNew: true };
   }
 
   async completeGoogleProfile(userId: string, data: CompleteProfileDto) {
