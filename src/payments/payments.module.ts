@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PaymentsService } from './payments.service';
 import { PaymentsController } from './payments.controller';
@@ -8,6 +8,8 @@ import { User } from '../users/users.entity';
 import { MembershipModule } from '../membership/membership.module';
 import { TokenPackageModule } from '../token-package/token-package.module';
 import { NotificationsModule } from 'src/notifications/notifications.module';
+import { AuthModule } from 'src/auth/auth.module';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { NotificationsModule } from 'src/notifications/notifications.module';
     MembershipModule,
     TokenPackageModule,
     NotificationsModule,
+    forwardRef(() => AuthModule),
+    forwardRef(() => UsersModule),
   ],
   controllers: [PaymentsController],
   providers: [PaymentsService],
