@@ -6,10 +6,15 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { TokenPackageService } from './token-package.service';
 import { CreateTokenPackageDto } from './dto/create-token-package.dto';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Role } from 'src/common/roles.enum';
 
 @ApiTags('Token Packages')
 @Controller('token-packages')
@@ -18,6 +23,8 @@ export class TokenPackageController {
 
   // POST /token-packages — Crea un paquete nuevo (Admin)
   @Post()
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Crear paquete de tokens (Admin)' })
   create(@Body() dto: CreateTokenPackageDto) {
     return this.tokenPackageService.create(dto);
@@ -32,6 +39,8 @@ export class TokenPackageController {
 
   // DELETE /token-packages/:id — Desactiva un paquete
   @Delete(':id')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Desactivar paquete de tokens (Admin)' })
   deactivate(@Param('id', ParseUUIDPipe) id: string) {
     return this.tokenPackageService.deactivate(id);
