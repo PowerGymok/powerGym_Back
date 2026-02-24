@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-base-to-string */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   BadRequestException,
@@ -66,14 +64,17 @@ export class usersRepository {
   }
 
   async getByEmail(searchEmail: GetByEmailDto) {
+    const email = (searchEmail.email || '').trim().toLowerCase();
+
     const user = await this.usersRepository.findOne({
-      where: { email: searchEmail.email },
+      where: { email },
     });
 
     if (!user)
       throw new NotFoundException(
-        `El usuario con el email ${searchEmail} no se encuentra en la base de datos`,
+        `El usuario con el email ${email} no se encuentra en la base de datos`,
       );
+
     return user;
   }
 
@@ -135,6 +136,8 @@ export class usersRepository {
       name: dto.name,
       email,
       googleId: dto.googleId,
+
+      authProvider: 'google',
 
       profileImg: dto.profileImg ?? null,
       password: null,

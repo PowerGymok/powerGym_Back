@@ -1,6 +1,7 @@
 import { Body, Controller, Post, Get, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dto/createUser.dto';
+import { LoginDto } from './dto/login.dto';
 import type { Request } from 'express';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { AuthGuard } from '@nestjs/passport';
@@ -12,8 +13,8 @@ export class AuthController {
 
   // LOGIN
   @Post('login')
-  async login(@Body() body: { email: string; password: string }) {
-    const user = await this.authService.validateUser(body.email, body.password);
+  async login(@Body() dto: LoginDto) {
+    const user = await this.authService.validateUser(dto.email, dto.password);
     return this.authService.login(user);
   }
 
@@ -23,16 +24,16 @@ export class AuthController {
     return this.authService.signup(dto);
   }
 
-  //  AUTH/ME  → devuelve el usuario del token
+  // AUTH/ME → devuelve el usuario del token
   @UseGuards(JwtAuthGuard)
   @Get('me')
   me(@Req() req: Request) {
     return req.user;
   }
 
-  //GOOGLE
+  // GOOGLE
 
-  //  esta ruta NO hace nada visible
+  // esta ruta NO hace nada visible
   // solo dispara a Passport → Google
   @Get('google')
   @UseGuards(AuthGuard('google'))
@@ -40,7 +41,7 @@ export class AuthController {
     // passport automáticamente redirige a Google
   }
 
-  //  Google vuelve acá después del login
+  // Google vuelve acá después del login
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleCallback(@Req() req: { user: GoogleUser }) {
