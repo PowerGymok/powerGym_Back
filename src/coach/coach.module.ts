@@ -6,12 +6,14 @@ import { User } from 'src/users/users.entity';
 import { coachRepository } from './coach.repository';
 import { AuthModule } from 'src/auth/auth.module';
 import { UsersModule } from 'src/users/users.module';
+import { NotificationsModule } from 'src/notifications/notifications.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     forwardRef(() => AuthModule),
     forwardRef(() => UsersModule),
+    NotificationsModule,
   ],
   controllers: [CoachController],
   providers: [CoachService, coachRepository],

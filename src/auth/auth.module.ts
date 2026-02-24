@@ -4,12 +4,14 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UsersModule } from '../users/users.module';
 import { CoachModule } from '../coach/coach.module';
+import { NotificationsModule } from 'src/notifications/notifications.module';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule } from '@nestjs/config';
 import { GoogleStrategy } from './strategies/google.strategy';
 
 @Module({
   imports: [
+    NotificationsModule,
     forwardRef(() => UsersModule),
     forwardRef(() => CoachModule),
 

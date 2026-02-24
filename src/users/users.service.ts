@@ -6,10 +6,14 @@ import { CreateUserDto } from './dto/createUser.dto';
 import * as bcrypt from 'bcrypt';
 import { CreateUserGoogleDto } from './dto/createUser-google.dto';
 import type { CompleteProfileDto } from 'src/auth/dto/completeProfile.dto';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: usersRepository) {}
+  constructor(
+    private readonly usersRepository: usersRepository,
+    private readonly notificationsService: NotificationsService,
+  ) {}
 
   getAllUsers(page: number, limit: number) {
     return this.usersRepository.getAllUsers(page, limit);
@@ -27,11 +31,15 @@ export class UsersService {
       newUserData.password = hashedPassword;
     }
     delete newUserData.confirmPassword;
-    return this.usersRepository.updateUser(id, newUserData);
+    const user = await this.usersRepository.updateUser(id, newUserData);
+    await this.notificationsService.sendUpdateEmail(user.name, user.email);
+    return 'El perfil ha sido actualizado exitosamente';
   }
 
-  inactiveUser(id: string) {
-    return this.usersRepository.inactiveUser(id);
+  async inactiveUser(id: string) {
+    const user = await this.usersRepository.inactiveUser(id);
+    await this.notificationsService.inactiveUserEmail(user.name, user.email);
+    return 'Su cuenta ha sido desactivda exitosamente';
   }
 
   getByEmail(email: GetByEmailDto) {

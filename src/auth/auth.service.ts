@@ -9,6 +9,7 @@ import { UsersService } from '../users/users.service';
 import { User } from '../users/users.entity';
 import { CreateUserDto } from '../users/dto/createUser.dto';
 import * as bcrypt from 'bcrypt';
+import { NotificationsService } from 'src/notifications/notifications.service';
 import { CreateUserGoogleDto } from '../users/dto/createUser-google.dto'; // ajustá el path si tu carpeta dto es otra
 
 @Injectable()
@@ -16,6 +17,7 @@ export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   async validateUser(
@@ -41,7 +43,9 @@ export class AuthService {
 
     // Si no tiene password, es cuenta Google (no puede loguear por password)
     if (!user.password) {
-      throw new UnauthorizedException('Este usuario se registró con Google');
+      throw new UnauthorizedException(
+        'Esta cuenta fue creada con Google, inicia sesión con Google',
+      );
     }
 
     // comparo contraseña con bcrypt
@@ -72,6 +76,11 @@ export class AuthService {
       email,
       password: passwordHasheada,
     });
+
+    await this.notificationsService.sendWelcomeEmail(
+      created.name,
+      created.email,
+    );
 
     return this.login({
       id: created.id,
@@ -104,11 +113,15 @@ export class AuthService {
     };
 
     // 1 creo o linkeo usuario en DB
-    const user = await this.usersService.findOrCreateByGoogle(dto);
+    const { user, isNew } = await this.usersService.findOrCreateByGoogle(dto);
 
     // 2 si está inactivo, no lo dejo loguearse
     if (!user.isActive) {
       throw new UnauthorizedException('Usuario dado de baja');
+    }
+
+    if (isNew) {
+      await this.notificationsService.sendWelcomeEmail(user.name, user.email);
     }
 
     // 3 firmo token real (sub = user.id)
