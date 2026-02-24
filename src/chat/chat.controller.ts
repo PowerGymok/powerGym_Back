@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ChatService } from './chat.service';
@@ -15,6 +16,10 @@ import { ChatbotService } from './chatbot.service';
 import { CreateConversationDto } from './dto/create-conversation.dto';
 import { CreateFAQDto } from './dto/create-faq.dto';
 import { UpdateFAQDto } from './dto/update-faq.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Role } from 'src/common/roles.enum';
 
 @ApiTags('Chat')
 @Controller('chat')
@@ -28,6 +33,8 @@ export class ChatController {
 
   // POST /chat/conversations — Crear conversación (Admin asigna coach)
   @Post('conversations')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({
     summary: 'Crear conversación asignando coach a usuario (Admin)',
   })
@@ -37,6 +44,7 @@ export class ChatController {
 
   // GET /chat/conversations/user/:userId — Listar conversaciones del usuario
   @Get('conversations/user/:userId')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Listar conversaciones de un usuario' })
   getUserConversations(@Param('userId', ParseUUIDPipe) userId: string) {
     return this.chatService.getUserConversations(userId);
@@ -44,6 +52,7 @@ export class ChatController {
 
   // GET /chat/conversations/coach/:coachId — Listar conversaciones del coach
   @Get('conversations/coach/:coachId')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Listar conversaciones asignadas a un coach' })
   getCoachConversations(@Param('coachId', ParseUUIDPipe) coachId: string) {
     return this.chatService.getCoachConversations(coachId);
@@ -52,19 +61,21 @@ export class ChatController {
   // GET /chat/conversations/:id/messages — Obtener mensajes de una conversación
   // Nota: en producción deberías sacar el userId del token JWT, no del query param
   @Get('conversations/:id/messages')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Obtener todos los mensajes de una conversación' })
   getMessages(
     @Param('id', ParseUUIDPipe) conversationId: string,
     @Req() req: any, // Aquí deberías usar el userId del JWT
   ) {
-    // TEMPORAL: asume que el userId viene en la query (?userId=xxx)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    // TEMPORAL: asume que el userId viene en la query (?userId=xxx), debe venir en el jwt token
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const userId = req.query.userId as string;
     return this.chatService.getConversationMessages(conversationId, userId);
   }
 
   // PATCH /chat/conversations/:id/close — Cerrar conversación
   @Patch('conversations/:id/close')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Cerrar una conversación' })
   closeConversation(@Param('id', ParseUUIDPipe) id: string) {
     return this.chatService.closeConversation(id);
@@ -74,6 +85,8 @@ export class ChatController {
 
   // POST /chat/faqs — Crear respuesta automática
   @Post('faqs')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Crear FAQ para el chatbot (Admin)' })
   createFAQ(@Body() dto: CreateFAQDto) {
     return this.chatbotService.createFAQ(dto);
@@ -88,6 +101,8 @@ export class ChatController {
 
   // PATCH /chat/faqs/:id — Actualizar FAQ
   @Patch('faqs/:id')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Actualizar FAQ (Admin)' })
   updateFAQ(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateFAQDto) {
     return this.chatbotService.updateFAQ(id, dto);
@@ -95,6 +110,8 @@ export class ChatController {
 
   // DELETE /chat/faqs/:id — Eliminar FAQ
   @Delete('faqs/:id')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Eliminar FAQ (Admin)' })
   deleteFAQ(@Param('id', ParseUUIDPipe) id: string) {
     return this.chatbotService.deleteFAQ(id);

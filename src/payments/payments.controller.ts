@@ -5,6 +5,7 @@ import { PaymentsService } from './payments.service';
 import { PurchaseMembershipDto } from './dto/purchase-membership.dto';
 import { PurchaseTokensDto } from './dto/spend-tokens.dto';
 import { SpendTokensDto } from './dto/spend-tokens.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('Payments')
 @common.Controller('payments')
@@ -14,6 +15,7 @@ export class PaymentsController {
   // POST /payments/membership — Inicia el pago de una membresía
   // Devuelve el clientSecret que el frontend usa con Stripe.js para cobrar la tarjeta
   @common.Post('membership')
+  @common.UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Iniciar pago de membresía con Stripe' })
   createMembershipPayment(@common.Body() dto: PurchaseMembershipDto) {
     return this.paymentsService.createMembershipPaymentIntent(
@@ -24,6 +26,7 @@ export class PaymentsController {
 
   // POST /payments/tokens — Inicia la compra de un paquete de tokens
   @common.Post('tokens')
+  @common.UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Iniciar compra de paquete de tokens con Stripe' })
   createTokenPurchase(@common.Body() dto: PurchaseTokensDto) {
     return this.paymentsService.createTokenPurchaseIntent(
@@ -35,6 +38,7 @@ export class PaymentsController {
   // POST /payments/tokens/spend — Gasta tokens internamente (sin Stripe)
   // Ejemplo: reservar una clase especial que cuesta 50 tokens
   @common.Post('tokens/spend')
+  @common.UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Gastar tokens en la app (reservas, etc.)' })
   spendTokens(@common.Body() dto: SpendTokensDto) {
     return this.paymentsService.spendTokens(
@@ -46,6 +50,7 @@ export class PaymentsController {
 
   // GET /payments/history/:userId — Historial de transacciones del usuario
   @common.Get('history/:userId')
+  @common.UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Ver historial de transacciones de un usuario' })
   getHistory(@common.Param('userId', common.ParseUUIDPipe) userId: string) {
     return this.paymentsService.getUserTransactions(userId);
