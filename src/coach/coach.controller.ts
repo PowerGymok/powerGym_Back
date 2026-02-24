@@ -56,7 +56,9 @@ export class CoachController {
     return this.coachService.updateCoach(id, newCoachData);
   }
 
-  @Put('promte/:id')
+  @Put('promote/:id')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   promoteCoach(@Param('id', ParseUUIDPipe) id: string) {
     return this.coachService.promoteCoach(id);
   }

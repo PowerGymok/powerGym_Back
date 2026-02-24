@@ -7,11 +7,16 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { MembershipService } from './membership.service';
 import { CreateMembershipDto } from './dto/create-membership.dto';
 import { UpdateMembershipDto } from './dto/update-membership.dto';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Role } from 'src/common/roles.enum';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 // @ApiTags agrupa las rutas bajo "Membresías" en la documentación Swagger
 @ApiTags('Memberships')
@@ -23,6 +28,8 @@ export class MembershipController {
   // POST /memberships — Crea un nuevo tipo de membresía
   // (en producción aquí irá un guard de admin)
   @Post()
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Crear nuevo tipo de membresía (Admin)' })
   create(@Body() dto: CreateMembershipDto) {
     return this.membershipService.create(dto);
@@ -37,6 +44,8 @@ export class MembershipController {
 
   // GET /memberships/admin — Devuelve TODOS los planes incluyendo inactivos
   @Get('admin')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Listar todas las membresías (Admin)' })
   findAll() {
     return this.membershipService.findAll();
@@ -53,6 +62,8 @@ export class MembershipController {
   // PATCH /memberships/:id — Actualiza parcialmente una membresía
   // PATCH = actualización parcial (solo los campos que envíes), a diferencia de PUT que reemplaza todo
   @Patch(':id')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Actualizar membresía (Admin)' })
   update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -63,6 +74,8 @@ export class MembershipController {
 
   // DELETE /memberships/:id — Desactiva la membresía (no la borra físicamente)
   @Delete(':id')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Desactivar membresía (Admin)' })
   deactivate(@Param('id', ParseUUIDPipe) id: string) {
     return this.membershipService.deactivate(id);
