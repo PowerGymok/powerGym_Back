@@ -1,9 +1,12 @@
 import { Class } from 'src/class/class.entity';
+import { Reservation } from 'src/reservation/reservation.entity';
+import { User } from 'src/users/users.entity';
 import {
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -17,19 +20,23 @@ export class Class_schedule {
   @Column('date', { nullable: false })
   date: Date;
 
-  @Column('date', { nullable: false })
-  time: Date;
+  @Column('time', { nullable: false })
+  time: string;
 
-  @Column('int', { nullable: false })
-  spaces_available: number;
+  @Column('numeric', { default: 0, nullable: false })
+  token: number;
 
   @Column('boolean', { default: true, nullable: false })
   isActive: boolean;
 
-  @Column('boolean', { default: false, nullable: false })
-  membership: boolean;
-
   @ManyToOne(() => Class, (assign) => assign.class_schedule)
-  @JoinColumn({ name: 'class_schedule' })
-  class_id: Class;
+  @JoinColumn({ name: 'class_id' })
+  class: Class;
+
+  @ManyToOne(() => User, (user) => user.classSchedules)
+  @JoinColumn({ name: 'coach_id' })
+  coach: User;
+
+  @OneToMany(() => Reservation, (reservation) => reservation.class_schedule)
+  reservations: Reservation[];
 }

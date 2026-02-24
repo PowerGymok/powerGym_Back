@@ -1,0 +1,3389 @@
+diff --git a/.env.example b/.env.example
+index f547829..2e55902 100644
+--- a/.env.example
++++ b/.env.example
+@@ -15,7 +15,7 @@ PORT=3000
+ # 3) En la pestaña Connection String, en la opción Method, dejar Transaction Pooler. Debajo debe aparecer un chulito verde que dice "IPv4 compatible"
+ # 4) Sobre el chulo darle a View parameters
+ # 5) Copiar los siguientes parámetros:
+-DATABASE_URL= la url se modifica, entonces copiar nuevamente la que aparece y reemplazar la contraseña con la de Supabase: postgresql://postgres.djbdnaxeznrkcrkosmzf:[YOUR-PASSWORD]@aws-1-us-east-1.pooler.supabase.com:6543/postgres
++DATABASE_URL=postgresql://postgres.djbdnaxeznrkcrkosmzf:proyectoHenry123@aws-1-us-east-1.pooler.supabase.com:6543/postgres
+ 
+ #6) Inicializar servidor
+ 
+@@ -23,9 +23,8 @@ DATABASE_URL= la url se modifica, entonces copiar nuevamente la que aparece y re
+ JWT_SECRET=tu_clave_aqui
+ JWT_EXPIRES_IN=1h
+ 
+-
+ # Clave secreta de Stripe — la encuentras en dashboard.stripe.com > Developers > API keys
+-STRIPE_SECRET_KEY=YOUR_STRIPE_SECRET_KEY
++STRIPE_SECRET_KEY=sk_test_xxxxxxxxxxxxxx
+ 
+ 
+ # Clave del webhook — la obtienes cuando configuras el webhook en el dashboard de Stripe
+@@ -38,7 +37,6 @@ MAIL_PASSWORD=App Password de google
+ #APP PASSWORD PEDIRSELA A JUAN
+ 
+ #GOOGLE AUTH
+-GOOGLE_CLIENT_ID=602001836736-4erflij0hndnd3qjb19l9hhm3durcbis.apps.googleusercontent.com
+-GOOGLE_CLIENT_SECRET=TU_SECRET_ACA
+-GOOGLE_CALLBACK_URL=http://localhost:3000/auth/google/callback
+-
++GOOGLE_CLIENT_ID=your_google_client_id
++GOOGLE_CLIENT_SECRET=your_google_client_secret
++GOOGLE_CALLBACK_URL=your_google_client_url
+diff --git a/package-lock.json b/package-lock.json
+index 967dcfe..cec56ee 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -10,7 +10,7 @@
+       "license": "UNLICENSED",
+       "dependencies": {
+         "@nestjs/common": "^11.0.1",
+-        "@nestjs/config": "^4.0.0",
++        "@nestjs/config": "^4.0.3",
+         "@nestjs/core": "^11.0.1",
+         "@nestjs/jwt": "^11.0.0",
+         "@nestjs/passport": "^11.0.5",
+@@ -24,8 +24,6 @@
+         "class-validator": "^0.14.1",
+         "dotenv": "^16.6.1",
+         "nodemailer": "^8.0.1",
+-        "passport": "^0.7.0",
+-        "passport-google-oauth20": "^2.0.0",
+         "passport-jwt": "^4.0.1",
+         "pg": "^8.18.0",
+         "reflect-metadata": "^0.2.2",
+@@ -54,7 +52,11 @@
+         "eslint-config-prettier": "^10.0.1",
+         "eslint-plugin-prettier": "^5.2.2",
+         "globals": "^16.0.0",
++        "i": "^0.3.7",
+         "jest": "^30.0.0",
++        "npm": "^11.10.1",
++        "passport": "^0.7.0",
++        "passport-google-oauth20": "^2.0.0",
+         "prettier": "^3.4.2",
+         "socket.io-client": "^4.8.3",
+         "source-map-support": "^0.5.21",
+@@ -4470,6 +4472,7 @@
+       "version": "3.0.1",
+       "resolved": "https://registry.npmjs.org/base64url/-/base64url-3.0.1.tgz",
+       "integrity": "sha512-ir1UPr3dkwexU7FdV8qBBbNDRUhMmIekYMFZfi+C/sLNnRESKPl23nB9b2pltqfOQNnGzsDdId90AEtG5tCx4A==",
++      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">=6.0.0"
+@@ -6730,6 +6733,15 @@
+         "node": ">=10.17.0"
+       }
+     },
++    "node_modules/i": {
++      "version": "0.3.7",
++      "resolved": "https://registry.npmjs.org/i/-/i-0.3.7.tgz",
++      "integrity": "sha512-FYz4wlXgkQwIPqhzC5TdNMLSE5+GS1IIDJZY/1ZiEPCT2S3COUVZeT5OW4BmW4r5LHLQuOosSwsvnroG9GR59Q==",
++      "dev": true,
++      "engines": {
++        "node": ">=0.4"
++      }
++    },
+     "node_modules/iconv-lite": {
+       "version": "0.7.2",
+       "resolved": "https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.7.2.tgz",
+@@ -8608,6 +8620,161 @@
+         "node": ">=0.10.0"
+       }
+     },
++    "node_modules/npm": {
++      "version": "11.10.1",
++      "resolved": "https://registry.npmjs.org/npm/-/npm-11.10.1.tgz",
++      "integrity": "sha512-woavuY2OgDFQ1K/tB9QHsUuW989nKfvsKTN/h5qGyS+3+BhvXN/DA2TNzx569JaFfTqrET5bEQNHwVhFk+U1gg==",
++      "bundleDependencies": [
++        "@isaacs/string-locale-compare",
++        "@npmcli/arborist",
++        "@npmcli/config",
++        "@npmcli/fs",
++        "@npmcli/map-workspaces",
++        "@npmcli/metavuln-calculator",
++        "@npmcli/package-json",
++        "@npmcli/promise-spawn",
++        "@npmcli/redact",
++        "@npmcli/run-script",
++        "@sigstore/tuf",
++        "abbrev",
++        "archy",
++        "cacache",
++        "chalk",
++        "ci-info",
++        "fastest-levenshtein",
++        "fs-minipass",
++        "glob",
++        "graceful-fs",
++        "hosted-git-info",
++        "ini",
++        "init-package-json",
++        "is-cidr",
++        "json-parse-even-better-errors",
++        "libnpmaccess",
++        "libnpmdiff",
++        "libnpmexec",
++        "libnpmfund",
++        "libnpmorg",
++        "libnpmpack",
++        "libnpmpublish",
++        "libnpmsearch",
++        "libnpmteam",
++        "libnpmversion",
++        "make-fetch-happen",
++        "minimatch",
++        "minipass",
++        "minipass-pipeline",
++        "ms",
++        "node-gyp",
++        "nopt",
++        "npm-audit-report",
++        "npm-install-checks",
++        "npm-package-arg",
++        "npm-pick-manifest",
++        "npm-profile",
++        "npm-registry-fetch",
++        "npm-user-validate",
++        "p-map",
++        "pacote",
++        "parse-conflict-json",
++        "proc-log",
++        "qrcode-terminal",
++        "read",
++        "semver",
++        "spdx-expression-parse",
++        "ssri",
++        "supports-color",
++        "tar",
++        "text-table",
++        "tiny-relative-date",
++        "treeverse",
++        "validate-npm-package-name",
++        "which"
++      ],
++      "dev": true,
++      "license": "Artistic-2.0",
++      "workspaces": [
++        "docs",
++        "smoke-tests",
++        "mock-globals",
++        "mock-registry",
++        "workspaces/*"
++      ],
++      "dependencies": {
++        "@isaacs/string-locale-compare": "^1.1.0",
++        "@npmcli/arborist": "^9.3.1",
++        "@npmcli/config": "^10.7.1",
++        "@npmcli/fs": "^5.0.0",
++        "@npmcli/map-workspaces": "^5.0.3",
++        "@npmcli/metavuln-calculator": "^9.0.3",
++        "@npmcli/package-json": "^7.0.5",
++        "@npmcli/promise-spawn": "^9.0.1",
++        "@npmcli/redact": "^4.0.0",
++        "@npmcli/run-script": "^10.0.3",
++        "@sigstore/tuf": "^4.0.1",
++        "abbrev": "^4.0.0",
++        "archy": "~1.0.0",
++        "cacache": "^20.0.3",
++        "chalk": "^5.6.2",
++        "ci-info": "^4.4.0",
++        "fastest-levenshtein": "^1.0.16",
++        "fs-minipass": "^3.0.3",
++        "glob": "^13.0.6",
++        "graceful-fs": "^4.2.11",
++        "hosted-git-info": "^9.0.2",
++        "ini": "^6.0.0",
++        "init-package-json": "^8.2.5",
++        "is-cidr": "^6.0.3",
++        "json-parse-even-better-errors": "^5.0.0",
++        "libnpmaccess": "^10.0.3",
++        "libnpmdiff": "^8.1.2",
++        "libnpmexec": "^10.2.2",
++        "libnpmfund": "^7.0.16",
++        "libnpmorg": "^8.0.1",
++        "libnpmpack": "^9.1.2",
++        "libnpmpublish": "^11.1.3",
++        "libnpmsearch": "^9.0.1",
++        "libnpmteam": "^8.0.2",
++        "libnpmversion": "^8.0.3",
++        "make-fetch-happen": "^15.0.3",
++        "minimatch": "^10.2.2",
++        "minipass": "^7.1.3",
++        "minipass-pipeline": "^1.2.4",
++        "ms": "^2.1.2",
++        "node-gyp": "^12.2.0",
++        "nopt": "^9.0.0",
++        "npm-audit-report": "^7.0.0",
++        "npm-install-checks": "^8.0.0",
++        "npm-package-arg": "^13.0.2",
++        "npm-pick-manifest": "^11.0.3",
++        "npm-profile": "^12.0.1",
++        "npm-registry-fetch": "^19.1.1",
++        "npm-user-validate": "^4.0.0",
++        "p-map": "^7.0.4",
++        "pacote": "^21.3.1",
++        "parse-conflict-json": "^5.0.1",
++        "proc-log": "^6.1.0",
++        "qrcode-terminal": "^0.12.0",
++        "read": "^5.0.1",
++        "semver": "^7.7.4",
++        "spdx-expression-parse": "^4.0.0",
++        "ssri": "^13.0.1",
++        "supports-color": "^10.2.2",
++        "tar": "^7.5.9",
++        "text-table": "~0.2.0",
++        "tiny-relative-date": "^2.0.2",
++        "treeverse": "^3.0.0",
++        "validate-npm-package-name": "^7.0.2",
++        "which": "^6.0.1"
++      },
++      "bin": {
++        "npm": "bin/npm-cli.js",
++        "npx": "bin/npx-cli.js"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
+     "node_modules/npm-run-path": {
+       "version": "4.0.1",
+       "resolved": "https://registry.npmjs.org/npm-run-path/-/npm-run-path-4.0.1.tgz",
+@@ -8621,267 +8788,2090 @@
+         "node": ">=8"
+       }
+     },
+-    "node_modules/npmlog": {
+-      "version": "5.0.1",
+-      "resolved": "https://registry.npmjs.org/npmlog/-/npmlog-5.0.1.tgz",
+-      "integrity": "sha512-AqZtDUWOMKs1G/8lwylVjrdYgqA4d9nu8hc+0gzRxlDb1I10+FHBGMXs6aiQHFdCUUlqH99MUMuLfzWDNDtfxw==",
+-      "deprecated": "This package is no longer supported.",
++    "node_modules/npm/node_modules/@isaacs/fs-minipass": {
++      "version": "4.0.1",
++      "dev": true,
++      "inBundle": true,
+       "license": "ISC",
+       "dependencies": {
+-        "are-we-there-yet": "^2.0.0",
+-        "console-control-strings": "^1.1.0",
+-        "gauge": "^3.0.0",
+-        "set-blocking": "^2.0.0"
+-      }
+-    },
+-    "node_modules/oauth": {
+-      "version": "0.10.2",
+-      "resolved": "https://registry.npmjs.org/oauth/-/oauth-0.10.2.tgz",
+-      "integrity": "sha512-JtFnB+8nxDEXgNyniwz573xxbKSOu3R8D40xQKqcjwJ2CDkYqUDI53o6IuzDJBx60Z8VKCm271+t8iFjakrl8Q==",
+-      "license": "MIT"
+-    },
+-    "node_modules/object-assign": {
+-      "version": "4.1.1",
+-      "resolved": "https://registry.npmjs.org/object-assign/-/object-assign-4.1.1.tgz",
+-      "integrity": "sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==",
+-      "license": "MIT",
++        "minipass": "^7.0.4"
++      },
+       "engines": {
+-        "node": ">=0.10.0"
++        "node": ">=18.0.0"
+       }
+     },
+-    "node_modules/object-hash": {
+-      "version": "3.0.0",
+-      "resolved": "https://registry.npmjs.org/object-hash/-/object-hash-3.0.0.tgz",
+-      "integrity": "sha512-RSn9F68PjH9HqtltsSnqYC1XXoWe9Bju5+213R98cNGttag9q9yAOTzdbsqvIa7aNm5WffBZFpWYr2aWrklWAw==",
+-      "license": "MIT",
+-      "engines": {
+-        "node": ">= 6"
+-      }
++    "node_modules/npm/node_modules/@isaacs/string-locale-compare": {
++      "version": "1.1.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC"
+     },
+-    "node_modules/object-inspect": {
+-      "version": "1.13.4",
+-      "resolved": "https://registry.npmjs.org/object-inspect/-/object-inspect-1.13.4.tgz",
+-      "integrity": "sha512-W67iLl4J2EXEGTbfeHCffrjDfitvLANg0UlX3wFUUSTx92KXRFegMHUVgSqE+wvhAbi4WqjGg9czysTV2Epbew==",
+-      "license": "MIT",
+-      "engines": {
+-        "node": ">= 0.4"
++    "node_modules/npm/node_modules/@npmcli/agent": {
++      "version": "4.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "agent-base": "^7.1.0",
++        "http-proxy-agent": "^7.0.0",
++        "https-proxy-agent": "^7.0.1",
++        "lru-cache": "^11.2.1",
++        "socks-proxy-agent": "^8.0.3"
+       },
+-      "funding": {
+-        "url": "https://github.com/sponsors/ljharb"
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
+       }
+     },
+-    "node_modules/on-finished": {
+-      "version": "2.4.1",
+-      "resolved": "https://registry.npmjs.org/on-finished/-/on-finished-2.4.1.tgz",
+-      "integrity": "sha512-oVlzkg3ENAhCk2zdv7IJwd/QUD4z2RxRwpkcGY8psCVcCYZNq4wYnVWALHM+brtuJjePWiYF/ClmuDr8Ch5+kg==",
+-      "license": "MIT",
++    "node_modules/npm/node_modules/@npmcli/arborist": {
++      "version": "9.3.1",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
+       "dependencies": {
+-        "ee-first": "1.1.1"
++        "@isaacs/string-locale-compare": "^1.1.0",
++        "@npmcli/fs": "^5.0.0",
++        "@npmcli/installed-package-contents": "^4.0.0",
++        "@npmcli/map-workspaces": "^5.0.0",
++        "@npmcli/metavuln-calculator": "^9.0.2",
++        "@npmcli/name-from-folder": "^4.0.0",
++        "@npmcli/node-gyp": "^5.0.0",
++        "@npmcli/package-json": "^7.0.0",
++        "@npmcli/query": "^5.0.0",
++        "@npmcli/redact": "^4.0.0",
++        "@npmcli/run-script": "^10.0.0",
++        "bin-links": "^6.0.0",
++        "cacache": "^20.0.1",
++        "common-ancestor-path": "^2.0.0",
++        "hosted-git-info": "^9.0.0",
++        "json-stringify-nice": "^1.1.4",
++        "lru-cache": "^11.2.1",
++        "minimatch": "^10.0.3",
++        "nopt": "^9.0.0",
++        "npm-install-checks": "^8.0.0",
++        "npm-package-arg": "^13.0.0",
++        "npm-pick-manifest": "^11.0.1",
++        "npm-registry-fetch": "^19.0.0",
++        "pacote": "^21.0.2",
++        "parse-conflict-json": "^5.0.1",
++        "proc-log": "^6.0.0",
++        "proggy": "^4.0.0",
++        "promise-all-reject-late": "^1.0.0",
++        "promise-call-limit": "^3.0.1",
++        "semver": "^7.3.7",
++        "ssri": "^13.0.0",
++        "treeverse": "^3.0.0",
++        "walk-up-path": "^4.0.0"
++      },
++      "bin": {
++        "arborist": "bin/index.js"
+       },
+       "engines": {
+-        "node": ">= 0.8"
++        "node": "^20.17.0 || >=22.9.0"
+       }
+     },
+-    "node_modules/once": {
+-      "version": "1.4.0",
+-      "resolved": "https://registry.npmjs.org/once/-/once-1.4.0.tgz",
+-      "integrity": "sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==",
++    "node_modules/npm/node_modules/@npmcli/config": {
++      "version": "10.7.1",
++      "dev": true,
++      "inBundle": true,
+       "license": "ISC",
+       "dependencies": {
+-        "wrappy": "1"
++        "@npmcli/map-workspaces": "^5.0.0",
++        "@npmcli/package-json": "^7.0.0",
++        "ci-info": "^4.0.0",
++        "ini": "^6.0.0",
++        "nopt": "^9.0.0",
++        "proc-log": "^6.0.0",
++        "semver": "^7.3.5",
++        "walk-up-path": "^4.0.0"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
+       }
+     },
+-    "node_modules/onetime": {
+-      "version": "5.1.2",
+-      "resolved": "https://registry.npmjs.org/onetime/-/onetime-5.1.2.tgz",
+-      "integrity": "sha512-kbpaSSGJTWdAY5KPVeMOKXSrPtr8C8C7wodJbcsd51jRnmD+GZu8Y0VoU6Dm5Z4vWr0Ig/1NKuWRKf7j5aaYSg==",
++    "node_modules/npm/node_modules/@npmcli/fs": {
++      "version": "5.0.0",
+       "dev": true,
+-      "license": "MIT",
++      "inBundle": true,
++      "license": "ISC",
+       "dependencies": {
+-        "mimic-fn": "^2.1.0"
++        "semver": "^7.3.5"
+       },
+       "engines": {
+-        "node": ">=6"
+-      },
+-      "funding": {
+-        "url": "https://github.com/sponsors/sindresorhus"
++        "node": "^20.17.0 || >=22.9.0"
+       }
+     },
+-    "node_modules/optionator": {
+-      "version": "0.9.4",
+-      "resolved": "https://registry.npmjs.org/optionator/-/optionator-0.9.4.tgz",
+-      "integrity": "sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==",
++    "node_modules/npm/node_modules/@npmcli/git": {
++      "version": "7.0.1",
+       "dev": true,
+-      "license": "MIT",
++      "inBundle": true,
++      "license": "ISC",
+       "dependencies": {
+-        "deep-is": "^0.1.3",
+-        "fast-levenshtein": "^2.0.6",
+-        "levn": "^0.4.1",
+-        "prelude-ls": "^1.2.1",
+-        "type-check": "^0.4.0",
+-        "word-wrap": "^1.2.5"
++        "@npmcli/promise-spawn": "^9.0.0",
++        "ini": "^6.0.0",
++        "lru-cache": "^11.2.1",
++        "npm-pick-manifest": "^11.0.1",
++        "proc-log": "^6.0.0",
++        "promise-retry": "^2.0.1",
++        "semver": "^7.3.5",
++        "which": "^6.0.0"
+       },
+       "engines": {
+-        "node": ">= 0.8.0"
++        "node": "^20.17.0 || >=22.9.0"
+       }
+     },
+-    "node_modules/ora": {
+-      "version": "5.4.1",
+-      "resolved": "https://registry.npmjs.org/ora/-/ora-5.4.1.tgz",
+-      "integrity": "sha512-5b6Y85tPxZZ7QytO+BQzysW31HJku27cRIlkbAXaNx+BdcVi+LlRFmVXzeF6a7JCwJpyw5c4b+YSVImQIrBpuQ==",
++    "node_modules/npm/node_modules/@npmcli/installed-package-contents": {
++      "version": "4.0.0",
+       "dev": true,
+-      "license": "MIT",
++      "inBundle": true,
++      "license": "ISC",
+       "dependencies": {
+-        "bl": "^4.1.0",
+-        "chalk": "^4.1.0",
+-        "cli-cursor": "^3.1.0",
+-        "cli-spinners": "^2.5.0",
+-        "is-interactive": "^1.0.0",
+-        "is-unicode-supported": "^0.1.0",
+-        "log-symbols": "^4.1.0",
+-        "strip-ansi": "^6.0.0",
+-        "wcwidth": "^1.0.1"
++        "npm-bundled": "^5.0.0",
++        "npm-normalize-package-bin": "^5.0.0"
+       },
+-      "engines": {
+-        "node": ">=10"
++      "bin": {
++        "installed-package-contents": "bin/index.js"
+       },
+-      "funding": {
+-        "url": "https://github.com/sponsors/sindresorhus"
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
+       }
+     },
+-    "node_modules/p-limit": {
+-      "version": "3.1.0",
+-      "resolved": "https://registry.npmjs.org/p-limit/-/p-limit-3.1.0.tgz",
+-      "integrity": "sha512-TYOanM3wGwNGsZN2cVTYPArw454xnXj5qmWF1bEoAc4+cU/ol7GVh7odevjp1FNHduHc3KZMcFduxU5Xc6uJRQ==",
++    "node_modules/npm/node_modules/@npmcli/map-workspaces": {
++      "version": "5.0.3",
+       "dev": true,
+-      "license": "MIT",
++      "inBundle": true,
++      "license": "ISC",
+       "dependencies": {
+-        "yocto-queue": "^0.1.0"
++        "@npmcli/name-from-folder": "^4.0.0",
++        "@npmcli/package-json": "^7.0.0",
++        "glob": "^13.0.0",
++        "minimatch": "^10.0.3"
+       },
+       "engines": {
+-        "node": ">=10"
+-      },
+-      "funding": {
+-        "url": "https://github.com/sponsors/sindresorhus"
++        "node": "^20.17.0 || >=22.9.0"
+       }
+     },
+-    "node_modules/p-locate": {
+-      "version": "5.0.0",
+-      "resolved": "https://registry.npmjs.org/p-locate/-/p-locate-5.0.0.tgz",
+-      "integrity": "sha512-LaNjtRWUBY++zB5nE/NwcaoMylSPk+S+ZHNB1TzdbMJMny6dynpAGt7X/tl/QYq3TIeE6nxHppbo2LGymrG5Pw==",
++    "node_modules/npm/node_modules/@npmcli/metavuln-calculator": {
++      "version": "9.0.3",
+       "dev": true,
+-      "license": "MIT",
++      "inBundle": true,
++      "license": "ISC",
+       "dependencies": {
+-        "p-limit": "^3.0.2"
++        "cacache": "^20.0.0",
++        "json-parse-even-better-errors": "^5.0.0",
++        "pacote": "^21.0.0",
++        "proc-log": "^6.0.0",
++        "semver": "^7.3.5"
+       },
+       "engines": {
+-        "node": ">=10"
+-      },
+-      "funding": {
+-        "url": "https://github.com/sponsors/sindresorhus"
++        "node": "^20.17.0 || >=22.9.0"
+       }
+     },
+-    "node_modules/p-try": {
+-      "version": "2.2.0",
+-      "resolved": "https://registry.npmjs.org/p-try/-/p-try-2.2.0.tgz",
+-      "integrity": "sha512-R4nPAVTAU0B9D35/Gk3uJf/7XYbQcyohSKdvAxIRSNghFl4e71hVoGnBNQz9cWaXxO2I10KTC+3jMdvvoKw6dQ==",
++    "node_modules/npm/node_modules/@npmcli/name-from-folder": {
++      "version": "4.0.0",
+       "dev": true,
+-      "license": "MIT",
++      "inBundle": true,
++      "license": "ISC",
+       "engines": {
+-        "node": ">=6"
++        "node": "^20.17.0 || >=22.9.0"
+       }
+     },
+-    "node_modules/package-json-from-dist": {
+-      "version": "1.0.1",
+-      "resolved": "https://registry.npmjs.org/package-json-from-dist/-/package-json-from-dist-1.0.1.tgz",
+-      "integrity": "sha512-UEZIS3/by4OC8vL3P2dTXRETpebLI2NiI5vIrjaD/5UtrkFX/tNbwjTSRAGC/+7CAo2pIcBaRgWmcBBHcsaCIw==",
+-      "license": "BlueOak-1.0.0"
++    "node_modules/npm/node_modules/@npmcli/node-gyp": {
++      "version": "5.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
+     },
+-    "node_modules/parent-module": {
+-      "version": "1.0.1",
+-      "resolved": "https://registry.npmjs.org/parent-module/-/parent-module-1.0.1.tgz",
+-      "integrity": "sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==",
++    "node_modules/npm/node_modules/@npmcli/package-json": {
++      "version": "7.0.5",
+       "dev": true,
+-      "license": "MIT",
++      "inBundle": true,
++      "license": "ISC",
+       "dependencies": {
+-        "callsites": "^3.0.0"
++        "@npmcli/git": "^7.0.0",
++        "glob": "^13.0.0",
++        "hosted-git-info": "^9.0.0",
++        "json-parse-even-better-errors": "^5.0.0",
++        "proc-log": "^6.0.0",
++        "semver": "^7.5.3",
++        "spdx-expression-parse": "^4.0.0"
+       },
+       "engines": {
+-        "node": ">=6"
++        "node": "^20.17.0 || >=22.9.0"
+       }
+     },
+-    "node_modules/parse-json": {
+-      "version": "5.2.0",
+-      "resolved": "https://registry.npmjs.org/parse-json/-/parse-json-5.2.0.tgz",
+-      "integrity": "sha512-ayCKvm/phCGxOkYRSCM82iDwct8/EonSEgCSxWxD7ve6jHggsFl4fZVQBPRNgQoKiuV/odhFrGzQXZwbifC8Rg==",
++    "node_modules/npm/node_modules/@npmcli/promise-spawn": {
++      "version": "9.0.1",
+       "dev": true,
+-      "license": "MIT",
++      "inBundle": true,
++      "license": "ISC",
+       "dependencies": {
+-        "@babel/code-frame": "^7.0.0",
+-        "error-ex": "^1.3.1",
+-        "json-parse-even-better-errors": "^2.3.0",
+-        "lines-and-columns": "^1.1.6"
++        "which": "^6.0.0"
+       },
+       "engines": {
+-        "node": ">=8"
+-      },
+-      "funding": {
+-        "url": "https://github.com/sponsors/sindresorhus"
++        "node": "^20.17.0 || >=22.9.0"
+       }
+     },
+-    "node_modules/parseurl": {
+-      "version": "1.3.3",
+-      "resolved": "https://registry.npmjs.org/parseurl/-/parseurl-1.3.3.tgz",
+-      "integrity": "sha512-CiyeOxFT/JZyN5m0z9PfXw4SCBJ6Sygz1Dpl0wqjlhDEGGBP1GnsUVEL0p63hoG1fcj3fHynXi9NYO4nWOL+qQ==",
+-      "license": "MIT",
++    "node_modules/npm/node_modules/@npmcli/query": {
++      "version": "5.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "postcss-selector-parser": "^7.0.0"
++      },
+       "engines": {
+-        "node": ">= 0.8"
++        "node": "^20.17.0 || >=22.9.0"
+       }
+     },
+-    "node_modules/passport": {
+-      "version": "0.7.0",
+-      "resolved": "https://registry.npmjs.org/passport/-/passport-0.7.0.tgz",
+-      "integrity": "sha512-cPLl+qZpSc+ireUvt+IzqbED1cHHkDoVYMo30jbJIdOOjQ1MQYZBPiNvmi8UM6lJuOpTPXJGZQk0DtC4y61MYQ==",
+-      "license": "MIT",
+-      "dependencies": {
+-        "passport-strategy": "1.x.x",
+-        "pause": "0.0.1",
+-        "utils-merge": "^1.0.1"
+-      },
++    "node_modules/npm/node_modules/@npmcli/redact": {
++      "version": "4.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
+       "engines": {
+-        "node": ">= 0.4.0"
+-      },
+-      "funding": {
+-        "type": "github",
+-        "url": "https://github.com/sponsors/jaredhanson"
++        "node": "^20.17.0 || >=22.9.0"
+       }
+     },
+-    "node_modules/passport-google-oauth20": {
+-      "version": "2.0.0",
+-      "resolved": "https://registry.npmjs.org/passport-google-oauth20/-/passport-google-oauth20-2.0.0.tgz",
+-      "integrity": "sha512-KSk6IJ15RoxuGq7D1UKK/8qKhNfzbLeLrG3gkLZ7p4A6DBCcv7xpyQwuXtWdpyR0+E0mwkpjY1VfPOhxQrKzdQ==",
+-      "license": "MIT",
++    "node_modules/npm/node_modules/@npmcli/run-script": {
++      "version": "10.0.3",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
+       "dependencies": {
+-        "passport-oauth2": "1.x.x"
++        "@npmcli/node-gyp": "^5.0.0",
++        "@npmcli/package-json": "^7.0.0",
++        "@npmcli/promise-spawn": "^9.0.0",
++        "node-gyp": "^12.1.0",
++        "proc-log": "^6.0.0",
++        "which": "^6.0.0"
+       },
+       "engines": {
+-        "node": ">= 0.4.0"
++        "node": "^20.17.0 || >=22.9.0"
+       }
+     },
+-    "node_modules/passport-jwt": {
+-      "version": "4.0.1",
+-      "resolved": "https://registry.npmjs.org/passport-jwt/-/passport-jwt-4.0.1.tgz",
+-      "integrity": "sha512-UCKMDYhNuGOBE9/9Ycuoyh7vP6jpeTp/+sfMJl7nLff/t6dps+iaeE0hhNkKN8/HZHcJ7lCdOyDxHdDoxoSvdQ==",
+-      "license": "MIT",
++    "node_modules/npm/node_modules/@sigstore/bundle": {
++      "version": "4.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "Apache-2.0",
+       "dependencies": {
+-        "jsonwebtoken": "^9.0.0",
+-        "passport-strategy": "^1.0.0"
++        "@sigstore/protobuf-specs": "^0.5.0"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/@sigstore/core": {
++      "version": "3.1.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "Apache-2.0",
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/@sigstore/protobuf-specs": {
++      "version": "0.5.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "Apache-2.0",
++      "engines": {
++        "node": "^18.17.0 || >=20.5.0"
++      }
++    },
++    "node_modules/npm/node_modules/@sigstore/sign": {
++      "version": "4.1.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "Apache-2.0",
++      "dependencies": {
++        "@sigstore/bundle": "^4.0.0",
++        "@sigstore/core": "^3.1.0",
++        "@sigstore/protobuf-specs": "^0.5.0",
++        "make-fetch-happen": "^15.0.3",
++        "proc-log": "^6.1.0",
++        "promise-retry": "^2.0.1"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/@sigstore/tuf": {
++      "version": "4.0.1",
++      "dev": true,
++      "inBundle": true,
++      "license": "Apache-2.0",
++      "dependencies": {
++        "@sigstore/protobuf-specs": "^0.5.0",
++        "tuf-js": "^4.1.0"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/@sigstore/verify": {
++      "version": "3.1.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "Apache-2.0",
++      "dependencies": {
++        "@sigstore/bundle": "^4.0.0",
++        "@sigstore/core": "^3.1.0",
++        "@sigstore/protobuf-specs": "^0.5.0"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/@tufjs/canonical-json": {
++      "version": "2.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "engines": {
++        "node": "^16.14.0 || >=18.0.0"
++      }
++    },
++    "node_modules/npm/node_modules/@tufjs/models": {
++      "version": "4.1.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "dependencies": {
++        "@tufjs/canonical-json": "2.0.0",
++        "minimatch": "^10.1.1"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/abbrev": {
++      "version": "4.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/agent-base": {
++      "version": "7.1.4",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "engines": {
++        "node": ">= 14"
++      }
++    },
++    "node_modules/npm/node_modules/aproba": {
++      "version": "2.1.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC"
++    },
++    "node_modules/npm/node_modules/archy": {
++      "version": "1.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT"
++    },
++    "node_modules/npm/node_modules/balanced-match": {
++      "version": "4.0.3",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "engines": {
++        "node": "20 || >=22"
++      }
++    },
++    "node_modules/npm/node_modules/bin-links": {
++      "version": "6.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "cmd-shim": "^8.0.0",
++        "npm-normalize-package-bin": "^5.0.0",
++        "proc-log": "^6.0.0",
++        "read-cmd-shim": "^6.0.0",
++        "write-file-atomic": "^7.0.0"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/binary-extensions": {
++      "version": "3.1.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "engines": {
++        "node": ">=18.20"
++      },
++      "funding": {
++        "url": "https://github.com/sponsors/sindresorhus"
++      }
++    },
++    "node_modules/npm/node_modules/brace-expansion": {
++      "version": "5.0.2",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "dependencies": {
++        "balanced-match": "^4.0.2"
++      },
++      "engines": {
++        "node": "20 || >=22"
++      }
++    },
++    "node_modules/npm/node_modules/cacache": {
++      "version": "20.0.3",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "@npmcli/fs": "^5.0.0",
++        "fs-minipass": "^3.0.0",
++        "glob": "^13.0.0",
++        "lru-cache": "^11.1.0",
++        "minipass": "^7.0.3",
++        "minipass-collect": "^2.0.1",
++        "minipass-flush": "^1.0.5",
++        "minipass-pipeline": "^1.2.4",
++        "p-map": "^7.0.2",
++        "ssri": "^13.0.0",
++        "unique-filename": "^5.0.0"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/chalk": {
++      "version": "5.6.2",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "engines": {
++        "node": "^12.17.0 || ^14.13 || >=16.0.0"
++      },
++      "funding": {
++        "url": "https://github.com/chalk/chalk?sponsor=1"
++      }
++    },
++    "node_modules/npm/node_modules/chownr": {
++      "version": "3.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "BlueOak-1.0.0",
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/npm/node_modules/ci-info": {
++      "version": "4.4.0",
++      "dev": true,
++      "funding": [
++        {
++          "type": "github",
++          "url": "https://github.com/sponsors/sibiraj-s"
++        }
++      ],
++      "inBundle": true,
++      "license": "MIT",
++      "engines": {
++        "node": ">=8"
++      }
++    },
++    "node_modules/npm/node_modules/cidr-regex": {
++      "version": "5.0.3",
++      "dev": true,
++      "inBundle": true,
++      "license": "BSD-2-Clause",
++      "engines": {
++        "node": ">=20"
++      }
++    },
++    "node_modules/npm/node_modules/cmd-shim": {
++      "version": "8.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/common-ancestor-path": {
++      "version": "2.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "BlueOak-1.0.0",
++      "engines": {
++        "node": ">= 18"
++      }
++    },
++    "node_modules/npm/node_modules/cssesc": {
++      "version": "3.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "bin": {
++        "cssesc": "bin/cssesc"
++      },
++      "engines": {
++        "node": ">=4"
++      }
++    },
++    "node_modules/npm/node_modules/debug": {
++      "version": "4.4.3",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "dependencies": {
++        "ms": "^2.1.3"
++      },
++      "engines": {
++        "node": ">=6.0"
++      },
++      "peerDependenciesMeta": {
++        "supports-color": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/npm/node_modules/diff": {
++      "version": "8.0.3",
++      "dev": true,
++      "inBundle": true,
++      "license": "BSD-3-Clause",
++      "engines": {
++        "node": ">=0.3.1"
++      }
++    },
++    "node_modules/npm/node_modules/encoding": {
++      "version": "0.1.13",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "optional": true,
++      "dependencies": {
++        "iconv-lite": "^0.6.2"
++      }
++    },
++    "node_modules/npm/node_modules/env-paths": {
++      "version": "2.2.1",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "engines": {
++        "node": ">=6"
++      }
++    },
++    "node_modules/npm/node_modules/err-code": {
++      "version": "2.0.3",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT"
++    },
++    "node_modules/npm/node_modules/exponential-backoff": {
++      "version": "3.1.3",
++      "dev": true,
++      "inBundle": true,
++      "license": "Apache-2.0"
++    },
++    "node_modules/npm/node_modules/fastest-levenshtein": {
++      "version": "1.0.16",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "engines": {
++        "node": ">= 4.9.1"
++      }
++    },
++    "node_modules/npm/node_modules/fs-minipass": {
++      "version": "3.0.3",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "minipass": "^7.0.3"
++      },
++      "engines": {
++        "node": "^14.17.0 || ^16.13.0 || >=18.0.0"
++      }
++    },
++    "node_modules/npm/node_modules/glob": {
++      "version": "13.0.6",
++      "dev": true,
++      "inBundle": true,
++      "license": "BlueOak-1.0.0",
++      "dependencies": {
++        "minimatch": "^10.2.2",
++        "minipass": "^7.1.3",
++        "path-scurry": "^2.0.2"
++      },
++      "engines": {
++        "node": "18 || 20 || >=22"
++      },
++      "funding": {
++        "url": "https://github.com/sponsors/isaacs"
++      }
++    },
++    "node_modules/npm/node_modules/graceful-fs": {
++      "version": "4.2.11",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC"
++    },
++    "node_modules/npm/node_modules/hosted-git-info": {
++      "version": "9.0.2",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "lru-cache": "^11.1.0"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/http-cache-semantics": {
++      "version": "4.2.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "BSD-2-Clause"
++    },
++    "node_modules/npm/node_modules/http-proxy-agent": {
++      "version": "7.0.2",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "dependencies": {
++        "agent-base": "^7.1.0",
++        "debug": "^4.3.4"
++      },
++      "engines": {
++        "node": ">= 14"
++      }
++    },
++    "node_modules/npm/node_modules/https-proxy-agent": {
++      "version": "7.0.6",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "dependencies": {
++        "agent-base": "^7.1.2",
++        "debug": "4"
++      },
++      "engines": {
++        "node": ">= 14"
++      }
++    },
++    "node_modules/npm/node_modules/iconv-lite": {
++      "version": "0.6.3",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "optional": true,
++      "dependencies": {
++        "safer-buffer": ">= 2.1.2 < 3.0.0"
++      },
++      "engines": {
++        "node": ">=0.10.0"
++      }
++    },
++    "node_modules/npm/node_modules/ignore-walk": {
++      "version": "8.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "minimatch": "^10.0.3"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/imurmurhash": {
++      "version": "0.1.4",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "engines": {
++        "node": ">=0.8.19"
++      }
++    },
++    "node_modules/npm/node_modules/ini": {
++      "version": "6.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/init-package-json": {
++      "version": "8.2.5",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "@npmcli/package-json": "^7.0.0",
++        "npm-package-arg": "^13.0.0",
++        "promzard": "^3.0.1",
++        "read": "^5.0.1",
++        "semver": "^7.7.2",
++        "validate-npm-package-name": "^7.0.0"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/ip-address": {
++      "version": "10.1.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "engines": {
++        "node": ">= 12"
++      }
++    },
++    "node_modules/npm/node_modules/is-cidr": {
++      "version": "6.0.3",
++      "dev": true,
++      "inBundle": true,
++      "license": "BSD-2-Clause",
++      "dependencies": {
++        "cidr-regex": "^5.0.1"
++      },
++      "engines": {
++        "node": ">=20"
++      }
++    },
++    "node_modules/npm/node_modules/isexe": {
++      "version": "4.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "BlueOak-1.0.0",
++      "engines": {
++        "node": ">=20"
++      }
++    },
++    "node_modules/npm/node_modules/json-parse-even-better-errors": {
++      "version": "5.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/json-stringify-nice": {
++      "version": "1.1.4",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "funding": {
++        "url": "https://github.com/sponsors/isaacs"
++      }
++    },
++    "node_modules/npm/node_modules/jsonparse": {
++      "version": "1.3.1",
++      "dev": true,
++      "engines": [
++        "node >= 0.2.0"
++      ],
++      "inBundle": true,
++      "license": "MIT"
++    },
++    "node_modules/npm/node_modules/just-diff": {
++      "version": "6.0.2",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT"
++    },
++    "node_modules/npm/node_modules/just-diff-apply": {
++      "version": "5.5.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT"
++    },
++    "node_modules/npm/node_modules/libnpmaccess": {
++      "version": "10.0.3",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "npm-package-arg": "^13.0.0",
++        "npm-registry-fetch": "^19.0.0"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/libnpmdiff": {
++      "version": "8.1.2",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "@npmcli/arborist": "^9.3.1",
++        "@npmcli/installed-package-contents": "^4.0.0",
++        "binary-extensions": "^3.0.0",
++        "diff": "^8.0.2",
++        "minimatch": "^10.0.3",
++        "npm-package-arg": "^13.0.0",
++        "pacote": "^21.0.2",
++        "tar": "^7.5.1"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/libnpmexec": {
++      "version": "10.2.2",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "@npmcli/arborist": "^9.3.1",
++        "@npmcli/package-json": "^7.0.0",
++        "@npmcli/run-script": "^10.0.0",
++        "ci-info": "^4.0.0",
++        "npm-package-arg": "^13.0.0",
++        "pacote": "^21.0.2",
++        "proc-log": "^6.0.0",
++        "promise-retry": "^2.0.1",
++        "read": "^5.0.1",
++        "semver": "^7.3.7",
++        "signal-exit": "^4.1.0",
++        "walk-up-path": "^4.0.0"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/libnpmfund": {
++      "version": "7.0.16",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "@npmcli/arborist": "^9.3.1"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/libnpmorg": {
++      "version": "8.0.1",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "aproba": "^2.0.0",
++        "npm-registry-fetch": "^19.0.0"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/libnpmpack": {
++      "version": "9.1.2",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "@npmcli/arborist": "^9.3.1",
++        "@npmcli/run-script": "^10.0.0",
++        "npm-package-arg": "^13.0.0",
++        "pacote": "^21.0.2"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/libnpmpublish": {
++      "version": "11.1.3",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "@npmcli/package-json": "^7.0.0",
++        "ci-info": "^4.0.0",
++        "npm-package-arg": "^13.0.0",
++        "npm-registry-fetch": "^19.0.0",
++        "proc-log": "^6.0.0",
++        "semver": "^7.3.7",
++        "sigstore": "^4.0.0",
++        "ssri": "^13.0.0"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/libnpmsearch": {
++      "version": "9.0.1",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "npm-registry-fetch": "^19.0.0"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/libnpmteam": {
++      "version": "8.0.2",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "aproba": "^2.0.0",
++        "npm-registry-fetch": "^19.0.0"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/libnpmversion": {
++      "version": "8.0.3",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "@npmcli/git": "^7.0.0",
++        "@npmcli/run-script": "^10.0.0",
++        "json-parse-even-better-errors": "^5.0.0",
++        "proc-log": "^6.0.0",
++        "semver": "^7.3.7"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/lru-cache": {
++      "version": "11.2.6",
++      "dev": true,
++      "inBundle": true,
++      "license": "BlueOak-1.0.0",
++      "engines": {
++        "node": "20 || >=22"
++      }
++    },
++    "node_modules/npm/node_modules/make-fetch-happen": {
++      "version": "15.0.3",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "@npmcli/agent": "^4.0.0",
++        "cacache": "^20.0.1",
++        "http-cache-semantics": "^4.1.1",
++        "minipass": "^7.0.2",
++        "minipass-fetch": "^5.0.0",
++        "minipass-flush": "^1.0.5",
++        "minipass-pipeline": "^1.2.4",
++        "negotiator": "^1.0.0",
++        "proc-log": "^6.0.0",
++        "promise-retry": "^2.0.1",
++        "ssri": "^13.0.0"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/minimatch": {
++      "version": "10.2.2",
++      "dev": true,
++      "inBundle": true,
++      "license": "BlueOak-1.0.0",
++      "dependencies": {
++        "brace-expansion": "^5.0.2"
++      },
++      "engines": {
++        "node": "18 || 20 || >=22"
++      },
++      "funding": {
++        "url": "https://github.com/sponsors/isaacs"
++      }
++    },
++    "node_modules/npm/node_modules/minipass": {
++      "version": "7.1.3",
++      "dev": true,
++      "inBundle": true,
++      "license": "BlueOak-1.0.0",
++      "engines": {
++        "node": ">=16 || 14 >=14.17"
++      }
++    },
++    "node_modules/npm/node_modules/minipass-collect": {
++      "version": "2.0.1",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "minipass": "^7.0.3"
++      },
++      "engines": {
++        "node": ">=16 || 14 >=14.17"
++      }
++    },
++    "node_modules/npm/node_modules/minipass-fetch": {
++      "version": "5.0.1",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "dependencies": {
++        "minipass": "^7.0.3",
++        "minipass-sized": "^2.0.0",
++        "minizlib": "^3.0.1"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      },
++      "optionalDependencies": {
++        "encoding": "^0.1.13"
++      }
++    },
++    "node_modules/npm/node_modules/minipass-flush": {
++      "version": "1.0.5",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "minipass": "^3.0.0"
++      },
++      "engines": {
++        "node": ">= 8"
++      }
++    },
++    "node_modules/npm/node_modules/minipass-flush/node_modules/minipass": {
++      "version": "3.3.6",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "yallist": "^4.0.0"
++      },
++      "engines": {
++        "node": ">=8"
++      }
++    },
++    "node_modules/npm/node_modules/minipass-flush/node_modules/yallist": {
++      "version": "4.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC"
++    },
++    "node_modules/npm/node_modules/minipass-pipeline": {
++      "version": "1.2.4",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "minipass": "^3.0.0"
++      },
++      "engines": {
++        "node": ">=8"
++      }
++    },
++    "node_modules/npm/node_modules/minipass-pipeline/node_modules/minipass": {
++      "version": "3.3.6",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "yallist": "^4.0.0"
++      },
++      "engines": {
++        "node": ">=8"
++      }
++    },
++    "node_modules/npm/node_modules/minipass-pipeline/node_modules/yallist": {
++      "version": "4.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC"
++    },
++    "node_modules/npm/node_modules/minipass-sized": {
++      "version": "2.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "minipass": "^7.1.2"
++      },
++      "engines": {
++        "node": ">=8"
++      }
++    },
++    "node_modules/npm/node_modules/minizlib": {
++      "version": "3.1.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "dependencies": {
++        "minipass": "^7.1.2"
++      },
++      "engines": {
++        "node": ">= 18"
++      }
++    },
++    "node_modules/npm/node_modules/ms": {
++      "version": "2.1.3",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT"
++    },
++    "node_modules/npm/node_modules/mute-stream": {
++      "version": "3.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/negotiator": {
++      "version": "1.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "engines": {
++        "node": ">= 0.6"
++      }
++    },
++    "node_modules/npm/node_modules/node-gyp": {
++      "version": "12.2.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "dependencies": {
++        "env-paths": "^2.2.0",
++        "exponential-backoff": "^3.1.1",
++        "graceful-fs": "^4.2.6",
++        "make-fetch-happen": "^15.0.0",
++        "nopt": "^9.0.0",
++        "proc-log": "^6.0.0",
++        "semver": "^7.3.5",
++        "tar": "^7.5.4",
++        "tinyglobby": "^0.2.12",
++        "which": "^6.0.0"
++      },
++      "bin": {
++        "node-gyp": "bin/node-gyp.js"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/nopt": {
++      "version": "9.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "abbrev": "^4.0.0"
++      },
++      "bin": {
++        "nopt": "bin/nopt.js"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/npm-audit-report": {
++      "version": "7.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/npm-bundled": {
++      "version": "5.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "npm-normalize-package-bin": "^5.0.0"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/npm-install-checks": {
++      "version": "8.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "BSD-2-Clause",
++      "dependencies": {
++        "semver": "^7.1.1"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/npm-normalize-package-bin": {
++      "version": "5.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/npm-package-arg": {
++      "version": "13.0.2",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "hosted-git-info": "^9.0.0",
++        "proc-log": "^6.0.0",
++        "semver": "^7.3.5",
++        "validate-npm-package-name": "^7.0.0"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/npm-packlist": {
++      "version": "10.0.3",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "ignore-walk": "^8.0.0",
++        "proc-log": "^6.0.0"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/npm-pick-manifest": {
++      "version": "11.0.3",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "npm-install-checks": "^8.0.0",
++        "npm-normalize-package-bin": "^5.0.0",
++        "npm-package-arg": "^13.0.0",
++        "semver": "^7.3.5"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/npm-profile": {
++      "version": "12.0.1",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "npm-registry-fetch": "^19.0.0",
++        "proc-log": "^6.0.0"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/npm-registry-fetch": {
++      "version": "19.1.1",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "@npmcli/redact": "^4.0.0",
++        "jsonparse": "^1.3.1",
++        "make-fetch-happen": "^15.0.0",
++        "minipass": "^7.0.2",
++        "minipass-fetch": "^5.0.0",
++        "minizlib": "^3.0.1",
++        "npm-package-arg": "^13.0.0",
++        "proc-log": "^6.0.0"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/npm-user-validate": {
++      "version": "4.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "BSD-2-Clause",
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/p-map": {
++      "version": "7.0.4",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "engines": {
++        "node": ">=18"
++      },
++      "funding": {
++        "url": "https://github.com/sponsors/sindresorhus"
++      }
++    },
++    "node_modules/npm/node_modules/pacote": {
++      "version": "21.3.1",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "@npmcli/git": "^7.0.0",
++        "@npmcli/installed-package-contents": "^4.0.0",
++        "@npmcli/package-json": "^7.0.0",
++        "@npmcli/promise-spawn": "^9.0.0",
++        "@npmcli/run-script": "^10.0.0",
++        "cacache": "^20.0.0",
++        "fs-minipass": "^3.0.0",
++        "minipass": "^7.0.2",
++        "npm-package-arg": "^13.0.0",
++        "npm-packlist": "^10.0.1",
++        "npm-pick-manifest": "^11.0.1",
++        "npm-registry-fetch": "^19.0.0",
++        "proc-log": "^6.0.0",
++        "promise-retry": "^2.0.1",
++        "sigstore": "^4.0.0",
++        "ssri": "^13.0.0",
++        "tar": "^7.4.3"
++      },
++      "bin": {
++        "pacote": "bin/index.js"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/parse-conflict-json": {
++      "version": "5.0.1",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "json-parse-even-better-errors": "^5.0.0",
++        "just-diff": "^6.0.0",
++        "just-diff-apply": "^5.2.0"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/path-scurry": {
++      "version": "2.0.2",
++      "dev": true,
++      "inBundle": true,
++      "license": "BlueOak-1.0.0",
++      "dependencies": {
++        "lru-cache": "^11.0.0",
++        "minipass": "^7.1.2"
++      },
++      "engines": {
++        "node": "18 || 20 || >=22"
++      },
++      "funding": {
++        "url": "https://github.com/sponsors/isaacs"
++      }
++    },
++    "node_modules/npm/node_modules/postcss-selector-parser": {
++      "version": "7.1.1",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "dependencies": {
++        "cssesc": "^3.0.0",
++        "util-deprecate": "^1.0.2"
++      },
++      "engines": {
++        "node": ">=4"
++      }
++    },
++    "node_modules/npm/node_modules/proc-log": {
++      "version": "6.1.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/proggy": {
++      "version": "4.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/promise-all-reject-late": {
++      "version": "1.0.1",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "funding": {
++        "url": "https://github.com/sponsors/isaacs"
++      }
++    },
++    "node_modules/npm/node_modules/promise-call-limit": {
++      "version": "3.0.2",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "funding": {
++        "url": "https://github.com/sponsors/isaacs"
++      }
++    },
++    "node_modules/npm/node_modules/promise-retry": {
++      "version": "2.0.1",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "dependencies": {
++        "err-code": "^2.0.2",
++        "retry": "^0.12.0"
++      },
++      "engines": {
++        "node": ">=10"
++      }
++    },
++    "node_modules/npm/node_modules/promzard": {
++      "version": "3.0.1",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "read": "^5.0.0"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/qrcode-terminal": {
++      "version": "0.12.0",
++      "dev": true,
++      "inBundle": true,
++      "bin": {
++        "qrcode-terminal": "bin/qrcode-terminal.js"
++      }
++    },
++    "node_modules/npm/node_modules/read": {
++      "version": "5.0.1",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "mute-stream": "^3.0.0"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/read-cmd-shim": {
++      "version": "6.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/retry": {
++      "version": "0.12.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "engines": {
++        "node": ">= 4"
++      }
++    },
++    "node_modules/npm/node_modules/safer-buffer": {
++      "version": "2.1.2",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "optional": true
++    },
++    "node_modules/npm/node_modules/semver": {
++      "version": "7.7.4",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "bin": {
++        "semver": "bin/semver.js"
++      },
++      "engines": {
++        "node": ">=10"
++      }
++    },
++    "node_modules/npm/node_modules/signal-exit": {
++      "version": "4.1.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "engines": {
++        "node": ">=14"
++      },
++      "funding": {
++        "url": "https://github.com/sponsors/isaacs"
++      }
++    },
++    "node_modules/npm/node_modules/sigstore": {
++      "version": "4.1.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "Apache-2.0",
++      "dependencies": {
++        "@sigstore/bundle": "^4.0.0",
++        "@sigstore/core": "^3.1.0",
++        "@sigstore/protobuf-specs": "^0.5.0",
++        "@sigstore/sign": "^4.1.0",
++        "@sigstore/tuf": "^4.0.1",
++        "@sigstore/verify": "^3.1.0"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/smart-buffer": {
++      "version": "4.2.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "engines": {
++        "node": ">= 6.0.0",
++        "npm": ">= 3.0.0"
++      }
++    },
++    "node_modules/npm/node_modules/socks": {
++      "version": "2.8.7",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "dependencies": {
++        "ip-address": "^10.0.1",
++        "smart-buffer": "^4.2.0"
++      },
++      "engines": {
++        "node": ">= 10.0.0",
++        "npm": ">= 3.0.0"
++      }
++    },
++    "node_modules/npm/node_modules/socks-proxy-agent": {
++      "version": "8.0.5",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "dependencies": {
++        "agent-base": "^7.1.2",
++        "debug": "^4.3.4",
++        "socks": "^2.8.3"
++      },
++      "engines": {
++        "node": ">= 14"
++      }
++    },
++    "node_modules/npm/node_modules/spdx-exceptions": {
++      "version": "2.5.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "CC-BY-3.0"
++    },
++    "node_modules/npm/node_modules/spdx-expression-parse": {
++      "version": "4.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "dependencies": {
++        "spdx-exceptions": "^2.1.0",
++        "spdx-license-ids": "^3.0.0"
++      }
++    },
++    "node_modules/npm/node_modules/spdx-license-ids": {
++      "version": "3.0.22",
++      "dev": true,
++      "inBundle": true,
++      "license": "CC0-1.0"
++    },
++    "node_modules/npm/node_modules/ssri": {
++      "version": "13.0.1",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "minipass": "^7.0.3"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/supports-color": {
++      "version": "10.2.2",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "engines": {
++        "node": ">=18"
++      },
++      "funding": {
++        "url": "https://github.com/chalk/supports-color?sponsor=1"
++      }
++    },
++    "node_modules/npm/node_modules/tar": {
++      "version": "7.5.9",
++      "dev": true,
++      "inBundle": true,
++      "license": "BlueOak-1.0.0",
++      "dependencies": {
++        "@isaacs/fs-minipass": "^4.0.0",
++        "chownr": "^3.0.0",
++        "minipass": "^7.1.2",
++        "minizlib": "^3.1.0",
++        "yallist": "^5.0.0"
++      },
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/npm/node_modules/text-table": {
++      "version": "0.2.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT"
++    },
++    "node_modules/npm/node_modules/tiny-relative-date": {
++      "version": "2.0.2",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT"
++    },
++    "node_modules/npm/node_modules/tinyglobby": {
++      "version": "0.2.15",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "dependencies": {
++        "fdir": "^6.5.0",
++        "picomatch": "^4.0.3"
++      },
++      "engines": {
++        "node": ">=12.0.0"
++      },
++      "funding": {
++        "url": "https://github.com/sponsors/SuperchupuDev"
++      }
++    },
++    "node_modules/npm/node_modules/tinyglobby/node_modules/fdir": {
++      "version": "6.5.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "engines": {
++        "node": ">=12.0.0"
++      },
++      "peerDependencies": {
++        "picomatch": "^3 || ^4"
++      },
++      "peerDependenciesMeta": {
++        "picomatch": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/npm/node_modules/tinyglobby/node_modules/picomatch": {
++      "version": "4.0.3",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "engines": {
++        "node": ">=12"
++      },
++      "funding": {
++        "url": "https://github.com/sponsors/jonschlinkert"
++      }
++    },
++    "node_modules/npm/node_modules/treeverse": {
++      "version": "3.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "engines": {
++        "node": "^14.17.0 || ^16.13.0 || >=18.0.0"
++      }
++    },
++    "node_modules/npm/node_modules/tuf-js": {
++      "version": "4.1.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT",
++      "dependencies": {
++        "@tufjs/models": "4.1.0",
++        "debug": "^4.4.3",
++        "make-fetch-happen": "^15.0.1"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/unique-filename": {
++      "version": "5.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "unique-slug": "^6.0.0"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/unique-slug": {
++      "version": "6.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "imurmurhash": "^0.1.4"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/util-deprecate": {
++      "version": "1.0.2",
++      "dev": true,
++      "inBundle": true,
++      "license": "MIT"
++    },
++    "node_modules/npm/node_modules/validate-npm-package-name": {
++      "version": "7.0.2",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/walk-up-path": {
++      "version": "4.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "engines": {
++        "node": "20 || >=22"
++      }
++    },
++    "node_modules/npm/node_modules/which": {
++      "version": "6.0.1",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "isexe": "^4.0.0"
++      },
++      "bin": {
++        "node-which": "bin/which.js"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/write-file-atomic": {
++      "version": "7.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "ISC",
++      "dependencies": {
++        "imurmurhash": "^0.1.4",
++        "signal-exit": "^4.0.1"
++      },
++      "engines": {
++        "node": "^20.17.0 || >=22.9.0"
++      }
++    },
++    "node_modules/npm/node_modules/yallist": {
++      "version": "5.0.0",
++      "dev": true,
++      "inBundle": true,
++      "license": "BlueOak-1.0.0",
++      "engines": {
++        "node": ">=18"
++      }
++    },
++    "node_modules/npmlog": {
++      "version": "5.0.1",
++      "resolved": "https://registry.npmjs.org/npmlog/-/npmlog-5.0.1.tgz",
++      "integrity": "sha512-AqZtDUWOMKs1G/8lwylVjrdYgqA4d9nu8hc+0gzRxlDb1I10+FHBGMXs6aiQHFdCUUlqH99MUMuLfzWDNDtfxw==",
++      "deprecated": "This package is no longer supported.",
++      "license": "ISC",
++      "dependencies": {
++        "are-we-there-yet": "^2.0.0",
++        "console-control-strings": "^1.1.0",
++        "gauge": "^3.0.0",
++        "set-blocking": "^2.0.0"
++      }
++    },
++    "node_modules/oauth": {
++      "version": "0.10.2",
++      "resolved": "https://registry.npmjs.org/oauth/-/oauth-0.10.2.tgz",
++      "integrity": "sha512-JtFnB+8nxDEXgNyniwz573xxbKSOu3R8D40xQKqcjwJ2CDkYqUDI53o6IuzDJBx60Z8VKCm271+t8iFjakrl8Q==",
++      "dev": true,
++      "license": "MIT"
++    },
++    "node_modules/object-assign": {
++      "version": "4.1.1",
++      "resolved": "https://registry.npmjs.org/object-assign/-/object-assign-4.1.1.tgz",
++      "integrity": "sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==",
++      "license": "MIT",
++      "engines": {
++        "node": ">=0.10.0"
++      }
++    },
++    "node_modules/object-hash": {
++      "version": "3.0.0",
++      "resolved": "https://registry.npmjs.org/object-hash/-/object-hash-3.0.0.tgz",
++      "integrity": "sha512-RSn9F68PjH9HqtltsSnqYC1XXoWe9Bju5+213R98cNGttag9q9yAOTzdbsqvIa7aNm5WffBZFpWYr2aWrklWAw==",
++      "license": "MIT",
++      "engines": {
++        "node": ">= 6"
++      }
++    },
++    "node_modules/object-inspect": {
++      "version": "1.13.4",
++      "resolved": "https://registry.npmjs.org/object-inspect/-/object-inspect-1.13.4.tgz",
++      "integrity": "sha512-W67iLl4J2EXEGTbfeHCffrjDfitvLANg0UlX3wFUUSTx92KXRFegMHUVgSqE+wvhAbi4WqjGg9czysTV2Epbew==",
++      "license": "MIT",
++      "engines": {
++        "node": ">= 0.4"
++      },
++      "funding": {
++        "url": "https://github.com/sponsors/ljharb"
++      }
++    },
++    "node_modules/on-finished": {
++      "version": "2.4.1",
++      "resolved": "https://registry.npmjs.org/on-finished/-/on-finished-2.4.1.tgz",
++      "integrity": "sha512-oVlzkg3ENAhCk2zdv7IJwd/QUD4z2RxRwpkcGY8psCVcCYZNq4wYnVWALHM+brtuJjePWiYF/ClmuDr8Ch5+kg==",
++      "license": "MIT",
++      "dependencies": {
++        "ee-first": "1.1.1"
++      },
++      "engines": {
++        "node": ">= 0.8"
++      }
++    },
++    "node_modules/once": {
++      "version": "1.4.0",
++      "resolved": "https://registry.npmjs.org/once/-/once-1.4.0.tgz",
++      "integrity": "sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==",
++      "license": "ISC",
++      "dependencies": {
++        "wrappy": "1"
++      }
++    },
++    "node_modules/onetime": {
++      "version": "5.1.2",
++      "resolved": "https://registry.npmjs.org/onetime/-/onetime-5.1.2.tgz",
++      "integrity": "sha512-kbpaSSGJTWdAY5KPVeMOKXSrPtr8C8C7wodJbcsd51jRnmD+GZu8Y0VoU6Dm5Z4vWr0Ig/1NKuWRKf7j5aaYSg==",
++      "dev": true,
++      "license": "MIT",
++      "dependencies": {
++        "mimic-fn": "^2.1.0"
++      },
++      "engines": {
++        "node": ">=6"
++      },
++      "funding": {
++        "url": "https://github.com/sponsors/sindresorhus"
++      }
++    },
++    "node_modules/optionator": {
++      "version": "0.9.4",
++      "resolved": "https://registry.npmjs.org/optionator/-/optionator-0.9.4.tgz",
++      "integrity": "sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==",
++      "dev": true,
++      "license": "MIT",
++      "dependencies": {
++        "deep-is": "^0.1.3",
++        "fast-levenshtein": "^2.0.6",
++        "levn": "^0.4.1",
++        "prelude-ls": "^1.2.1",
++        "type-check": "^0.4.0",
++        "word-wrap": "^1.2.5"
++      },
++      "engines": {
++        "node": ">= 0.8.0"
++      }
++    },
++    "node_modules/ora": {
++      "version": "5.4.1",
++      "resolved": "https://registry.npmjs.org/ora/-/ora-5.4.1.tgz",
++      "integrity": "sha512-5b6Y85tPxZZ7QytO+BQzysW31HJku27cRIlkbAXaNx+BdcVi+LlRFmVXzeF6a7JCwJpyw5c4b+YSVImQIrBpuQ==",
++      "dev": true,
++      "license": "MIT",
++      "dependencies": {
++        "bl": "^4.1.0",
++        "chalk": "^4.1.0",
++        "cli-cursor": "^3.1.0",
++        "cli-spinners": "^2.5.0",
++        "is-interactive": "^1.0.0",
++        "is-unicode-supported": "^0.1.0",
++        "log-symbols": "^4.1.0",
++        "strip-ansi": "^6.0.0",
++        "wcwidth": "^1.0.1"
++      },
++      "engines": {
++        "node": ">=10"
++      },
++      "funding": {
++        "url": "https://github.com/sponsors/sindresorhus"
++      }
++    },
++    "node_modules/p-limit": {
++      "version": "3.1.0",
++      "resolved": "https://registry.npmjs.org/p-limit/-/p-limit-3.1.0.tgz",
++      "integrity": "sha512-TYOanM3wGwNGsZN2cVTYPArw454xnXj5qmWF1bEoAc4+cU/ol7GVh7odevjp1FNHduHc3KZMcFduxU5Xc6uJRQ==",
++      "dev": true,
++      "license": "MIT",
++      "dependencies": {
++        "yocto-queue": "^0.1.0"
++      },
++      "engines": {
++        "node": ">=10"
++      },
++      "funding": {
++        "url": "https://github.com/sponsors/sindresorhus"
++      }
++    },
++    "node_modules/p-locate": {
++      "version": "5.0.0",
++      "resolved": "https://registry.npmjs.org/p-locate/-/p-locate-5.0.0.tgz",
++      "integrity": "sha512-LaNjtRWUBY++zB5nE/NwcaoMylSPk+S+ZHNB1TzdbMJMny6dynpAGt7X/tl/QYq3TIeE6nxHppbo2LGymrG5Pw==",
++      "dev": true,
++      "license": "MIT",
++      "dependencies": {
++        "p-limit": "^3.0.2"
++      },
++      "engines": {
++        "node": ">=10"
++      },
++      "funding": {
++        "url": "https://github.com/sponsors/sindresorhus"
++      }
++    },
++    "node_modules/p-try": {
++      "version": "2.2.0",
++      "resolved": "https://registry.npmjs.org/p-try/-/p-try-2.2.0.tgz",
++      "integrity": "sha512-R4nPAVTAU0B9D35/Gk3uJf/7XYbQcyohSKdvAxIRSNghFl4e71hVoGnBNQz9cWaXxO2I10KTC+3jMdvvoKw6dQ==",
++      "dev": true,
++      "license": "MIT",
++      "engines": {
++        "node": ">=6"
++      }
++    },
++    "node_modules/package-json-from-dist": {
++      "version": "1.0.1",
++      "resolved": "https://registry.npmjs.org/package-json-from-dist/-/package-json-from-dist-1.0.1.tgz",
++      "integrity": "sha512-UEZIS3/by4OC8vL3P2dTXRETpebLI2NiI5vIrjaD/5UtrkFX/tNbwjTSRAGC/+7CAo2pIcBaRgWmcBBHcsaCIw==",
++      "license": "BlueOak-1.0.0"
++    },
++    "node_modules/parent-module": {
++      "version": "1.0.1",
++      "resolved": "https://registry.npmjs.org/parent-module/-/parent-module-1.0.1.tgz",
++      "integrity": "sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==",
++      "dev": true,
++      "license": "MIT",
++      "dependencies": {
++        "callsites": "^3.0.0"
++      },
++      "engines": {
++        "node": ">=6"
++      }
++    },
++    "node_modules/parse-json": {
++      "version": "5.2.0",
++      "resolved": "https://registry.npmjs.org/parse-json/-/parse-json-5.2.0.tgz",
++      "integrity": "sha512-ayCKvm/phCGxOkYRSCM82iDwct8/EonSEgCSxWxD7ve6jHggsFl4fZVQBPRNgQoKiuV/odhFrGzQXZwbifC8Rg==",
++      "dev": true,
++      "license": "MIT",
++      "dependencies": {
++        "@babel/code-frame": "^7.0.0",
++        "error-ex": "^1.3.1",
++        "json-parse-even-better-errors": "^2.3.0",
++        "lines-and-columns": "^1.1.6"
++      },
++      "engines": {
++        "node": ">=8"
++      },
++      "funding": {
++        "url": "https://github.com/sponsors/sindresorhus"
++      }
++    },
++    "node_modules/parseurl": {
++      "version": "1.3.3",
++      "resolved": "https://registry.npmjs.org/parseurl/-/parseurl-1.3.3.tgz",
++      "integrity": "sha512-CiyeOxFT/JZyN5m0z9PfXw4SCBJ6Sygz1Dpl0wqjlhDEGGBP1GnsUVEL0p63hoG1fcj3fHynXi9NYO4nWOL+qQ==",
++      "license": "MIT",
++      "engines": {
++        "node": ">= 0.8"
++      }
++    },
++    "node_modules/passport": {
++      "version": "0.7.0",
++      "resolved": "https://registry.npmjs.org/passport/-/passport-0.7.0.tgz",
++      "integrity": "sha512-cPLl+qZpSc+ireUvt+IzqbED1cHHkDoVYMo30jbJIdOOjQ1MQYZBPiNvmi8UM6lJuOpTPXJGZQk0DtC4y61MYQ==",
++      "license": "MIT",
++      "dependencies": {
++        "passport-strategy": "1.x.x",
++        "pause": "0.0.1",
++        "utils-merge": "^1.0.1"
++      },
++      "engines": {
++        "node": ">= 0.4.0"
++      },
++      "funding": {
++        "type": "github",
++        "url": "https://github.com/sponsors/jaredhanson"
++      }
++    },
++    "node_modules/passport-google-oauth20": {
++      "version": "2.0.0",
++      "resolved": "https://registry.npmjs.org/passport-google-oauth20/-/passport-google-oauth20-2.0.0.tgz",
++      "integrity": "sha512-KSk6IJ15RoxuGq7D1UKK/8qKhNfzbLeLrG3gkLZ7p4A6DBCcv7xpyQwuXtWdpyR0+E0mwkpjY1VfPOhxQrKzdQ==",
++      "dev": true,
++      "license": "MIT",
++      "dependencies": {
++        "passport-oauth2": "1.x.x"
++      },
++      "engines": {
++        "node": ">= 0.4.0"
++      }
++    },
++    "node_modules/passport-jwt": {
++      "version": "4.0.1",
++      "resolved": "https://registry.npmjs.org/passport-jwt/-/passport-jwt-4.0.1.tgz",
++      "integrity": "sha512-UCKMDYhNuGOBE9/9Ycuoyh7vP6jpeTp/+sfMJl7nLff/t6dps+iaeE0hhNkKN8/HZHcJ7lCdOyDxHdDoxoSvdQ==",
++      "license": "MIT",
++      "dependencies": {
++        "jsonwebtoken": "^9.0.0",
++        "passport-strategy": "^1.0.0"
+       }
+     },
+     "node_modules/passport-oauth2": {
+       "version": "1.8.0",
+       "resolved": "https://registry.npmjs.org/passport-oauth2/-/passport-oauth2-1.8.0.tgz",
+       "integrity": "sha512-cjsQbOrXIDE4P8nNb3FQRCCmJJ/utnFKEz2NX209f7KOHPoX18gF7gBzBbLLsj2/je4KrgiwLLGjf0lm9rtTBA==",
++      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "base64url": "3.x.x",
+@@ -11167,6 +13157,7 @@
+       "version": "0.0.4",
+       "resolved": "https://registry.npmjs.org/uid2/-/uid2-0.0.4.tgz",
+       "integrity": "sha512-IevTus0SbGwQzYh3+fRsAMTVVPOoIVufzacXcHPmdlle1jUpq7BRL+mw3dgeLanvGZdwwbWhRV6XrcFNdBmjWA==",
++      "dev": true,
+       "license": "MIT"
+     },
+     "node_modules/uint8array-extras": {
+diff --git a/package.json b/package.json
+index 53b20fc..b2997e7 100644
+--- a/package.json
++++ b/package.json
+@@ -21,7 +21,7 @@
+   },
+   "dependencies": {
+     "@nestjs/common": "^11.0.1",
+-    "@nestjs/config": "^4.0.0",
++    "@nestjs/config": "^4.0.3",
+     "@nestjs/core": "^11.0.1",
+     "@nestjs/jwt": "^11.0.0",
+     "@nestjs/passport": "^11.0.5",
+@@ -35,8 +35,6 @@
+     "class-validator": "^0.14.1",
+     "dotenv": "^16.6.1",
+     "nodemailer": "^8.0.1",
+-    "passport": "^0.7.0",
+-    "passport-google-oauth20": "^2.0.0",
+     "passport-jwt": "^4.0.1",
+     "pg": "^8.18.0",
+     "reflect-metadata": "^0.2.2",
+@@ -65,7 +63,11 @@
+     "eslint-config-prettier": "^10.0.1",
+     "eslint-plugin-prettier": "^5.2.2",
+     "globals": "^16.0.0",
++    "i": "^0.3.7",
+     "jest": "^30.0.0",
++    "npm": "^11.10.1",
++    "passport": "^0.7.0",
++    "passport-google-oauth20": "^2.0.0",
+     "prettier": "^3.4.2",
+     "socket.io-client": "^4.8.3",
+     "source-map-support": "^0.5.21",
+diff --git a/src/app.module.ts b/src/app.module.ts
+index 2c139c6..9c614b9 100644
+--- a/src/app.module.ts
++++ b/src/app.module.ts
+@@ -35,7 +35,7 @@ import { ChatModule } from './chat/chat.module';
+         // todas las entidades que aparezcan en TypeOrmModule.forFeature([...])
+         // de cualquier módulo importado aca. No necesitamos listarlas manualmente.
+         autoLoadEntities: true,
+-        synchronize: true, // solo en desarrollo, en producción usamos migraciones
++        synchronize: false, // False solo en desarrollo, en producción usamos migraciones
+         ssl: { rejectUnauthorized: false },
+       }),
+     }),
+diff --git a/src/class/class.controller.ts b/src/class/class.controller.ts
+index 8e2e8e1..3bc04d0 100644
+--- a/src/class/class.controller.ts
++++ b/src/class/class.controller.ts
+@@ -8,47 +8,47 @@ import {
+   Patch,
+   Post,
+   Put,
++  UseGuards,
+ } from '@nestjs/common';
+ import { ClassService } from './class.service';
+-import { ResponseClass } from 'src/class/dtos/ResponseClass.dto';
+ import { CreateClass } from './dtos/CreateClass.dto';
++import { UpdateClass } from './dtos/UpdateClass.dto';
++import { Roles } from 'src/auth/decorators/roles.decorator';
++import { Role } from 'src/common/roles.enum';
++import { RolesGuard } from 'src/auth/guards/roles.guard';
+ 
+ @Controller('clases')
+ export class ClassController {
+   constructor(private readonly classService: ClassService) {}
+ 
+-  @Post('seeder')
+-  seeder() {
+-    return this.classService.seeder();
+-  }
+-
+   @Get('/')
+   @HttpCode(200)
+   get_all_classes() {
+     return this.classService.get_classes();
+   }
+ 
+-  // Rol de admin puede hacer esto
++  @Roles(Role.Admin, Role.Coach)
++  @UseGuards(RolesGuard)
+   @Post('crear')
+   @HttpCode(201)
+   create_new_class(@Body() clase: CreateClass) {
+     return this.classService.create_new_class(clase);
+   }
+ 
+-  // Rol de admin puede hacer esto - Mauro ya lo hizo el rol
++  @Roles(Role.Admin, Role.Coach)
++  @UseGuards(RolesGuard)
+   @Put(':id')
+   update_a_class(
+     @Param('id', ParseUUIDPipe) id: string,
+-    @Body() clase: ResponseClass,
++    @Body() clase: UpdateClass,
+   ) {
+     return this.classService.update_class(id, clase);
+   }
+ 
+-  // Rol de admin puede hacer esto
++  @Roles(Role.Admin, Role.Coach)
++  @UseGuards(RolesGuard)
+   @Patch(':id/delete')
+   delete_a_class(@Param('id', ParseUUIDPipe) id: string) {
+     return this.classService.delete_class(id);
+   }
+ }
+-
+-// postgresql://postgres:YOUR_PASSWORD@db.YOUR_PROJECT_REF.supabase.co:5432/postgres estaba antes en url .env.example
+diff --git a/src/class/class.entity.ts b/src/class/class.entity.ts
+index 5daf394..20191e4 100644
+--- a/src/class/class.entity.ts
++++ b/src/class/class.entity.ts
+@@ -23,6 +23,6 @@ export class Class {
+   @Column('boolean', { default: true, nullable: false })
+   isActive: boolean;
+ 
+-  @OneToMany(() => Class_schedule, (schedule) => schedule.class_id)
++  @OneToMany(() => Class_schedule, (schedule) => schedule.class)
+   class_schedule: Class_schedule[];
+ }
+diff --git a/src/class/class.module.ts b/src/class/class.module.ts
+index 9bfefa0..eaae3c1 100644
+--- a/src/class/class.module.ts
++++ b/src/class/class.module.ts
+@@ -4,9 +4,10 @@ import { ClassService } from './class.service';
+ import { TypeOrmModule } from '@nestjs/typeorm';
+ import { Class } from './class.entity';
+ import { ClassRepository } from './class.repository';
++import { Class_schedule } from 'src/class_schedule/class_schedule.entity';
+ 
+ @Module({
+-  imports: [TypeOrmModule.forFeature([Class])],
++  imports: [TypeOrmModule.forFeature([Class, Class_schedule])],
+   controllers: [ClassController],
+   providers: [ClassService, ClassRepository],
+   exports: [ClassService, ClassRepository],
+diff --git a/src/class/class.repository.ts b/src/class/class.repository.ts
+index 9c776a1..b25428a 100644
+--- a/src/class/class.repository.ts
++++ b/src/class/class.repository.ts
+@@ -1,8 +1,9 @@
+-import { Injectable, UnauthorizedException } from '@nestjs/common';
++import { Injectable, NotFoundException } from '@nestjs/common';
+ import { InjectRepository } from '@nestjs/typeorm';
+ import { Class } from './class.entity';
+ import { Repository } from 'typeorm';
+ import { CreateClass } from './dtos/CreateClass.dto';
++import { UpdateClass } from './dtos/UpdateClass.dto';
+ 
+ @Injectable({})
+ export class ClassRepository {
+@@ -11,14 +12,10 @@ export class ClassRepository {
+     private readonly classRepository: Repository<Class>,
+   ) {}
+ 
+-  async load_seeder(seed_classes: CreateClass[]): Promise<Class[]> {
+-    return await this.classRepository.save(seed_classes);
+-  }
+-
+   find_class_by_id(id: string) {
+     return this.classRepository.findOne({
+       where: { id },
+-      relations: ['Class_schedule'],
++      relations: ['class_schedule'],
+       select: {
+         id: true,
+         name: true,
+@@ -32,20 +29,25 @@ export class ClassRepository {
+ 
+   get_classes() {
+     return this.classRepository.find({
+-      relations: ['Class_schedule'],
++      relations: ['class_schedule'],
+       select: {
+         id: true,
+         name: true,
+         duration: true,
+         description: true,
+         capacity: true,
++        isActive: true,
+         class_schedule: true,
+       },
+     });
+   }
+ 
+   async create_class(clase: CreateClass) {
+-    await this.classRepository.save(clase);
++    // Guardamos la clase e igualamos el espacio de la clase con el espacio disponible
++    await this.classRepository.save({
++      ...clase,
++      spaces_available: clase.capacity,
++    });
+ 
+     return {
+       success: true,
+@@ -53,41 +55,40 @@ export class ClassRepository {
+     };
+   }
+ 
+-  async update(id: string, clase: CreateClass) {
++  async update(id: string, clase: UpdateClass) {
+     const find_clase = await this.find_class_by_id(id);
+ 
+     if (!find_clase) {
+-      throw new UnauthorizedException('Clase no encontrada');
++      throw new NotFoundException('Clase no encontrada');
+     }
+ 
+     // Mezclamos la informacion que tenemos del usuario no modificada con la que si esta modificada
+     const update = this.classRepository.merge(find_clase, clase);
+ 
+-    await this.classRepository.save(update);
++    // Guardamos la clase modificada
++    const class_updated = await this.classRepository.save(update);
+ 
+     return {
+       success: true,
+       message: 'Clase actualizada correctamente',
++      class_updated,
+     };
+   }
+ 
+   async deleted_class(id: string) {
++    // Buscamos la clase
+     const find_clase = await this.find_class_by_id(id);
+ 
+     if (!find_clase) {
+-      throw new UnauthorizedException('Clase no encontrada');
++      throw new NotFoundException('Clase no encontrada');
+     }
+ 
+     // No borramos la clase ya que preservamos informacion que puede ser valiosa en un futuro
+-    await this.classRepository.update(find_clase, {
+-      isActive: false,
+-    });
++    await this.classRepository.update({ id }, { isActive: false });
+ 
+     return {
+       success: true,
+       message: 'Clase borrada correctamente',
+     };
+   }
+-
+-  async assigned_student() {}
+ }
+diff --git a/src/class/class.service.ts b/src/class/class.service.ts
+index 2fea9de..c506371 100644
+--- a/src/class/class.service.ts
++++ b/src/class/class.service.ts
+@@ -1,43 +1,11 @@
+ import { Injectable } from '@nestjs/common';
+ import { ClassRepository } from './class.repository';
+ import { CreateClass } from './dtos/CreateClass.dto';
++import { UpdateClass } from './dtos/UpdateClass.dto';
+ 
+ @Injectable({})
+ export class ClassService {
+   constructor(private readonly classRepository: ClassRepository) {}
+-
+-  private seed_classes = [
+-    {
+-      name: 'Boxeo',
+-      duration: '1 hr',
+-      description: 'Clases de boxeo recreativo',
+-      capacity: 5,
+-    },
+-    {
+-      name: 'Body Pump',
+-      duration: '1 hr',
+-      description: 'Clases de Body Pump para principiantes',
+-      capacity: 10,
+-    },
+-    {
+-      name: 'Zumba Femenina',
+-      duration: '1 hr',
+-      description: 'Clases de zumba para mujeres',
+-      capacity: 10,
+-    },
+-    {
+-      name: 'Zumba Masculina',
+-      duration: '1 hr',
+-      description: 'Clases de zumba para hombres',
+-      capacity: 2, // Pongo a este que sea falso
+-    },
+-  ];
+-
+-  async seeder() {
+-    await this.classRepository.load_seeder(this.seed_classes);
+-    return { message: 'Seeder de clases cargado correctamente' };
+-  }
+-
+   get_classes() {
+     return this.classRepository.get_classes();
+   }
+@@ -46,11 +14,12 @@ export class ClassService {
+     return this.classRepository.create_class(clase);
+   }
+ 
+-  update_class(id: string, clase: CreateClass) {
++  update_class(id: string, clase: UpdateClass) {
+     return this.classRepository.update(id, clase);
+   }
+ 
+   delete_class(id: string) {
++    console.log(this.classRepository.deleted_class(id));
+     return this.classRepository.deleted_class(id);
+   }
+ }
+diff --git a/src/class/dtos/ResponseClass.dto.ts b/src/class/dtos/UpdateClass.dto.ts
+similarity index 59%
+rename from src/class/dtos/ResponseClass.dto.ts
+rename to src/class/dtos/UpdateClass.dto.ts
+index b7ab6b4..3ddaaa7 100644
+--- a/src/class/dtos/ResponseClass.dto.ts
++++ b/src/class/dtos/UpdateClass.dto.ts
+@@ -1,33 +1,26 @@
+ import {
+   IsBoolean,
+-  IsNotEmpty,
+   IsNumber,
+   IsOptional,
+   IsPositive,
+   IsString,
+-  IsUUID,
+   Length,
+ } from 'class-validator';
+-import { ResponseClassSchedule } from 'src/class_schedule/dtos/ResponseClassSchedule.dto';
+ 
+-export class ResponseClass {
+-  @IsNotEmpty({ message: 'El id de una clase no puede estar vacío' })
+-  @IsUUID()
+-  id: string;
+-
+-  @IsNotEmpty({ message: 'El nombre de la clase no puede estar vacío' })
++export class UpdateClass {
++  @IsOptional({ message: 'El nombre de la clase es opcional' })
+   @IsString({ message: 'El nombre de la clase debe ser una cadena de texto' })
+   @Length(3, 50, {
+     message: 'El nombre de la clase debe tener entre 3 y 50 cáracteres',
+   })
+-  name: string;
++  name?: string;
+ 
+-  @IsNotEmpty({ message: 'La duración de la clase no puede estar vacía' })
++  @IsOptional({ message: 'La duración de la clase es opcional' })
+   @IsString({ message: 'La duración de la clase debe ser una cadena de texto' })
+   @Length(2, 10, {
+     message: 'La duración de la clase debe tener entre 2 y 10 cáracteres',
+   })
+-  duration: string;
++  duration?: string;
+ 
+   @IsOptional({ message: 'La descripción de la clase es opcional' })
+   @IsString({
+@@ -38,16 +31,14 @@ export class ResponseClass {
+   })
+   description?: string;
+ 
+-  @IsNotEmpty({ message: 'La capacidad de la clase no puede estar vacía' })
++  @IsOptional({ message: 'La capacidad de la clase es opcional' })
+   @IsNumber()
+   @IsPositive({
+     message: 'La capacidad de la clase debe ser un número positivo',
+   })
+-  capacity: number;
++  capacity?: number;
+ 
+-  @IsNotEmpty({ message: 'La clase tiene que estar activa o no' })
++  @IsOptional({ message: 'La clase tiene que estar activa o no' })
+   @IsBoolean({ message: 'La clase esta activa o no debe ser un booleano' })
+-  isActive: boolean;
+-
+-  class_schedule: ResponseClassSchedule;
++  isActive?: boolean;
+ }
+diff --git a/src/class_schedule/class_schedule.controller.ts b/src/class_schedule/class_schedule.controller.ts
+index 81af611..f933ad9 100644
+--- a/src/class_schedule/class_schedule.controller.ts
++++ b/src/class_schedule/class_schedule.controller.ts
+@@ -1,12 +1,48 @@
+-import { Controller, Param, ParseUUIDPipe, Post } from '@nestjs/common';
++import {
++  Body,
++  Controller,
++  Get,
++  HttpCode,
++  Param,
++  ParseUUIDPipe,
++  Post,
++  Put,
++  Query,
++  UseGuards,
++} from '@nestjs/common';
+ import { ClassScheduleService } from './class_schedule.service';
++import { CreateClassSchedule } from './dtos/CreateClassSchedule.dto';
++import { Roles } from 'src/auth/decorators/roles.decorator';
++import { Role } from 'src/common/roles.enum';
++import { RolesGuard } from 'src/auth/guards/roles.guard';
+ 
+ @Controller('class_schedule')
+ export class ClassesScheduleController {
+   constructor(private readonly classScheduleService: ClassScheduleService) {}
+ 
++  @Roles(Role.Coach, Role.Admin, Role.User)
++  @UseGuards(RolesGuard)
++  @Get('history')
++  @HttpCode(200)
++  classes_user_history() {
++    return this.classScheduleService.classes_history();
++  }
++
++  @Roles(Role.Coach, Role.Admin)
++  @UseGuards(RolesGuard)
+   @Post('appointment')
+-  class_appointment_reserve(@Param('id_class', ParseUUIDPipe) id: string) {
+-    return this.classScheduleService.class_appointment(id);
++  @HttpCode(201)
++  class_appointment_reserve(
++    @Body() clase_app: CreateClassSchedule,
++    @Query('id_class', ParseUUIDPipe) id: string,
++  ) {
++    return this.classScheduleService.class_appointment(clase_app, id);
++  }
++
++  @Roles(Role.Coach, Role.Admin)
++  @UseGuards(RolesGuard)
++  @Put('cancel')
++  class_appointment_cancel(@Param('id_class', ParseUUIDPipe) id: string) {
++    return this.classScheduleService.class_cancel(id);
+   }
+ }
+diff --git a/src/class_schedule/class_schedule.entity.ts b/src/class_schedule/class_schedule.entity.ts
+index 8a7b237..31057d5 100644
+--- a/src/class_schedule/class_schedule.entity.ts
++++ b/src/class_schedule/class_schedule.entity.ts
+@@ -1,9 +1,12 @@
+ import { Class } from 'src/class/class.entity';
++import { Reservation } from 'src/reservation/reservation.entity';
++import { User } from 'src/users/users.entity';
+ import {
+   Column,
+   Entity,
+   JoinColumn,
+   ManyToOne,
++  OneToMany,
+   PrimaryGeneratedColumn,
+ } from 'typeorm';
+ 
+@@ -17,19 +20,23 @@ export class Class_schedule {
+   @Column('date', { nullable: false })
+   date: Date;
+ 
+-  @Column('date', { nullable: false })
+-  time: Date;
++  @Column('time', { nullable: false })
++  time: string;
+ 
+-  @Column('int', { nullable: false })
+-  spaces_available: number;
++  @Column('numeric', { default: 0, nullable: false })
++  token: number;
+ 
+   @Column('boolean', { default: true, nullable: false })
+   isActive: boolean;
+ 
+-  @Column('boolean', { default: false, nullable: false })
+-  membership: boolean;
+-
+   @ManyToOne(() => Class, (assign) => assign.class_schedule)
+-  @JoinColumn({ name: 'class_schedule' })
+-  class_id: Class;
++  @JoinColumn({ name: 'class_id' })
++  class: Class;
++
++  @ManyToOne(() => User, (user) => user.classSchedules)
++  @JoinColumn({ name: 'coach_id' })
++  coach: User;
++
++  @OneToMany(() => Reservation, (reservation) => reservation.class_schedule)
++  reservations: Reservation[];
+ }
+diff --git a/src/class_schedule/class_schedule.module.ts b/src/class_schedule/class_schedule.module.ts
+index ece8c9e..ddb7bfa 100644
+--- a/src/class_schedule/class_schedule.module.ts
++++ b/src/class_schedule/class_schedule.module.ts
+@@ -4,11 +4,14 @@ import { Class_schedule } from './class_schedule.entity';
+ import { ClassesScheduleController } from './class_schedule.controller';
+ import { ClassScheduleService } from './class_schedule.service';
+ import { ClassScheduleRepository } from './class_schedule.repository';
++import { Class } from 'src/class/class.entity';
++import { User } from 'src/users/users.entity';
++import { ClassRepository } from 'src/class/class.repository';
+ 
+ @Module({
+-  imports: [TypeOrmModule.forFeature([Class_schedule])],
++  imports: [TypeOrmModule.forFeature([Class_schedule, Class, User])],
+   controllers: [ClassesScheduleController],
+-  providers: [ClassScheduleService, ClassScheduleRepository],
++  providers: [ClassScheduleService, ClassScheduleRepository, ClassRepository],
+   exports: [ClassScheduleService, ClassScheduleRepository],
+ })
+ export class ClassScheduleModule {}
+diff --git a/src/class_schedule/class_schedule.repository.ts b/src/class_schedule/class_schedule.repository.ts
+index 7c44e5d..a1abe82 100644
+--- a/src/class_schedule/class_schedule.repository.ts
++++ b/src/class_schedule/class_schedule.repository.ts
+@@ -1,12 +1,117 @@
+ import { InjectRepository } from '@nestjs/typeorm';
+ import { Class_schedule } from './class_schedule.entity';
+ import { Repository } from 'typeorm';
++import { ClassRepository } from 'src/class/class.repository';
++import { BadRequestException, NotFoundException } from '@nestjs/common';
++import { CreateClassSchedule } from './dtos/CreateClassSchedule.dto';
++import { User } from 'src/users/users.entity';
++import { Role } from 'src/common/roles.enum';
+ 
+ export class ClassScheduleRepository {
+   constructor(
+     @InjectRepository(Class_schedule)
+     private readonly classScheduleRepository: Repository<Class_schedule>,
++    private readonly classRepository: ClassRepository,
++    @InjectRepository(User)
++    private readonly usersRepository: Repository<User>,
+   ) {}
+ 
+-  class_appmnt(id: string) {}
++  classes_history() {
++    return this.classScheduleRepository.find({
++      relations: ['class'],
++      select: {
++        id: true,
++        date: true,
++        time: true,
++        token: true,
++        isActive: true,
++        class: {
++          id: true,
++          name: true,
++          duration: true,
++          capacity: true,
++        },
++      },
++    });
++  }
++
++  async class_appmnt(clase_app: CreateClassSchedule, id: string) {
++    // // Buscamos la clase
++    const find_class = await this.classRepository.find_class_by_id(id);
++
++    if (!find_class) {
++      throw new NotFoundException('Clase no encontrada');
++    }
++
++    // Validamos que la fecha y la hora de clase que se va a agendar sea valida
++    this.time_valid(clase_app.date, clase_app.time);
++
++    // Asignamos un coach a la clase
++    const coach = await this.coach_assign();
++
++    // Creamos la cita con datos requeridos y la clase encontrada, posteriormente la guardamos
++    const new_schedule = this.classScheduleRepository.create({
++      ...clase_app,
++      class: find_class,
++      coach: coach,
++    });
++
++    return await this.classScheduleRepository.save(new_schedule);
++  }
++
++  async class_appmnt_cancel(id: string) {
++    // Buscamos la clase agendada
++    const find_appoint = await this.classScheduleRepository.findOne({
++      where: { id },
++    });
++
++    if (!find_appoint) {
++      throw new NotFoundException('Clase agendada no encontrada');
++    }
++
++    await this.classScheduleRepository.update({ id }, { isActive: false });
++
++    return {
++      success: true,
++      message: 'Clase agendada cancelada correctamente',
++    };
++  }
++
++  time_valid(date_appt, time_appt) {
++    // const now = new Date();
++    const scheduleDate = new Date(date_appt);
++
++    // Normalizamos fechas (quitamos hora)
++    const today = new Date();
++    today.setHours(0, 0, 0, 0);
++    scheduleDate.setHours(0, 0, 0, 0);
++
++    if (scheduleDate <= today) {
++      throw new BadRequestException(
++        'La fecha debe ser posterior al día actual',
++      );
++    }
++
++    // Validacion de horario
++    const scheduleTime = new Date(time_appt);
++    const hour = scheduleTime.getHours();
++
++    if (hour < 10 || hour >= 18) {
++      throw new BadRequestException(
++        'La clase solo puede agendarse entre las 10:00 y las 18:00 hs',
++      );
++    }
++  }
++
++  async coach_assign(): Promise<User> {
++    const coach = await this.usersRepository.findOne({
++      where: { role: Role.Coach },
++    });
++
++    if (!coach) {
++      throw new NotFoundException('No hay un coach disponible');
++    }
++
++    return coach;
++  }
+ }
+diff --git a/src/class_schedule/class_schedule.service.ts b/src/class_schedule/class_schedule.service.ts
+index af0392f..6952e26 100644
+--- a/src/class_schedule/class_schedule.service.ts
++++ b/src/class_schedule/class_schedule.service.ts
+@@ -1,5 +1,6 @@
+ import { Injectable } from '@nestjs/common';
+ import { ClassScheduleRepository } from './class_schedule.repository';
++import { CreateClassSchedule } from './dtos/CreateClassSchedule.dto';
+ 
+ @Injectable({})
+ export class ClassScheduleService {
+@@ -7,7 +8,15 @@ export class ClassScheduleService {
+     private readonly classScheduleRepository: ClassScheduleRepository,
+   ) {}
+ 
+-  class_appointment(id: string) {
+-    return this.classScheduleRepository.class_appmnt(id);
++  classes_history() {
++    return this.classScheduleRepository.classes_history();
++  }
++
++  class_appointment(clase_app: CreateClassSchedule, id: string) {
++    return this.classScheduleRepository.class_appmnt(clase_app, id);
++  }
++
++  class_cancel(id: string) {
++    return this.classScheduleRepository.class_appmnt_cancel(id);
+   }
+ }
+diff --git a/src/class_schedule/dtos/CreateClassSchedule.dto.ts b/src/class_schedule/dtos/CreateClassSchedule.dto.ts
+new file mode 100644
+index 0000000..ddb42dc
+--- /dev/null
++++ b/src/class_schedule/dtos/CreateClassSchedule.dto.ts
+@@ -0,0 +1,19 @@
++import { Type } from 'class-transformer';
++import { IsDate, IsNotEmpty } from 'class-validator';
++
++export class CreateClassSchedule {
++  @IsNotEmpty({ message: 'La fecha de cita de la clase no puede estar vacía' })
++  @Type(() => Date)
++  @IsDate({ message: 'La fecha de cita de la clase debe tener formato "date"' })
++  date: Date;
++
++  @IsNotEmpty({
++    message: 'El horario de la cita de la clase no puede estar vacía',
++  })
++  time: string;
++
++  @IsNotEmpty({
++    message: 'La clase citada tiene que decir cuantos token va a ocupar',
++  })
++  token: number;
++}
+diff --git a/src/class_schedule/dtos/ResponseClassSchedule.dto.ts b/src/class_schedule/dtos/ResponseClassSchedule.dto.ts
+index 4d0cc02..261425f 100644
+--- a/src/class_schedule/dtos/ResponseClassSchedule.dto.ts
++++ b/src/class_schedule/dtos/ResponseClassSchedule.dto.ts
+@@ -1,10 +1,5 @@
+-import {
+-  IsDate,
+-  IsNotEmpty,
+-  IsNumber,
+-  IsOptional,
+-  IsUUID,
+-} from 'class-validator';
++import { Type } from 'class-transformer';
++import { IsDate, IsNotEmpty, IsUUID } from 'class-validator';
+ 
+ export class ResponseClassSchedule {
+   @IsNotEmpty({ message: 'El id de la cita de una clase no puede estar vacío' })
+@@ -12,31 +7,22 @@ export class ResponseClassSchedule {
+   id: string;
+ 
+   @IsNotEmpty({ message: 'La fecha de cita de la clase no puede estar vacía' })
++  @Type(() => Date)
+   @IsDate({ message: 'La fecha de cita de la clase debe tener formato "date"' })
+   date: Date;
+ 
+   @IsNotEmpty({
+-    message: 'La duracion de la cita de la clase no puede estar vacía',
++    message: 'El horario de la cita de la clase no puede estar vacía',
+   })
+-  @IsDate({
+-    message: 'La duración de la cita de la clase debe tener formato "date"',
+-  })
+-  time: Date;
+-
+-  @IsOptional({
+-    message:
+-      'La cantidad de espacios disponibles de la clase citada es opcional',
+-  })
+-  @IsNumber()
+-  spaces_available: number;
++  time: string;
+ 
+   @IsNotEmpty({ message: 'La clase citada tiene que estar activa o no' })
+   isActive: boolean;
+ 
+   @IsNotEmpty({
+-    message: 'La clase citada tiene que mostrar si es de membresía o no',
++    message: 'La clase citada tiene que mostrar cuantos token ocupa',
+   })
+-  membership: boolean;
++  token: number;
+ 
+   @IsNotEmpty({
+     message: 'La clase citada tiene que mostrar el id de la clase',
+diff --git a/src/interfaces/class.interface.ts b/src/interfaces/class.interface.ts
+deleted file mode 100644
+index af06080..0000000
+--- a/src/interfaces/class.interface.ts
++++ /dev/null
+@@ -1,8 +0,0 @@
+-export interface Class {
+-  id: number;
+-  name: string;
+-  duration: string;
+-  description: string;
+-  capacity: number;
+-  isActive: boolean;
+-}
+diff --git a/src/reservation/reservation.entity.ts b/src/reservation/reservation.entity.ts
+new file mode 100644
+index 0000000..f177a16
+--- /dev/null
++++ b/src/reservation/reservation.entity.ts
+@@ -0,0 +1,34 @@
++import { Class_schedule } from 'src/class_schedule/class_schedule.entity';
++import { User } from 'src/users/users.entity';
++import {
++  Column,
++  Entity,
++  JoinColumn,
++  ManyToOne,
++  PrimaryGeneratedColumn,
++} from 'typeorm';
++
++@Entity({
++  name: 'reservation',
++})
++export class Reservation {
++  @PrimaryGeneratedColumn('uuid')
++  id: string;
++
++  @Column('date', { nullable: false })
++  date: Date;
++
++  @Column({
++    type: 'enum',
++    enum: ['Confirmed', 'Cancelled'],
++  })
++  status: string;
++
++  @ManyToOne(() => Class_schedule, (schedule) => schedule.reservations)
++  @JoinColumn({ name: 'class_schedule_id' })
++  class_schedule: Class_schedule;
++
++  @ManyToOne(() => User, (users_ent) => users_ent.reservations)
++  @JoinColumn({ name: 'user_id' })
++  users: User;
++}
+diff --git a/src/reservation/reservation.module.ts b/src/reservation/reservation.module.ts
+new file mode 100644
+index 0000000..d95dec7
+--- /dev/null
++++ b/src/reservation/reservation.module.ts
+@@ -0,0 +1,8 @@
++import { Module } from '@nestjs/common';
++import { TypeOrmModule } from '@nestjs/typeorm';
++import { Reservation } from './reservation.entity';
++
++@Module({
++  imports: [TypeOrmModule.forFeature([Reservation])],
++})
++export class ReservationModule {}
+diff --git a/src/reservation/reservation.service.ts b/src/reservation/reservation.service.ts
+new file mode 100644
+index 0000000..25a6a9f
+--- /dev/null
++++ b/src/reservation/reservation.service.ts
+@@ -0,0 +1,22 @@
++/*
++// Buscamos el usuario
++    const find_user = await this.usersRepository.getUserById(user_id);
++
++    // VALIDACION -- couch no se puede unir a una clase
++    if (!find_user) {
++      throw new NotFoundException('Usuario no encontrado');
++    }
++
++    if (find_class.spaces_available <= 0) {
++      throw new BadRequestException('No hay cupos disponibles para la clase');
++    }
++
++    // Restamos el espacio en la clase
++    find_class.spaces_available -= 1;
++
++    const new_user_assigned = await this.classScheduleRepository.save({
++      user  
++    });
++*/
++
++// VALIDACIONES SOLO USER PUEDE AGENDARSE A CLASES Y ADMIN PREGUNTAR A FRONT
+diff --git a/src/users/users.entity.ts b/src/users/users.entity.ts
+index 2a30c95..69cafb1 100644
+--- a/src/users/users.entity.ts
++++ b/src/users/users.entity.ts
+@@ -2,6 +2,8 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+ import { Role } from 'src/common/roles.enum';
+ import { UserMembership } from '../user-membership/user-membership.entity';
+ import { Transaction } from 'src/transactions/transactions.entity';
++import { Reservation } from 'src/reservation/reservation.entity';
++import { Class_schedule } from 'src/class_schedule/class_schedule.entity';
+ 
+ @Entity({ name: 'users' })
+ export class User {
+@@ -58,6 +60,11 @@ export class User {
+   @OneToMany(() => Transaction, (transaction) => transaction.user)
+   transactions: Transaction[];
+ 
++  @OneToMany(() => Reservation, (reservation) => reservation.users)
++  reservations: Reservation[];
++
++  @OneToMany(() => Class_schedule, (schedule) => schedule.coach)
++  classSchedules: Class_schedule[];
+   // ─────────────────────────
+   // GOOGLE LOGIN
+   // ─────────────────────────

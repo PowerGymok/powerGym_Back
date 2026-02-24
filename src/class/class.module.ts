@@ -4,9 +4,10 @@ import { ClassService } from './class.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Class } from './class.entity';
 import { ClassRepository } from './class.repository';
+import { Class_schedule } from 'src/class_schedule/class_schedule.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Class])],
+  imports: [TypeOrmModule.forFeature([Class, Class_schedule])],
   controllers: [ClassController],
   providers: [ClassService, ClassRepository],
   exports: [ClassService, ClassRepository],

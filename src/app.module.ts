@@ -35,7 +35,7 @@ import { ChatModule } from './chat/chat.module';
         // todas las entidades que aparezcan en TypeOrmModule.forFeature([...])
         // de cualquier módulo importado aca. No necesitamos listarlas manualmente.
         autoLoadEntities: true,
-        synchronize: true, // solo en desarrollo, en producción usamos migraciones
+        synchronize: false, // False solo en desarrollo, en producción usamos migraciones
         ssl: { rejectUnauthorized: false },
       }),
     }),
