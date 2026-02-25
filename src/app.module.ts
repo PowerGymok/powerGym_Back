@@ -12,6 +12,7 @@ import { MembershipModule } from './membership/membership.module';
 import { TokenPackageModule } from './token-package/token-package.module';
 import { PaymentsModule } from './payments/payments.module';
 import { ChatModule } from './chat/chat.module';
+import { ReservationModule } from './reservation/reservation.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { ChatModule } from './chat/chat.module';
     // Si el server no se reinició después de setear el .env,
     // puede quedar leyendo valores viejos/undefined.
     ClassScheduleModule,
+    ReservationModule,
     UsersModule,
     AuthModule,
     ClassModule,
