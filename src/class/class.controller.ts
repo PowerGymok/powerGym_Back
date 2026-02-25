@@ -27,16 +27,16 @@ export class ClassController {
     return this.classService.get_classes();
   }
 
-  @Roles(Role.Admin, Role.Coach)
-  @UseGuards(RolesGuard)
+  // @Roles(Role.Admin, Role.Coach)
+  // @UseGuards(RolesGuard)
   @Post('crear')
   @HttpCode(201)
   create_new_class(@Body() clase: CreateClass) {
     return this.classService.create_new_class(clase);
   }
 
-  @Roles(Role.Admin, Role.Coach)
-  @UseGuards(RolesGuard)
+  // @Roles(Role.Admin, Role.Coach)
+  // @UseGuards(RolesGuard)
   @Put(':id')
   update_a_class(
     @Param('id', ParseUUIDPipe) id: string,
@@ -45,8 +45,8 @@ export class ClassController {
     return this.classService.update_class(id, clase);
   }
 
-  @Roles(Role.Admin, Role.Coach)
-  @UseGuards(RolesGuard)
+  // @Roles(Role.Admin, Role.Coach)
+  // @UseGuards(RolesGuard)
   @Patch(':id/delete')
   delete_a_class(@Param('id', ParseUUIDPipe) id: string) {
     return this.classService.delete_class(id);

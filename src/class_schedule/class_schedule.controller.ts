@@ -20,16 +20,16 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 export class ClassesScheduleController {
   constructor(private readonly classScheduleService: ClassScheduleService) {}
 
-  @Roles(Role.Coach, Role.Admin, Role.User)
-  @UseGuards(RolesGuard)
+  // @Roles(Role.Coach, Role.Admin, Role.User)
+  // @UseGuards(RolesGuard)
   @Get('history')
   @HttpCode(200)
   classes_user_history() {
     return this.classScheduleService.classes_history();
   }
 
-  @Roles(Role.Coach, Role.Admin)
-  @UseGuards(RolesGuard)
+  // @Roles(Role.Coach, Role.Admin)
+  // @UseGuards(RolesGuard)
   @Post('appointment')
   @HttpCode(201)
   class_appointment_reserve(
@@ -39,8 +39,8 @@ export class ClassesScheduleController {
     return this.classScheduleService.class_appointment(clase_app, id);
   }
 
-  @Roles(Role.Coach, Role.Admin)
-  @UseGuards(RolesGuard)
+  // @Roles(Role.Coach, Role.Admin)
+  // @UseGuards(RolesGuard)
   @Put('cancel')
   class_appointment_cancel(@Param('id_class', ParseUUIDPipe) id: string) {
     return this.classScheduleService.class_cancel(id);
