@@ -23,6 +23,6 @@ export class Class {
   @Column('boolean', { default: true, nullable: false })
   isActive: boolean;
 
-  @OneToMany(() => Class_schedule, (schedule) => schedule.class_id)
+  @OneToMany(() => Class_schedule, (schedule) => schedule.class)
   class_schedule: Class_schedule[];
 }
