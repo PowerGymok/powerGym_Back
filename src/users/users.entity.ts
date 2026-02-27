@@ -2,6 +2,8 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Role } from 'src/common/roles.enum';
 import { UserMembership } from '../user-membership/user-membership.entity';
 import { Transaction } from 'src/transactions/transactions.entity';
+import { Reservation } from 'src/reservation/reservation.entity';
+import { Class_schedule } from 'src/class_schedule/class_schedule.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -58,6 +60,11 @@ export class User {
   @OneToMany(() => Transaction, (transaction) => transaction.user)
   transactions: Transaction[];
 
+  @OneToMany(() => Reservation, (reservation) => reservation.users)
+  reservations: Reservation[];
+
+  @OneToMany(() => Class_schedule, (schedule) => schedule.coach)
+  classSchedules: Class_schedule[];
   // ─────────────────────────
   // GOOGLE LOGIN
   // ─────────────────────────
