@@ -16,6 +16,7 @@ import { UpdateClass } from './dtos/UpdateClass.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/common/roles.enum';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('clases')
 export class ClassController {
@@ -27,16 +28,16 @@ export class ClassController {
     return this.classService.get_classes();
   }
 
-  // @Roles(Role.Admin, Role.Coach)
-  // @UseGuards(RolesGuard)
+  @Roles(Role.Coach, Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post('crear')
   @HttpCode(201)
   create_new_class(@Body() clase: CreateClass) {
     return this.classService.create_new_class(clase);
   }
 
-  // @Roles(Role.Admin, Role.Coach)
-  // @UseGuards(RolesGuard)
+  @Roles(Role.Coach, Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Put(':id')
   update_a_class(
     @Param('id', ParseUUIDPipe) id: string,
@@ -45,9 +46,9 @@ export class ClassController {
     return this.classService.update_class(id, clase);
   }
 
-  // @Roles(Role.Admin, Role.Coach)
-  // @UseGuards(RolesGuard)
-  @Patch(':id/delete')
+  @Roles(Role.Coach, Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Patch('delete/:id')
   delete_a_class(@Param('id', ParseUUIDPipe) id: string) {
     return this.classService.delete_class(id);
   }
