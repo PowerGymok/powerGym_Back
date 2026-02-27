@@ -12,8 +12,8 @@ export class ClassRepository {
     private readonly classRepository: Repository<Class>,
   ) {}
 
-  find_class_by_id(id: string) {
-    return this.classRepository.findOne({
+  async find_class_by_id(id: string) {
+    const find_class = await this.classRepository.findOne({
       where: { id },
       relations: ['class_schedule'],
       select: {
@@ -25,6 +25,12 @@ export class ClassRepository {
         class_schedule: true,
       },
     });
+
+    if (!find_class) {
+      throw new NotFoundException(`La clase ${id} no fue encontrada`);
+    }
+
+    return find_class;
   }
 
   get_classes() {

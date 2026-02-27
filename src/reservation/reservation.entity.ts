@@ -21,6 +21,7 @@ export class Reservation {
   @Column({
     type: 'enum',
     enum: ['Confirmed', 'Cancelled'],
+    default: 'Confirmed', // dad
   })
   status: string;
 
