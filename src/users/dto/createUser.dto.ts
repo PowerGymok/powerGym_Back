@@ -50,7 +50,7 @@ export class CreateUserDto {
     { message: 'El teléfono debe ser un número' },
   )
   @IsNotEmpty({ message: 'El número de teléfono no puede estar vacío' })
-  phone: number;
+  phone: string;
 
   @IsString({ message: 'La dirección debe ser una cadena de texto' })
   @IsNotEmpty({ message: 'La dirección no puede estar vacía' })

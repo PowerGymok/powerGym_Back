@@ -24,8 +24,8 @@ export class User {
   // CAMPOS PERFIL (nullable porque google no los trae)
   // ─────────────────────────
 
-  @Column({ type: 'bigint', nullable: true })
-  phone: number | null;
+  @Column({ type: 'varchar', nullable: true })
+  phone: string | null;
 
   @Column({ type: 'text', nullable: true })
   address: string | null;
