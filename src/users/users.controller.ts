@@ -72,7 +72,7 @@ export class UsersController {
     @Req() req: AuthenticatedRequest,
     @Body() dto: CompleteProfileDto,
   ) {
-    const userId = req.user.sub;
+    const userId = req.user.id;
     return this.usersService.completeGoogleProfile(userId, dto);
   }
 }
