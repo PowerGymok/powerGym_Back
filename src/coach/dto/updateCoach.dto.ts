@@ -42,7 +42,7 @@ export class UpdateCoachDto {
     { allowInfinity: false, allowNaN: false },
     { message: 'El teléfono debe ser un número' },
   )
-  phone: number;
+  phone: string;
 
   @IsOptional()
   @IsNotEmpty({ message: 'La dirección no puede estar vacia' })
