@@ -178,15 +178,10 @@ export class ReservationRepository {
   }
 
   /*
-    // VALIDACION -- couch no se puede unir a una clase
+    // VALIDACION -- couch no se puede unir a una clase -- ERROR coach no aparece asignado a la reserva
     if (!find_user) {
       throw new NotFoundException('Usuario no encontrado');
     }
-
-
-    const new_user_assigned = await this.classScheduleRepository.save({
-      user  
-    });
 
     // VALIDACION: SOLO USER PUEDE AGENDARSE A CLASES, CON ADMIN PREGUNTAR A FRONT
 
