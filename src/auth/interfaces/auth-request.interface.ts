@@ -1,19 +1,10 @@
 import type { Request } from 'express';
+import type { User } from 'src/users/users.entity';
 
-// Para guards / middleware: puede venir sin user
 export interface AuthRequest extends Request {
-  user?: {
-    sub: string;
-    email?: string;
-    role?: string;
-  };
+  user?: User;
 }
 
-// Para endpoints con JwtAuthGuard: user SIEMPRE existe
 export interface AuthenticatedRequest extends Request {
-  user: {
-    sub: string;
-    email?: string;
-    role?: string;
-  };
+  user: User;
 }

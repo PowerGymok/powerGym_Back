@@ -5,21 +5,20 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { UsersService } from '../../users/users.service';
-import type { AuthRequest } from '../interfaces/auth-request.interface';
+import type { AuthenticatedRequest } from '../interfaces/auth-request.interface';
 
 @Injectable()
 export class ProfileCompleteGuard implements CanActivate {
   constructor(private readonly usersService: UsersService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const req = context.switchToHttp().getRequest<AuthRequest>();
+    const req = context.switchToHttp().getRequest<AuthenticatedRequest>();
 
-    const userId = req.user?.sub;
-    if (!userId) return true;
+    const userId = req.user.id;
 
     const url: string = req.originalUrl || req.url || '';
 
-    //  SIEMPRE permitidos aunque el perfil esté incompleto
+    // siempre permitidos aunque el perfil esté incompleto
     if (url.includes('/users/complete-profile')) return true;
     if (url.includes('/auth/me')) return true;
 
