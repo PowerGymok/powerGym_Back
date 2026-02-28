@@ -16,6 +16,21 @@ export class ClassScheduleRepository {
     private readonly usersRepository: Repository<User>,
   ) {}
 
+  async find_class_schedule_by_id(id: string) {
+    const class_schedule = await this.classScheduleRepository.findOne({
+      where: { id },
+      relations: ['class'],
+    });
+
+    if (!class_schedule)
+      throw new NotFoundException(
+        `No se encontró la clase agendada con id ${id}`,
+      );
+    console.log('Para ver si me devuelve lo que quiero', class_schedule);
+
+    return class_schedule;
+  }
+
   classes_history() {
     return this.classScheduleRepository.find({
       relations: ['class'],
@@ -126,5 +141,5 @@ export class ClassScheduleRepository {
     return coach;
   }
 
-  // Poner validaciones: si el horario de la duracion de la clase supera las 18 hs no se pude asignar cita, si la clase esta cancelada no se puede sacar una cita
+  // Poner validaciones: si la duracion de la clase supera las 18 hs no se pude asignar cita, si la clase no esta activa no se puede sacar una cita
 }
