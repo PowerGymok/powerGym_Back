@@ -77,15 +77,16 @@ export class ClassScheduleRepository {
     };
   }
 
-  time_valid(date_appt, time_appt) {
-    // const now = new Date();
-    const scheduleDate = new Date(date_appt);
-
-    // Normalizamos fechas (quitamos hora)
+  time_valid(date_appt: Date, time_appt: string) {
+    // Normalizamos a la fecha para comparar dias (quitamos hora)
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+
+    // date_appt ya es un objeto Date, pero por seguridad nos aseguramos
+    const scheduleDate = new Date(date_appt);
     scheduleDate.setHours(0, 0, 0, 0);
 
+    // Validamos la fecha futura
     if (scheduleDate <= today) {
       throw new BadRequestException(
         'La fecha debe ser posterior al día actual',
@@ -93,8 +94,18 @@ export class ClassScheduleRepository {
     }
 
     // Validacion de horario
-    const scheduleTime = new Date(time_appt);
-    const hour = scheduleTime.getHours();
+    const time_string = String(time_appt);
+
+    const hour_match = time_string.match(/^(\d{1,2})/);
+
+    if (!hour_match) {
+      throw new BadRequestException('Formato de hora inválido. Use HH:mm');
+    }
+
+    const hour = parseInt(hour_match[1], 10);
+
+    console.log(`Validando hora: Recibido="${time_appt}", Procesado=${hour}`);
+    // Si el string no tiene el formato correcto, hour sera NaN
 
     if (hour < 10 || hour >= 18) {
       throw new BadRequestException(
@@ -114,4 +125,6 @@ export class ClassScheduleRepository {
 
     return coach;
   }
+
+  // Poner validaciones: si el horario de la duracion de la clase supera las 18 hs no se pude asignar cita, si la clase esta cancelada no se puede sacar una cita
 }
