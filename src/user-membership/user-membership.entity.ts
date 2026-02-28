@@ -55,21 +55,25 @@ export class UserMembership {
 
   // ManyToOne = muchas suscripciones → un usuario
   // El @JoinColumn crea la columna FK "userId" en la tabla user_memberships
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  @ManyToOne(() => User, (user: User) => user.memberships, { nullable: false })
+  @ManyToOne(() => User, (user) => user.memberships, { nullable: false })
   @JoinColumn({ name: 'userId' })
   user: User;
 
   // ManyToOne = muchas suscripciones → un tipo de membresía
-  @ManyToOne(
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    () => Membership,
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
-    (membership: Membership) => membership.userMemberships,
-    {
-      nullable: false,
-    },
-  )
+  @ManyToOne(() => Membership, (membership) => membership.userMemberships, {
+    nullable: false,
+  })
   @JoinColumn({ name: 'membershipId' })
   membership: Membership;
+
+  // ── MÉTODOS HELPER ────────────────────────────────────────────────────────
+
+  // Verifica si esta membresía está activa Y no ha vencido
+  // Útil para validar antes de permitir acciones que requieren membresía
+  isActiveAndValid(): boolean {
+    const now = new Date();
+    return (
+      this.status === MembershipStatus.ACTIVE && new Date(this.endDate) > now
+    );
+  }
 }

@@ -5,7 +5,7 @@ import { PaymentsService } from './payments.service';
 import { PurchaseMembershipDto } from './dto/purchase-membership.dto';
 import { PurchaseTokensDto } from './dto/spend-tokens.dto';
 import { SpendTokensDto } from './dto/spend-tokens.dto';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RenewMembershipDto } from './dto/renew-membership.dto';
 
 @ApiTags('Payments')
 @common.Controller('payments')
@@ -15,7 +15,6 @@ export class PaymentsController {
   // POST /payments/membership — Inicia el pago de una membresía
   // Devuelve el clientSecret que el frontend usa con Stripe.js para cobrar la tarjeta
   @common.Post('membership')
-  @common.UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Iniciar pago de membresía con Stripe' })
   createMembershipPayment(@common.Body() dto: PurchaseMembershipDto) {
     return this.paymentsService.createMembershipPaymentIntent(
@@ -24,9 +23,20 @@ export class PaymentsController {
     );
   }
 
+  // POST /payments/membership/renew — Renovar una membresía existente
+  @common.Post('membership/renew')
+  @ApiOperation({
+    summary: 'Renovar membresía con Stripe (extiende o crea nueva)',
+  })
+  renewMembership(@common.Body() dto: RenewMembershipDto) {
+    return this.paymentsService.createMembershipRenewalIntent(
+      dto.userId,
+      dto.membershipId,
+    );
+  }
+
   // POST /payments/tokens — Inicia la compra de un paquete de tokens
   @common.Post('tokens')
-  @common.UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Iniciar compra de paquete de tokens con Stripe' })
   createTokenPurchase(@common.Body() dto: PurchaseTokensDto) {
     return this.paymentsService.createTokenPurchaseIntent(
@@ -38,7 +48,6 @@ export class PaymentsController {
   // POST /payments/tokens/spend — Gasta tokens internamente (sin Stripe)
   // Ejemplo: reservar una clase especial que cuesta 50 tokens
   @common.Post('tokens/spend')
-  @common.UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Gastar tokens en la app (reservas, etc.)' })
   spendTokens(@common.Body() dto: SpendTokensDto) {
     return this.paymentsService.spendTokens(
@@ -50,15 +59,21 @@ export class PaymentsController {
 
   // GET /payments/history/:userId — Historial de transacciones del usuario
   @common.Get('history/:userId')
-  @common.UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Ver historial de transacciones de un usuario' })
   getHistory(@common.Param('userId', common.ParseUUIDPipe) userId: string) {
     return this.paymentsService.getUserTransactions(userId);
   }
 
-  // POST /payments/webhook — Stripe llama aquí automáticamente cuando ocurre un pago
-  // IMPORTANTE: Esta ruta debe recibir el body como buffer RAW (sin parsear a JSON)
-  // Stripe necesita el payload original para verificar la firma de seguridad
+  // GET /payments/status/:userId — Estado de membresía y tokens
+  @common.Get('status/:userId')
+  @ApiOperation({
+    summary: 'Obtener estado de membresía activa y balance de tokens',
+  })
+  getMembershipStatus(
+    @common.Param('userId', common.ParseUUIDPipe) userId: string,
+  ) {
+    return this.paymentsService.getUserMembershipStatus(userId);
+  }
   @common.Post('webhook')
   @ApiOperation({ summary: 'Webhook de Stripe (no llamar manualmente)' })
   handleWebhook(
@@ -67,7 +82,7 @@ export class PaymentsController {
   ) {
     // req.rawBody es el buffer original antes de que NestJS lo parsee
     if (!req.rawBody) {
-      throw new Error('Raw body is missing');
+      throw new common.BadRequestException('Raw body is required for webhook');
     }
     return this.paymentsService.handleStripeWebhook(req.rawBody, signature);
   }
