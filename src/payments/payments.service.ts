@@ -325,7 +325,6 @@ export class PaymentsService {
     return { newBalance: user.tokenBalance - amount };
   }
 
-  // ─── HISTORIAL DE TRANSACCIONES ──────────────────────────────────────────
   async getUserTransactions(userId: string): Promise<Transaction[]> {
     return this.transactionRepository.find({
       where: { user: { id: userId } },
