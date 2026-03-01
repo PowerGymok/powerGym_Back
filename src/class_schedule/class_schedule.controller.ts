@@ -15,21 +15,22 @@ import { CreateClassSchedule } from './dtos/CreateClassSchedule.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/common/roles.enum';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('class_schedule')
 export class ClassesScheduleController {
   constructor(private readonly classScheduleService: ClassScheduleService) {}
 
-  // @Roles(Role.Coach, Role.Admin, Role.User)
-  // @UseGuards(RolesGuard)
+  @Roles(Role.User, Role.Coach, Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('history')
   @HttpCode(200)
   classes_user_history() {
     return this.classScheduleService.classes_history();
   }
 
-  // @Roles(Role.Coach, Role.Admin)
-  // @UseGuards(RolesGuard)
+  @Roles(Role.Coach, Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post('appointment')
   @HttpCode(201)
   class_appointment_reserve(
@@ -39,10 +40,10 @@ export class ClassesScheduleController {
     return this.classScheduleService.class_appointment(clase_app, id);
   }
 
-  // @Roles(Role.Coach, Role.Admin)
-  // @UseGuards(RolesGuard)
-  @Put('cancel')
-  class_appointment_cancel(@Param('id_class', ParseUUIDPipe) id: string) {
+  @Roles(Role.Coach, Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Put('cancel/:id')
+  class_appointment_cancel(@Param('id', ParseUUIDPipe) id: string) {
     return this.classScheduleService.class_cancel(id);
   }
 }

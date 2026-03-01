@@ -159,7 +159,7 @@ export class usersRepository {
     if (user.isProfileComplete)
       throw new BadRequestException('El perfil ya está completo');
 
-    user.phone = data.phone;
+    user.phone = data.phone?.toString();
     user.address = data.address;
     user.city = data.city;
     user.Birthdate = data.Birthdate;

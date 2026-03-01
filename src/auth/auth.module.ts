@@ -8,6 +8,7 @@ import { NotificationsModule } from 'src/notifications/notifications.module';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule } from '@nestjs/config';
 import { GoogleStrategy } from './strategies/google.strategy';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
@@ -22,12 +23,12 @@ import { GoogleStrategy } from './strategies/google.strategy';
 
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'dev_secret',
-      signOptions: { expiresIn: '1d' },
+      signOptions: { expiresIn: '20min' },
     }),
   ],
   controllers: [AuthController],
 
-  providers: [AuthService, GoogleStrategy],
+  providers: [AuthService, GoogleStrategy, JwtStrategy],
 
   exports: [JwtModule],
 })

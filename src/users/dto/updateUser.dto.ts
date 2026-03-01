@@ -1,6 +1,5 @@
 import {
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsString,
   Length,
@@ -38,11 +37,8 @@ export class UpdateUserDto {
 
   @IsOptional()
   @IsNotEmpty({ message: 'El número de teléfono no puede estar vacio' })
-  @IsNumber(
-    { allowInfinity: false, allowNaN: false },
-    { message: 'El teléfono debe ser un número' },
-  )
-  phone: number;
+  @IsString({ message: 'El teléfono debe contener mas de 3 caracteres' })
+  phone: string;
 
   @IsOptional()
   @IsNotEmpty({ message: 'La dirección no puede estar vacia' })

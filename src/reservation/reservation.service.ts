@@ -1,22 +1,26 @@
-/*
-// Buscamos el usuario
-    const find_user = await this.usersRepository.getUserById(user_id);
+import { Injectable } from '@nestjs/common';
+import { ReservationRepository } from './reservation.repository';
 
-    // VALIDACION -- couch no se puede unir a una clase
-    if (!find_user) {
-      throw new NotFoundException('Usuario no encontrado');
-    }
+@Injectable()
+export class ReservationService {
+  constructor(private readonly reservationRepository: ReservationRepository) {}
 
-    if (find_class.spaces_available <= 0) {
-      throw new BadRequestException('No hay cupos disponibles para la clase');
-    }
+  reserve_class(id_user: string, id_class_schedule: string) {
+    return this.reservationRepository.create_reserve(
+      id_user,
+      id_class_schedule,
+    );
+  }
 
-    // Restamos el espacio en la clase
-    find_class.spaces_available -= 1;
+  cancel_reserve_class(id: string) {
+    return this.reservationRepository.cancel_reserve(id);
+  }
 
-    const new_user_assigned = await this.classScheduleRepository.save({
-      user  
-    });
-*/
+  get_reservations() {
+    return this.reservationRepository.get_reserves();
+  }
 
-// VALIDACIONES SOLO USER PUEDE AGENDARSE A CLASES Y ADMIN PREGUNTAR A FRONT
+  get_reserves_by_id(id: string) {
+    return this.reservationRepository.get_by_id(id);
+  }
+}

@@ -60,6 +60,7 @@ export class UserMembership {
   user: User;
 
   // ManyToOne = muchas suscripciones → un tipo de membresía
+
   @ManyToOne(
     () => Membership,
     (membership: Membership) => membership.userMemberships,
@@ -69,4 +70,15 @@ export class UserMembership {
   )
   @JoinColumn({ name: 'membershipId' })
   membership: Membership;
+
+  // ── MÉTODOS HELPER ────────────────────────────────────────────────────────
+
+  // Verifica si esta membresía está activa Y no ha vencido
+  // Útil para validar antes de permitir acciones que requieren membresía
+  isActiveAndValid(): boolean {
+    const now = new Date();
+    return (
+      this.status === MembershipStatus.ACTIVE && new Date(this.endDate) > now
+    );
+  }
 }
