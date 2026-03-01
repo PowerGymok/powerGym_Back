@@ -55,16 +55,13 @@ export class UserMembership {
 
   // ManyToOne = muchas suscripciones → un usuario
   // El @JoinColumn crea la columna FK "userId" en la tabla user_memberships
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   @ManyToOne(() => User, (user: User) => user.memberships, { nullable: false })
   @JoinColumn({ name: 'userId' })
   user: User;
 
   // ManyToOne = muchas suscripciones → un tipo de membresía
   @ManyToOne(
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     () => Membership,
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
     (membership: Membership) => membership.userMemberships,
     {
       nullable: false,

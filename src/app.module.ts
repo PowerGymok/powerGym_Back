@@ -13,6 +13,8 @@ import { TokenPackageModule } from './token-package/token-package.module';
 import { PaymentsModule } from './payments/payments.module';
 import { ChatModule } from './chat/chat.module';
 import { ReservationModule } from './reservation/reservation.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { CronsModule } from './crons/crons.module';
 
 @Module({
   imports: [
@@ -49,6 +51,7 @@ import { ReservationModule } from './reservation/reservation.module';
     // - GOOGLE_CALLBACK_URL
     // Si el server no se reinició después de setear el .env,
     // puede quedar leyendo valores viejos/undefined.
+    ScheduleModule.forRoot(),
     ClassScheduleModule,
     ReservationModule,
     UsersModule,
@@ -59,6 +62,7 @@ import { ReservationModule } from './reservation/reservation.module';
     TokenPackageModule,
     PaymentsModule,
     ChatModule,
+    CronsModule,
   ],
 })
 export class AppModule {}
