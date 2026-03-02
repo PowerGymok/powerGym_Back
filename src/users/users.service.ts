@@ -65,4 +65,11 @@ export class UsersService {
   getUserEntityById(id: string) {
     return this.usersRepository.getUserEntityById(id);
   }
+
+  updateUserImage(
+    id: string,
+    data: { profileImg: string; cloudinaryId: string },
+  ) {
+    return this.usersRepository.updateUserImage(id, data);
+  }
 }
