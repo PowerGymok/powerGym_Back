@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsDate, IsNotEmpty, IsUUID } from 'class-validator';
+import { IsDate, IsNotEmpty, IsNumber, IsUUID } from 'class-validator';
 
 export class ResponseClassSchedule {
   @IsNotEmpty({ message: 'El id de la cita de una clase no puede estar vacío' })
@@ -16,17 +16,27 @@ export class ResponseClassSchedule {
   })
   time: string;
 
+  @IsNotEmpty({
+    message: 'Los tokens de la cita de la clase no puede estar vacíos',
+  })
+  @IsNumber()
+  token: number;
+
   @IsNotEmpty({ message: 'La clase citada tiene que estar activa o no' })
   isActive: boolean;
 
   @IsNotEmpty({
-    message: 'La clase citada tiene que mostrar cuantos token ocupa',
-  })
-  token: number;
-
-  @IsNotEmpty({
     message: 'La clase citada tiene que mostrar el id de la clase',
   })
-  @IsUUID()
-  class_id: string;
+  class: {
+    id: string;
+    name: string;
+  };
+
+  @IsNotEmpty()
+  coach: {
+    id: string;
+    name: string;
+    email: string;
+  };
 }

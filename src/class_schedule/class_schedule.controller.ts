@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { ClassScheduleService } from './class_schedule.service';
@@ -16,6 +17,7 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/common/roles.enum';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { JwtPayload } from 'src/auth/interfaces/jwt-payload.interface';
 
 @Controller('class_schedule')
 export class ClassesScheduleController {
@@ -36,13 +38,17 @@ export class ClassesScheduleController {
   class_appointment_reserve(
     @Body() clase_app: CreateClassSchedule,
     @Query('id_class', ParseUUIDPipe) id: string,
+    @Req() req: Request & { user: JwtPayload }, // Intersección de tipos
   ) {
-    return this.classScheduleService.class_appointment(clase_app, id);
+    const user = req.user; // Ahora 'user' es de tipo JwtPayload y tiene 'sub', 'email', 'role'
+
+    return this.classScheduleService.class_appointment(clase_app, id, user);
   }
 
   @Roles(Role.Coach, Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Put('cancel/:id')
+  @HttpCode(200)
   class_appointment_cancel(@Param('id', ParseUUIDPipe) id: string) {
     return this.classScheduleService.class_cancel(id);
   }
