@@ -55,14 +55,19 @@ export class UserMembership {
 
   // ManyToOne = muchas suscripciones → un usuario
   // El @JoinColumn crea la columna FK "userId" en la tabla user_memberships
-  @ManyToOne(() => User, (user) => user.memberships, { nullable: false })
+  @ManyToOne(() => User, (user: User) => user.memberships, { nullable: false })
   @JoinColumn({ name: 'userId' })
   user: User;
 
   // ManyToOne = muchas suscripciones → un tipo de membresía
-  @ManyToOne(() => Membership, (membership) => membership.userMemberships, {
-    nullable: false,
-  })
+
+  @ManyToOne(
+    () => Membership,
+    (membership: Membership) => membership.userMemberships,
+    {
+      nullable: false,
+    },
+  )
   @JoinColumn({ name: 'membershipId' })
   membership: Membership;
 

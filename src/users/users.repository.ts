@@ -27,10 +27,11 @@ export class usersRepository {
       skip: skip,
       take: limit,
       where: { role: Role.User },
+      relations: ['memberships'],
     });
 
     return allUsers.map(({ password, ...userNoPassword }) => userNoPassword);
-  } //Falta verificar si va a traer los usuarios activos o los activos e inactivos
+  }
 
   async getUserById(id: string) {
     const user = await this.usersRepository.findOne({
@@ -175,5 +176,15 @@ export class usersRepository {
     const user = await this.usersRepository.findOne({ where: { id } });
     if (!user) throw new NotFoundException('Usuario no encontrado');
     return user;
+  }
+
+  async updateUserImage(
+    id: string,
+    data: { profileImg: string; cloudinaryId: string },
+  ) {
+    const user = await this.getUserEntityById(id);
+    user.profileImg = data.profileImg;
+    user.cloudinaryId = data.cloudinaryId;
+    return this.usersRepository.save(user);
   }
 }
