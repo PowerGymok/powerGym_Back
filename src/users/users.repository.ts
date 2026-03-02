@@ -177,4 +177,14 @@ export class usersRepository {
     if (!user) throw new NotFoundException('Usuario no encontrado');
     return user;
   }
+
+  async updateUserImage(
+    id: string,
+    data: { profileImg: string; cloudinaryId: string },
+  ) {
+    const user = await this.getUserEntityById(id);
+    user.profileImg = data.profileImg;
+    user.cloudinaryId = data.cloudinaryId;
+    return this.usersRepository.save(user);
+  }
 }

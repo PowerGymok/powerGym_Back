@@ -15,6 +15,7 @@ import { ChatModule } from './chat/chat.module';
 import { ReservationModule } from './reservation/reservation.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CronsModule } from './crons/crons.module';
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { CronsModule } from './crons/crons.module';
     PaymentsModule,
     ChatModule,
     CronsModule,
+    FilesModule,
   ],
 })
 export class AppModule {}

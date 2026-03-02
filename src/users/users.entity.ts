@@ -80,6 +80,11 @@ export class User {
   googleId: string | null;
 
   // si es false → lo vamos a obligar a completar perfil
-  @Column({ type: 'boolean', default: true })
+  @Column({ type: 'boolean', default: false })
   isProfileComplete: boolean;
+
+  // cloudinary
+
+  @Column({ type: 'text', nullable: true })
+  cloudinaryId: string | null;
 }
