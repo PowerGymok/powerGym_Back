@@ -3,7 +3,6 @@ import {
   IsNotEmpty,
   IsString,
   MaxLength,
-  IsNumber,
   IsDateString,
   Length,
   Matches,
@@ -45,10 +44,7 @@ export class CreateUserDto {
   })
   confirmPassword: string;
 
-  @IsNumber(
-    { allowInfinity: false, allowNaN: false },
-    { message: 'El teléfono debe ser un número' },
-  )
+  @IsString({ message: 'El telefono debe tener más de 3 digitos' })
   @IsNotEmpty({ message: 'El número de teléfono no puede estar vacío' })
   phone: string;
 
