@@ -135,7 +135,7 @@ export class ClassScheduleRepository {
 
   async class_appmnt_cancel(id: string) {
     // Buscamos la clase agendada
-    await this.find_class_schedule_by_id(id); // Probar que funcione
+    await this.find_class_schedule_by_id(id);
 
     await this.classScheduleRepository.update({ id }, { isActive: false });
 
