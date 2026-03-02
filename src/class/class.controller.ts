@@ -30,7 +30,7 @@ export class ClassController {
 
   @Roles(Role.Coach, Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Post('crear')
+  @Post('create')
   @HttpCode(201)
   create_new_class(@Body() clase: CreateClass) {
     return this.classService.create_new_class(clase);
@@ -39,6 +39,7 @@ export class ClassController {
   @Roles(Role.Coach, Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Put(':id')
+  @HttpCode(200)
   update_a_class(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() clase: UpdateClass,
@@ -49,6 +50,7 @@ export class ClassController {
   @Roles(Role.Coach, Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch('delete/:id')
+  @HttpCode(200)
   delete_a_class(@Param('id', ParseUUIDPipe) id: string) {
     return this.classService.delete_class(id);
   }

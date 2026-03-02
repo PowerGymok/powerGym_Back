@@ -44,11 +44,6 @@ export class ReservationRepository {
     // Buscamos si el usuario existe y esta activo ESTO ULTIMO AL FINAL IMPLEMENTAR
     const find_user = await this.usersRepository.getUserById(id_user);
 
-    if (!find_user) {
-      // Ver si dejarlo ya que el metodo getUserById ya tiene validacion
-      throw new NotFoundException('El usuario no existe');
-    }
-
     // Buscamos si la cita de la clase existe
     const find_class_schedule =
       await this.classScheduleRepository.find_class_schedule_by_id(
@@ -106,9 +101,6 @@ export class ReservationRepository {
       message: 'Se realizó la reservación de la clase correctamente',
       reservation_id: new_reservation.id,
     };
-
-    // DROP TABLE reservation CASCADE; ejecutar esto en supabase para que se corrija lo de Status default
-    // O se puede hacer para no perder datos (pero no tengo nada) ALTER TABLE reservation ALTER COLUMN status SET DEFAULT 'Confirmed';
   }
 
   async cancel_reserve(id: string) {
@@ -135,7 +127,7 @@ export class ReservationRepository {
   async get_by_id(id: string) {
     const reservations = await this.reservationRepository.find({
       where: {
-        users: { id }, // user_id ¿?
+        users: { id },
       },
       relations: ['class_schedule'],
       select: {
@@ -176,19 +168,4 @@ export class ReservationRepository {
       },
     });
   }
-
-  /*
-    // VALIDACION -- couch no se puede unir a una clase
-    if (!find_user) {
-      throw new NotFoundException('Usuario no encontrado');
-    }
-
-
-    const new_user_assigned = await this.classScheduleRepository.save({
-      user  
-    });
-
-    // VALIDACION: SOLO USER PUEDE AGENDARSE A CLASES, CON ADMIN PREGUNTAR A FRONT
-
-  */
 }

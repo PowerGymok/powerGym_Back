@@ -22,12 +22,21 @@ export class ClassRepository {
         duration: true,
         description: true,
         capacity: true,
+        isActive: true,
         class_schedule: true,
       },
     });
 
     if (!find_class) {
-      throw new NotFoundException(`La clase ${id} no fue encontrada`);
+      throw new NotFoundException(
+        `La clase ${id} no fue encontrada o esta inactiva`,
+      );
+    }
+
+    if (find_class.isActive === false) {
+      throw new NotFoundException(
+        `La clase con id ${id} que intenta buscar esta inactiva`,
+      );
     }
 
     return find_class;
@@ -52,7 +61,6 @@ export class ClassRepository {
     // Guardamos la clase e igualamos el espacio de la clase con el espacio disponible
     await this.classRepository.save({
       ...clase,
-      spaces_available: clase.capacity,
     });
 
     return {
@@ -62,11 +70,8 @@ export class ClassRepository {
   }
 
   async update(id: string, clase: UpdateClass) {
+    // Buscamos la clase
     const find_clase = await this.find_class_by_id(id);
-
-    if (!find_clase) {
-      throw new NotFoundException('Clase no encontrada');
-    }
 
     // Mezclamos la informacion que tenemos del usuario no modificada con la que si esta modificada
     const update = this.classRepository.merge(find_clase, clase);
@@ -83,11 +88,7 @@ export class ClassRepository {
 
   async deleted_class(id: string) {
     // Buscamos la clase
-    const find_clase = await this.find_class_by_id(id);
-
-    if (!find_clase) {
-      throw new NotFoundException('Clase no encontrada');
-    }
+    await this.find_class_by_id(id);
 
     // No borramos la clase ya que preservamos informacion que puede ser valiosa en un futuro
     await this.classRepository.update({ id }, { isActive: false });
