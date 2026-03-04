@@ -8,24 +8,26 @@ import { ConfigService } from '@nestjs/config';
 // Básicamente: le enseña a Nest cómo hablar con Google OAuth.
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(private readonly configService: ConfigService) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     super({
       // clientID = "quién soy yo para Google"
-      // Google te me dio cuando creaste el OAuth Client
+      // Google te lo dio cuando creaste el OAuth Client
       clientID: configService.get<string>('GOOGLE_CLIENT_ID') as string,
 
       // clientSecret = contraseña privada entre nuestro backend y Google
-
       clientSecret: configService.get<string>('GOOGLE_CLIENT_SECRET') as string,
 
       // a dónde Google vuelve después del login
-
       callbackURL: configService.get<string>('GOOGLE_CALLBACK_URL') as string,
 
       // qué datos le pedimos a Google
       // profile = nombre + foto
       // email = mail del usuario
       scope: ['email', 'profile'],
-    });
+
+      //  fuerza a Google a mostrar siempre el selector de cuentas
+      prompt: 'select_account',
+    } as any);
   }
 
   // ESTA ES LA FUNCIÓN MÁS IMPORTANTE DE TODO GOOGLE LOGIN
