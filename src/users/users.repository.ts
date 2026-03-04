@@ -54,6 +54,14 @@ export class usersRepository {
     return savedUser;
   }
 
+  async promoteUserToAdmin(id: string) {
+    const user = await this.usersRepository.findOneBy({ id });
+    if (!user) throw new NotFoundException('El usuario no fue encontrado');
+    user.role = Role.Admin;
+    await this.usersRepository.save(user);
+    return 'El usuario ahora es un administrador';
+  }
+
   async inactiveUser(id: string) {
     // Hace falta hacer borrado logico
     const user = await this.usersRepository.findOneBy({ id });
