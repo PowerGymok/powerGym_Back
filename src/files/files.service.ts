@@ -19,7 +19,7 @@ export class FilesService {
           .upload_stream(
             { folder, resource_type: 'image' },
             (error, result) => {
-              // 🔴 Si falla
+              //  Si falla
               if (error || !result) {
                 console.log('CLOUDINARY ERROR =>', error);
                 console.log('CLOUDINARY RESULT =>', result);
@@ -45,8 +45,6 @@ export class FilesService {
   async deleteImage(publicId: string) {
     try {
       await cloudinary.uploader.destroy(publicId);
-    } catch {
-      // no rompemos el flujo si falla borrar la anterior
-    }
+    } catch {}
   }
 }
