@@ -58,6 +58,23 @@ export class coachRepository {
     return coach;
   }
 
+  async demoteCoach(id: string) {
+    const coach = await this.coachesRepository.findOneBy({ id });
+    if (!coach)
+      throw new NotFoundException('No se encontró el usuario solicitado');
+    coach.role = Role.User;
+    await this.coachesRepository.save(coach);
+    return coach;
+  }
+
+  async getNameAndImg() {
+    const AllCoaches = await this.coachesRepository.find({
+      where: { role: Role.Coach, isActive: true },
+      select: { name: true, profileImg: true },
+    });
+    return AllCoaches;
+  }
+
   async inactiveCoach(id: string) {
     //Hace falta hacer borrado logico
     const coach = await this.coachesRepository.findOneBy({ id });

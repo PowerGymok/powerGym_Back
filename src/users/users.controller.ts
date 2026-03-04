@@ -60,6 +60,13 @@ export class UsersController {
     return this.usersService.updateUser(id, newUserData);
   }
 
+  @Put('promote/:id')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  promoteUserToAdmin(@Param('id', ParseUUIDPipe) id: string) {
+    return this.usersService.promoteUserToAdmin(id);
+  }
+
   @Put('inactive/:id')
   @UseGuards(JwtAuthGuard, OwnerOrAdminGuard)
   inactiveUser(@Param('id', ParseUUIDPipe) id: string) {
