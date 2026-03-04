@@ -35,7 +35,17 @@ export class CoachService {
 
   async promoteCoach(id: string) {
     const coach = await this.coachRepository.promoteCoach(id);
-    await this.notificationsService.promoteCoachEmail(coach.name, coach.email);
+    try {
+      await this.notificationsService.promoteCoachEmail(
+        coach.name,
+        coach.email,
+      );
+    } catch (error) {
+      console.error(
+        'Error enviando email de promoción:',
+        error instanceof Error ? error.message : error,
+      );
+    }
     return 'El usuario ahora hace parte de los entrenadores del gimnasio';
   }
 

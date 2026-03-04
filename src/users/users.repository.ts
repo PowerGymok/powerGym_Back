@@ -98,6 +98,7 @@ export class usersRepository {
     const user = this.usersRepository.create({
       ...dto,
       email,
+      isProfileComplete: true,
     });
 
     return this.usersRepository.save(user);
