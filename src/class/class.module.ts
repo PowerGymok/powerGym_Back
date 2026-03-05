@@ -8,6 +8,7 @@ import { Class_schedule } from 'src/class_schedule/class_schedule.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { UsersModule } from 'src/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
+import { FilesModule } from 'src/files/files.module'; // ✅
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { JwtModule } from '@nestjs/jwt';
     forwardRef(() => AuthModule),
     forwardRef(() => UsersModule),
     forwardRef(() => JwtModule),
+    FilesModule,
   ],
   controllers: [ClassController],
   providers: [ClassService, ClassRepository],

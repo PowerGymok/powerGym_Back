@@ -25,4 +25,10 @@ export class Class {
 
   @OneToMany(() => Class_schedule, (schedule) => schedule.class)
   class_schedule: Class_schedule[];
+
+  @Column('varchar', { nullable: true })
+  imgUrl?: string;
+
+  @Column('varchar', { nullable: true })
+  cloudinaryId?: string;
 }
