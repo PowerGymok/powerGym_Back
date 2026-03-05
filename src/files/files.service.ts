@@ -30,7 +30,7 @@ export class FilesService {
                 );
               }
 
-              // 🟢 Si sale bien
+              //  Si sale bien
               return resolve({
                 secure_url: result.secure_url,
                 public_id: result.public_id,
@@ -45,6 +45,8 @@ export class FilesService {
   async deleteImage(publicId: string) {
     try {
       await cloudinary.uploader.destroy(publicId);
-    } catch {}
+    } catch {
+      /* empty */
+    }
   }
 }
