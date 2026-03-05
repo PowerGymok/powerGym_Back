@@ -54,7 +54,7 @@ export class AuthController {
   ) {
     const result = await this.authService.googleLogin(req.user);
 
-    const FRONT_URL = 'http://localhost:3001/auth/callback';
+    const FRONT_URL = 'http://localhost:3000/auth/callback';
 
     const redirectUrl = `${FRONT_URL}?token=${encodeURIComponent(result.accessToken)}&isProfileComplete=${result.user.isProfileComplete}`;
 

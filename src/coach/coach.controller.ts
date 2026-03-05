@@ -34,6 +34,11 @@ export class CoachController {
     return this.coachService.getAllCoaches(validPage, validLimit);
   }
 
+  @Get('nameAndImg')
+  getNameAndImg() {
+    return this.coachService.getNameAndImg();
+  }
+
   @Get('email')
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -61,6 +66,13 @@ export class CoachController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   promoteCoach(@Param('id', ParseUUIDPipe) id: string) {
     return this.coachService.promoteCoach(id);
+  }
+
+  @Put('demote/:id')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  demoteCoach(@Param('id', ParseUUIDPipe) id: string) {
+    return this.coachService.demoteCoach(id);
   }
 
   @Put('inactive/:id')

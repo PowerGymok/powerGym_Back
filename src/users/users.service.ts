@@ -51,6 +51,10 @@ export class UsersService {
     return this.usersRepository.createUser(dto);
   }
 
+  promoteUserToAdmin(id: string) {
+    return this.usersRepository.promoteUserToAdmin(id);
+  }
+
   findIsActiveById(id: string): Promise<boolean> {
     return this.usersRepository.findIsActiveById(id);
   }

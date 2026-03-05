@@ -35,14 +35,32 @@ export class CoachService {
 
   async promoteCoach(id: string) {
     const coach = await this.coachRepository.promoteCoach(id);
-    await this.notificationsService.promoteCoachEmail(coach.name, coach.email);
+    try {
+      await this.notificationsService.promoteCoachEmail(
+        coach.name,
+        coach.email,
+      );
+    } catch (error) {
+      console.error(
+        'Error enviando email de promoción:',
+        error instanceof Error ? error.message : error,
+      );
+    }
     return 'El usuario ahora hace parte de los entrenadores del gimnasio';
+  }
+
+  async demoteCoach(id: string) {
+    return this.coachRepository.demoteCoach(id);
   }
 
   async inactiveCoach(id: string) {
     const coach = await this.coachRepository.inactiveCoach(id);
     await this.notificationsService.inactiveUserEmail(coach.name, coach.email);
     return 'Su cuenta ha sido desactivada exitosamente';
+  }
+
+  getNameAndImg() {
+    return this.coachRepository.getNameAndImg();
   }
 
   getByEmail(email: GetByEmailDto) {

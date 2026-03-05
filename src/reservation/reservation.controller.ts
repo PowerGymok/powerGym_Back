@@ -22,10 +22,10 @@ export class ReservationController {
   @Roles(Role.User, Role.Coach, Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Post('reserve')
-  @HttpCode(201) // fijarme si esta bien el codigo
+  @HttpCode(201)
   reserve_a_class(
     @Query('id_user', ParseUUIDPipe) id_user: string,
-    @Query('id_class_schedule', ParseUUIDPipe) id_class_schedule: string, // se puede hacer otro metodo con req: any
+    @Query('id_class_schedule', ParseUUIDPipe) id_class_schedule: string,
   ) {
     return this.reservationService.reserve_class(id_user, id_class_schedule);
   }
@@ -33,6 +33,7 @@ export class ReservationController {
   @Roles(Role.User, Role.Coach, Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Put('cancel/:id')
+  @HttpCode(200)
   cancel_a_reserve_class(@Param('id', ParseUUIDPipe) id: string) {
     return this.reservationService.cancel_reserve_class(id);
   }
@@ -40,6 +41,7 @@ export class ReservationController {
   @Roles(Role.User, Role.Coach, Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get(':id')
+  @HttpCode(200)
   get_history_reserves_by_id(@Param('id', ParseUUIDPipe) id: string) {
     return this.reservationService.get_reserves_by_id(id);
   }
