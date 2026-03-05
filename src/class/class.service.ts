@@ -1,11 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ClassRepository } from './class.repository';
 import { CreateClass } from './dtos/CreateClass.dto';
 import { UpdateClass } from './dtos/UpdateClass.dto';
+import { FilesService } from 'src/files/files.service';
 
 @Injectable({})
 export class ClassService {
-  constructor(private readonly classRepository: ClassRepository) {}
+  constructor(
+    private readonly classRepository: ClassRepository,
+    private readonly filesService: FilesService,
+  ) {}
+
   get_classes() {
     return this.classRepository.get_classes();
   }
@@ -19,7 +24,27 @@ export class ClassService {
   }
 
   delete_class(id: string) {
-    console.log(this.classRepository.deleted_class(id));
     return this.classRepository.deleted_class(id);
+  }
+
+  //  SUBIR IMAGEN
+  async uploadClassImage(id: string, file: Express.Multer.File) {
+    const classEntity = await this.classRepository.getById(id);
+    if (!classEntity) throw new NotFoundException('Clase no encontrada');
+
+    const uploaded = await this.filesService.uploadImage(
+      file,
+      'powergym/classes',
+    );
+
+    if (classEntity.cloudinaryId) {
+      await this.filesService.deleteImage(classEntity.cloudinaryId);
+    }
+
+    return this.classRepository.updateImage(
+      id,
+      uploaded.secure_url,
+      uploaded.public_id,
+    );
   }
 }
