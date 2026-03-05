@@ -24,7 +24,7 @@ export class FilesController {
   @Post('avatar')
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: memoryStorage(), // ✅ para que exista file.buffer
+      storage: memoryStorage(), //  para que exista file.buffer
       limits: { fileSize: 1024 * 1024 }, // 1MB
       fileFilter: (req, file, cb) => {
         const ok = /image\/(jpeg|jpg|png|webp)/.test(file.mimetype);
@@ -44,16 +44,16 @@ export class FilesController {
     if (!userId)
       throw new BadRequestException('No se pudo leer user del token');
 
-    // 1) Traigo user desde DB (para tener cloudinaryId actual)
+    //  Traigo user desde DB (para tener cloudinaryId actual)
     const userEntity = await this.usersService.getUserEntityById(userId);
 
-    // 2) Subo imagen nueva
+    //  Subo imagen nueva
     const uploaded = await this.filesService.uploadImage(
       file,
       'powergym/users',
     );
 
-    // 3) Borro anterior si existía
+    //  Borro anterior si existía
     if (userEntity.cloudinaryId) {
       await this.filesService.deleteImage(userEntity.cloudinaryId);
     }
