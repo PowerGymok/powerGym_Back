@@ -6,6 +6,7 @@ import {
   IsString,
   Length,
 } from 'class-validator';
+import { Intensity } from '../class.entity';
 
 export class CreateClass {
   @IsNotEmpty({ message: 'El nombre de la clase no puede estar vacío' })
@@ -37,4 +38,9 @@ export class CreateClass {
     message: 'La capacidad de la clase debe ser un número positivo',
   })
   capacity: number;
+
+  @IsNotEmpty({
+    message: 'La intensidad no puede estar vacía. Debe ser alta, media o baja',
+  })
+  intensity: Intensity;
 }

@@ -6,6 +6,7 @@ import {
   IsString,
   Length,
 } from 'class-validator';
+import { Intensity } from '../class.entity';
 
 export class UpdateClass {
   @IsOptional({ message: 'El nombre de la clase es opcional' })
@@ -41,4 +42,9 @@ export class UpdateClass {
   @IsOptional({ message: 'La clase tiene que estar activa o no' })
   @IsBoolean({ message: 'La clase esta activa o no debe ser un booleano' })
   isActive?: boolean;
+
+  @IsOptional({
+    message: 'La intensidad no puede estar vacía. Debe ser alta, media o baja',
+  })
+  intensity?: Intensity;
 }
