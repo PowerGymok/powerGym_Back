@@ -29,7 +29,7 @@ export class Class {
   @Column('boolean', { default: true, nullable: false })
   isActive: boolean;
 
-  @Column('varchar', { length: 10, nullable: false })
+  @Column('varchar', { length: 10, nullable: false, default: Intensity.Media })
   intensity: Intensity;
 
   @Column('text', { array: true, nullable: true })
