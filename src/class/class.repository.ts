@@ -24,6 +24,7 @@ export class ClassRepository {
         capacity: true,
         isActive: true,
         class_schedule: true,
+        intensity: true,
       },
     });
 
@@ -53,6 +54,7 @@ export class ClassRepository {
         capacity: true,
         isActive: true,
         class_schedule: true,
+        intensity: true,
       },
     });
   }
