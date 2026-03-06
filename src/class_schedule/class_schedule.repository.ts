@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { InjectRepository } from '@nestjs/typeorm';
 import { Class_schedule } from './class_schedule.entity';
 import { Repository } from 'typeorm';
@@ -29,9 +30,9 @@ export class ClassScheduleRepository {
     return class_schedule;
   }
 
-  classes_history() {
-    return this.classScheduleRepository.find({
-      relations: ['class'],
+  async classes_history() {
+    const schedules = await this.classScheduleRepository.find({
+      relations: ['class', 'reservations', 'coach'],
       select: {
         id: true,
         date: true,
@@ -44,8 +45,27 @@ export class ClassScheduleRepository {
           duration: true,
           capacity: true,
         },
+        coach: {
+          id: true,
+          name: true,
+          email: true,
+        },
       },
     });
+
+    const result: any[] = [];
+
+    for (const schedule of schedules) {
+      const activeReservations = schedule.reservations.filter(
+        (r) => r.status === 'Confirmed',
+      ).length;
+
+      result.push({
+        ...schedule,
+        spaces_available: schedule.class.capacity - activeReservations,
+      });
+    }
+    return result;
   }
 
   /*

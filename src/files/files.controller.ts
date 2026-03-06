@@ -24,7 +24,7 @@ export class FilesController {
   @Post('avatar')
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: memoryStorage(), // ✅ para que exista file.buffer
+      storage: memoryStorage(), // para que exista file.buffer
       limits: { fileSize: 1024 * 1024 }, // 1MB
       fileFilter: (req, file, cb) => {
         const ok = /image\/(jpeg|jpg|png|webp)/.test(file.mimetype);
@@ -37,33 +37,38 @@ export class FilesController {
     @UploadedFile() file: Express.Multer.File,
     @Req() req: any,
   ) {
-    if (!file) throw new BadRequestException('Falta archivo (field "file")');
+    // Paso 5 (extra): valido que exista y que tenga buffer (por si mandan mal el form-data)
+    if (!file || !file.buffer) {
+      throw new BadRequestException('Archivo inválido (field "file")');
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     const userId: string | undefined = req.user?.id;
-    if (!userId)
+    if (!userId) {
       throw new BadRequestException('No se pudo leer user del token');
+    }
 
-    // 1) Traigo user desde DB (para tener cloudinaryId actual)
+    // Traigo user desde DB (para tener cloudinaryId actual)
     const userEntity = await this.usersService.getUserEntityById(userId);
 
-    // 2) Subo imagen nueva
+    // Subo imagen nueva
     const uploaded = await this.filesService.uploadImage(
       file,
       'powergym/users',
     );
 
-    // 3) Borro anterior si existía
+    // Borro anterior si existía
     if (userEntity.cloudinaryId) {
       await this.filesService.deleteImage(userEntity.cloudinaryId);
     }
 
-    // 4) Guardo nueva en DB
+    // Guardo nueva en DB
     await this.usersService.updateUserImage(userId, {
       profileImg: uploaded.secure_url,
       cloudinaryId: uploaded.public_id,
     });
 
-    return { profileImg: uploaded.secure_url, imgUrl: uploaded.secure_url };
+    // Respuesta simple para front
+    return { profileImg: uploaded.secure_url };
   }
 }

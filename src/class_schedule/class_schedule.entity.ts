@@ -29,6 +29,9 @@ export class Class_schedule {
   @Column('boolean', { default: true, nullable: false })
   isActive: boolean;
 
+  @Column('int', { default: 0, nullable: false })
+  spaces_available: number;
+
   @ManyToOne(() => Class, (assign) => assign.class_schedule)
   @JoinColumn({ name: 'class_id' })
   class: Class;

@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-base-to-string */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../users/users.entity';
 import { Repository } from 'typeorm';
@@ -51,11 +55,38 @@ export class coachRepository {
 
   async promoteCoach(id: string) {
     const coach = await this.coachesRepository.findOneBy({ id });
+
+    if (!coach) {
+      throw new NotFoundException('No se encontró el usuario solicitado');
+    }
+
+    //  Validación nueva
+    if (coach.role === Role.Coach) {
+      throw new BadRequestException('El usuario ya es coach');
+    }
+
+    coach.role = Role.Coach;
+
+    await this.coachesRepository.save(coach);
+
+    return coach;
+  }
+
+  async demoteCoach(id: string) {
+    const coach = await this.coachesRepository.findOneBy({ id });
     if (!coach)
       throw new NotFoundException('No se encontró el usuario solicitado');
-    coach.role = Role.Coach;
+    coach.role = Role.User;
     await this.coachesRepository.save(coach);
     return coach;
+  }
+
+  async getNameAndImg() {
+    const AllCoaches = await this.coachesRepository.find({
+      where: { role: Role.Coach, isActive: true },
+      select: { name: true, profileImg: true },
+    });
+    return AllCoaches;
   }
 
   async inactiveCoach(id: string) {

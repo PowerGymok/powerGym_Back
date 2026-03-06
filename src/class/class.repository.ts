@@ -23,7 +23,9 @@ export class ClassRepository {
         description: true,
         capacity: true,
         isActive: true,
+        imgUrl: true, // 👈 agregado para que el front vea la imagen
         class_schedule: true,
+        intensity: true,
       },
     });
 
@@ -52,7 +54,9 @@ export class ClassRepository {
         description: true,
         capacity: true,
         isActive: true,
+        imgUrl: true, // 👈 agregado para que el front vea la imagen
         class_schedule: true,
+        intensity: true,
       },
     });
   }
@@ -96,6 +100,38 @@ export class ClassRepository {
     return {
       success: true,
       message: 'Clase borrada correctamente',
+    };
+  }
+
+  // =========================
+  // METODOS PARA IMAGEN DE CLASE
+  // =========================
+
+  async getById(id: string) {
+    const clase = await this.classRepository.findOneBy({ id });
+
+    if (!clase) {
+      throw new NotFoundException(`La clase ${id} no fue encontrada`);
+    }
+
+    return clase;
+  }
+
+  async updateImage(id: string, imgUrl: string, cloudinaryId: string) {
+    // Buscamos la clase
+    const clase = await this.getById(id);
+
+    // Actualizamos los datos de la imagen
+    clase.imgUrl = imgUrl;
+    clase.cloudinaryId = cloudinaryId;
+
+    // Guardamos la clase modificada
+    await this.classRepository.save(clase);
+
+    return {
+      success: true,
+      message: 'Imagen de la clase actualizada correctamente',
+      imgUrl: clase.imgUrl,
     };
   }
 }

@@ -10,7 +10,7 @@ import { User } from '../users/users.entity';
 import { CreateUserDto } from '../users/dto/createUser.dto';
 import * as bcrypt from 'bcrypt';
 import { NotificationsService } from 'src/notifications/notifications.service';
-import { CreateUserGoogleDto } from '../users/dto/createUser-google.dto'; // ajustá el path si tu carpeta dto es otra
+import { CreateUserGoogleDto } from '../users/dto/createUser-google.dto';
 
 @Injectable()
 export class AuthService {
@@ -41,14 +41,12 @@ export class AuthService {
       throw new UnauthorizedException('Usuario dado de baja');
     }
 
-    // Si no tiene password, es cuenta Google (no puede loguear por password)
     if (!user.password) {
       throw new UnauthorizedException(
         'Esta cuenta fue creada con Google, inicia sesión con Google',
       );
     }
 
-    // comparo contraseña con bcrypt
     const passwordValida = await bcrypt.compare(password, user.password);
 
     if (!passwordValida) {
@@ -58,12 +56,26 @@ export class AuthService {
     return { id: user.id, email: user.email, role: user.role };
   }
 
-  login(user: { id: string; email: string; role: Role }) {
+  async login(user: { id: string; email: string; role: Role }) {
     const payload = { sub: user.id, email: user.email, role: user.role };
-    return { accessToken: this.jwtService.sign(payload) };
+    const accessToken = this.jwtService.sign(payload);
+
+    const fullUser = await this.usersService.getUserEntityById(user.id);
+
+    return {
+      accessToken,
+      user: {
+        id: fullUser.id,
+        email: fullUser.email,
+        name: fullUser.name,
+        role: fullUser.role,
+        isProfileComplete: fullUser.isProfileComplete,
+        profileImg: fullUser.profileImg,
+        cloudinaryId: fullUser.cloudinaryId ?? null,
+      },
+    };
   }
 
-  // SIGNUP + bcrypt hash
   async signup(dto: CreateUserDto) {
     if (dto.password !== dto.confirmPassword) {
       throw new BadRequestException('Las contraseñas no coinciden');
@@ -81,14 +93,13 @@ export class AuthService {
       created.email,
     );
 
-    return this.login({
+    return await this.login({
       id: created.id,
       email: created.email,
       role: created.role,
     });
   }
 
-  // GOOGLE LOGIN COMPLETO (DB + JWT)
   async googleLogin(googleUser: {
     email: string;
     googleId: string;
@@ -101,8 +112,9 @@ export class AuthService {
     if (!email) {
       throw new UnauthorizedException('Google no devolvió email');
     }
-    if (!googleId)
+    if (!googleId) {
       throw new UnauthorizedException('Google no devolvió googleId');
+    }
 
     const dto: CreateUserGoogleDto = {
       email,
@@ -111,10 +123,8 @@ export class AuthService {
       profileImg: googleUser.picture,
     };
 
-    // 1 creo o linkeo usuario en DB
     const { user, isNew } = await this.usersService.findOrCreateByGoogle(dto);
 
-    // 2 si está inactivo, no lo dejo loguearse
     if (!user.isActive) {
       throw new UnauthorizedException('Usuario dado de baja');
     }
@@ -123,7 +133,6 @@ export class AuthService {
       await this.notificationsService.sendWelcomeEmail(user.name, user.email);
     }
 
-    // 3 firmo token real (sub = user.id)
     const payload = {
       sub: user.id,
       email: user.email,
@@ -133,7 +142,6 @@ export class AuthService {
 
     const accessToken = await this.jwtService.signAsync(payload);
 
-    // 4 devuelvo token + data útil
     return {
       accessToken,
       user: {
@@ -142,6 +150,8 @@ export class AuthService {
         name: user.name,
         role: user.role,
         isProfileComplete: user.isProfileComplete,
+        profileImg: user.profileImg,
+        cloudinaryId: user.cloudinaryId ?? null,
       },
     };
   }
