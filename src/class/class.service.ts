@@ -4,7 +4,7 @@ import { CreateClass } from './dtos/CreateClass.dto';
 import { UpdateClass } from './dtos/UpdateClass.dto';
 import { FilesService } from 'src/files/files.service';
 
-@Injectable({})
+@Injectable()
 export class ClassService {
   constructor(
     private readonly classRepository: ClassRepository,
@@ -27,20 +27,25 @@ export class ClassService {
     return this.classRepository.deleted_class(id);
   }
 
-  //  SUBIR IMAGEN
+  // SUBIR IMAGEN DE CLASE (Cloudinary)
+  // Flujo: traer clase -> subir nueva -> borrar anterior -> guardar url + publicId
   async uploadClassImage(id: string, file: Express.Multer.File) {
+    // 1) Traigo la clase desde DB para tener cloudinaryId actual
     const classEntity = await this.classRepository.getById(id);
     if (!classEntity) throw new NotFoundException('Clase no encontrada');
 
+    // 2) Subo imagen nueva a Cloudinary (carpeta de clases)
     const uploaded = await this.filesService.uploadImage(
       file,
       'powergym/classes',
     );
 
+    // 3) Borro la anterior si existía
     if (classEntity.cloudinaryId) {
       await this.filesService.deleteImage(classEntity.cloudinaryId);
     }
 
+    // 4) Guardo nueva url + public_id en DB
     return this.classRepository.updateImage(
       id,
       uploaded.secure_url,
