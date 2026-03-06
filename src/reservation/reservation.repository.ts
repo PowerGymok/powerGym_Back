@@ -60,14 +60,8 @@ export class ReservationRepository {
         id_class_schedule,
       );
 
-    if (!find_class_schedule) {
-      // Ver si dejarlo ya que el metodo find_class_schedule_by_id ya tiene validacion
-      throw new NotFoundException('La clase agendada no existe');
-    }
-
     // Extraemos la capacidad de la clase con class_schedule
-    let find_class_by_schedule = find_class_schedule.class.capacity; // Ver si poner let es correcto
-    console.log('Para ver que me devuelve', find_class_by_schedule);
+    let find_class_by_schedule = find_class_schedule.class.capacity;
 
     if (find_class_by_schedule <= 0) {
       throw new UnauthorizedException(
@@ -76,9 +70,9 @@ export class ReservationRepository {
     }
 
     // Extraemos el dato de el costo de tokens de la clase
-    const class_cost_tokens = find_class_schedule.token; // Ver si poner let es correcto
+    const class_cost_tokens = find_class_schedule.token;
     let user_tokens = find_user.tokenBalance;
-    console.log(user_tokens);
+
     // Chequeamos que el usuario tengo la cantidad de tokens suficientes para gastar en la clase
     if (user_tokens < class_cost_tokens) {
       throw new UnauthorizedException(

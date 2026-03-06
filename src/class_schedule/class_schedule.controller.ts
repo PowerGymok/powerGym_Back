@@ -37,12 +37,16 @@ export class ClassesScheduleController {
   @HttpCode(201)
   class_appointment_reserve(
     @Body() clase_app: CreateClassSchedule,
-    @Query('id_class', ParseUUIDPipe) id: string,
+    @Query('id_class', ParseUUIDPipe) id_class: string,
     @Req() req: Request & { user: JwtPayload }, // Intersección de tipos
   ) {
     const user = req.user; // Ahora 'user' es de tipo JwtPayload y tiene 'sub', 'email', 'role'
 
-    return this.classScheduleService.class_appointment(clase_app, id, user);
+    return this.classScheduleService.class_appointment(
+      clase_app,
+      id_class,
+      user,
+    );
   }
 
   @Roles(Role.Coach, Role.Admin)

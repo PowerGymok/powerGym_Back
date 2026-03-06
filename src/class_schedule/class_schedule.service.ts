@@ -26,34 +26,17 @@ export class ClassScheduleService {
 
   async class_appointment(
     clase_app: CreateClassSchedule,
-    id: string,
+    id_class: string,
     user: JwtPayload,
   ) {
-    // Buscamos la clase base
-    const find_class = await this.classRepository.find_class_by_id(id);
+    // Buscamos la clase a la cual queremos hacerle una cita
+    const find_class = await this.classRepository.find_class_by_id(id_class);
 
-    // Validamos que la fecha y la hora de clase que se va a agendar sea valida
-    this.time_valid(clase_app.date, clase_app.time);
+    // Convertimos la duración a número (por si viene como string "60")
+    const duration = parseInt(find_class.duration, 10);
 
-    const [hours, minutes] = clase_app.time.split(':').map(Number);
-    const start_total_minutes = hours * 60 + (minutes || 0);
-
-    // Convertimos la duración de la clase a minutos -- LOS CHICOS CAMBIARON LA DURACION DE LA CLASE YA A MINUTOS
-    const duration_in_minutes = parseFloat(find_class.duration) * 60;
-    console.log('Duracion de la clase en minutos', duration_in_minutes);
-
-    // Calculamos el final de la clase
-    const end_total_minutes = start_total_minutes + duration_in_minutes;
-
-    // Límite de las 18:00 (1080 minutos)
-    const limit_minutes = 18 * 60;
-
-    if (end_total_minutes > limit_minutes) {
-      const extraMinutes = end_total_minutes - limit_minutes;
-      throw new BadRequestException(
-        `La clase excede el horario de cierre por ${extraMinutes} minuto(s). Debe terminar máximo a las 18:00.`,
-      );
-    }
+    // Validamos que la fecha y la hora de clase que se va a agendar sea válida
+    this.time_valid(clase_app.date, clase_app.time, duration);
 
     // Asignamos coach (llamada local)
     const coach_id = user.role === Role.Coach ? user.sub : undefined;
@@ -64,7 +47,6 @@ export class ClassScheduleService {
     );
 
     // Guardamos usando el REPOSITORIO
-    // Nota: El repo tiene los métodos de TypeORM (save, create, etc)
     const new_schedule = {
       ...clase_app,
       class: find_class,
@@ -81,8 +63,9 @@ export class ClassScheduleService {
   // Método privado para limpiar la respuesta y no repetir código
   private mapToResponse(schedule: any): ResponseClassSchedule {
     return {
+      // Falta tipado
       id: schedule.id,
-      date: schedule.date,
+      date: schedule.date ? new Date(schedule.date).toISOString().split('T')[0] : schedule.date,
       time: schedule.time,
       token: schedule.token,
       isActive: schedule.isActive,
@@ -148,37 +131,55 @@ export class ClassScheduleService {
     }
   }
 
-  time_valid(date_appt: Date, time_appt: string) {
+  time_valid(date_appt: Date, time_appt: string, duration_mins: number) {
     // Normalizamos a la fecha para comparar dias (quitamos hora)
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
     // date_appt ya es un objeto Date, pero por seguridad nos aseguramos
     const scheduleDate = new Date(date_appt);
-    scheduleDate.setHours(0, 0, 0, 0);
+    const utcDate = new Date(
+      scheduleDate.getUTCFullYear(),
+      scheduleDate.getUTCMonth(),
+      scheduleDate.getUTCDate(),
+    );
 
     // Validamos la fecha futura
-    if (scheduleDate <= today) {
+    if (utcDate <= today) {
       throw new BadRequestException(
         'La fecha debe ser posterior al día actual',
       );
     }
 
-    // Validacion de horario
-    const time_string = String(time_appt);
+    // Parsear hora de inicio -- Lo unico no toma 3 digitos (mas de 1 hora 39 minutos)
+    const time_match = time_appt.match(/^(\d{1,2}):(\d{2})$/);
 
-    const hour_match = time_string.match(/^(\d{1,2})/);
-
-    if (!hour_match) {
+    if (!time_match) {
       throw new BadRequestException('Formato de hora inválido. Use HH:mm');
     }
 
-    const hour = parseInt(hour_match[1], 10);
-    // Si el string no tiene el formato correcto, hour sera NaN
+    const hours = parseInt(time_match[1], 10);
+    console.log('horas', hours);
+    const minutes = parseInt(time_match[2], 10);
+    console.log('minutos', minutes);
+    const start_total_minutes = hours * 60 + minutes;
+    console.log('start total minutes', start_total_minutes);
 
-    if (hour < 10 || hour >= 18) {
+    // Validamos que la cita no empiece antes de las 10:00 (600 min)
+    if (start_total_minutes < 600) {
       throw new BadRequestException(
-        'La clase solo puede agendarse entre las 10:00 y las 18:00 hs',
+        'La clase solo puede agendarse a partir de las 10:00 a.m en adelante',
+      );
+    }
+
+    // Validamos que termine a las 18:00 (1080 min) como máximo
+    const end_total_minutes = start_total_minutes + duration_mins;
+    const limit_minutes = 1080;
+
+    if (end_total_minutes > limit_minutes) {
+      const extraMinutes = end_total_minutes - limit_minutes;
+      throw new BadRequestException(
+        `La clase excede el horario de cierre por ${extraMinutes} minuto(s). Debe terminar máximo a las 18:00 hs.`,
       );
     }
   }
@@ -189,32 +190,53 @@ export class ClassScheduleService {
     id?: string,
     exclude_id?: string,
   ): Promise<Partial<User>> {
-    // Si el que creo la clase es Coach, se asigna a el mismo la clase
+    // Si el que creo la clase es Coach
     if (id) {
       const coach = await this.coachRepository.getCoachById(id);
 
-      return coach;
-    } else {
-      // Si no es Coach, o sea Admin se busca el 1er Coach que se encuentre
-      const coaches = await this.coachRepository.getAllCoaches(1, 10);
+      const is_occupied = await this.dataSource
+        .getRepository(Class_schedule)
+        .findOne({
+          where: {
+            coach: { id: coach.id },
+            date,
+            time,
+            isActive: true,
+          },
+        });
 
-      for (const candidate of coaches) {
-        // NUEVO: Si el candidato es el que estamos inhabilitando, lo saltamos
-        if (exclude_id && candidate.id === exclude_id) continue;
-
-        // Verificamos disponibilidad del coach
-        const is_occupied = await this.dataSource
-          .getRepository(Class_schedule)
-          .findOne({
-            where: { coach: { id: candidate.id }, date, time, isActive: true },
-          });
-
-        if (!is_occupied) return candidate;
+      if (is_occupied) {
+        throw new BadRequestException(
+          'Ya tenes una clase asignada en esa fecha/horario',
+        );
       }
 
-      throw new BadRequestException(
-        'No hay coaches disponibles para este horario',
-      );
+      return coach;
     }
+
+    // Si es admin
+    const coaches = await this.coachRepository.getAllCoaches(1, 10);
+
+    for (const candidate of coaches) {
+      // Si el candidato es el que estamos inhabilitando, lo saltamos
+      if (exclude_id && candidate.id === exclude_id) continue;
+
+      const is_occupied = await this.dataSource
+        .getRepository(Class_schedule)
+        .findOne({
+          where: {
+            coach: { id: candidate.id },
+            date,
+            time,
+            isActive: true,
+          },
+        });
+
+      if (!is_occupied) return candidate;
+    }
+
+    throw new BadRequestException(
+      'No hay coaches disponibles para este horario',
+    );
   }
 }
