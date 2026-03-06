@@ -23,6 +23,7 @@ export class ClassRepository {
         description: true,
         capacity: true,
         isActive: true,
+        imgUrl: true, // 👈 agregado para que el front vea la imagen
         class_schedule: true,
         intensity: true,
       },
@@ -53,6 +54,7 @@ export class ClassRepository {
         description: true,
         capacity: true,
         isActive: true,
+        imgUrl: true, // 👈 agregado para que el front vea la imagen
         class_schedule: true,
         intensity: true,
       },

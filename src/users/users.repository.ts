@@ -103,6 +103,7 @@ export class usersRepository {
 
     return this.usersRepository.save(user);
   }
+
   //busco usuario activos por lo que charlamos de la duracion del token .. si esta en false no puede hacer nada
   async findIsActiveById(id: string): Promise<boolean> {
     const user = await this.usersRepository.findOne({
@@ -112,6 +113,7 @@ export class usersRepository {
 
     return !!user?.isActive;
   }
+
   // google
   async findOrCreateByGoogle(dto: CreateUserGoogleDto) {
     const email = (dto.email || '').trim().toLowerCase();
@@ -131,12 +133,17 @@ export class usersRepository {
       // si no tenía googleId, se lo guardo
       if (!user.googleId) {
         user.googleId = dto.googleId;
-        // si tu entity tiene profileImg y querés guardarlo si está vacío:
-        if (!user.profileImg && dto.profileImg)
-          user.profileImg = dto.profileImg;
-
-        user = await this.usersRepository.save(user);
+        user.authProvider = 'google';
       }
+
+      // IMPORTANTE:
+      // solo guardo la foto de google si el usuario NO tiene imagen previa
+      // y además NO tiene imagen subida a cloudinary
+      if (!user.profileImg && !user.cloudinaryId && dto.profileImg) {
+        user.profileImg = dto.profileImg;
+      }
+
+      user = await this.usersRepository.save(user);
 
       return { user, isNew: false };
     }
@@ -149,7 +156,9 @@ export class usersRepository {
 
       authProvider: 'google',
 
+      // si google manda imagen, la guardo
       profileImg: dto.profileImg ?? null,
+
       password: null,
       isProfileComplete: false,
     });
