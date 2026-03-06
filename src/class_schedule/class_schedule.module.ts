@@ -6,10 +6,11 @@ import { ClassScheduleService } from './class_schedule.service';
 import { ClassScheduleRepository } from './class_schedule.repository';
 import { Class } from 'src/class/class.entity';
 import { User } from 'src/users/users.entity';
-import { ClassRepository } from 'src/class/class.repository';
 import { UsersModule } from 'src/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from 'src/auth/auth.module';
+import { ClassModule } from 'src/class/class.module';
+import { CoachModule } from 'src/coach/coach.module';
 
 @Module({
   imports: [
@@ -17,9 +18,11 @@ import { AuthModule } from 'src/auth/auth.module';
     forwardRef(() => AuthModule),
     forwardRef(() => UsersModule),
     forwardRef(() => JwtModule),
+    forwardRef(() => ClassModule),
+    forwardRef(() => CoachModule),
   ],
   controllers: [ClassesScheduleController],
-  providers: [ClassScheduleService, ClassScheduleRepository, ClassRepository],
+  providers: [ClassScheduleService, ClassScheduleRepository],
   exports: [ClassScheduleService, ClassScheduleRepository],
 })
 export class ClassScheduleModule {}

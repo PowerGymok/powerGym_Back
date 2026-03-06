@@ -1,21 +1,12 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Class_schedule } from './class_schedule.entity';
 import { Repository } from 'typeorm';
-import { ClassRepository } from 'src/class/class.repository';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { CreateClassSchedule } from './dtos/CreateClassSchedule.dto';
-import { User } from 'src/users/users.entity';
-import { Role } from 'src/common/roles.enum';
-import { JwtPayload } from 'src/auth/interfaces/jwt-payload.interface';
-import { ResponseClassSchedule } from './dtos/ResponseClassSchedule.dto';
+import { NotFoundException } from '@nestjs/common';
 
 export class ClassScheduleRepository {
   constructor(
     @InjectRepository(Class_schedule)
     private readonly classScheduleRepository: Repository<Class_schedule>,
-    private readonly classRepository: ClassRepository,
-    @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
   ) {}
 
   async find_class_schedule_by_id(id: string) {
@@ -57,6 +48,7 @@ export class ClassScheduleRepository {
     });
   }
 
+  /*
   async class_appmnt(
     clase_app: CreateClassSchedule,
     id: string,
@@ -66,7 +58,7 @@ export class ClassScheduleRepository {
     const find_class = await this.classRepository.find_class_by_id(id);
 
     // Validamos que la fecha y la hora de clase que se va a agendar sea valida
-    this.time_valid(clase_app.date, clase_app.time);
+    this.classScheduleService.time_valid(clase_app.date, clase_app.time);
 
     // Convertimos la hora de inicio a minutos totales
     // Ejemplo: "17:01" -> (17 * 60) + 01 = 1021 minutos
@@ -96,10 +88,10 @@ export class ClassScheduleRepository {
     const coach_id = user.role === Role.Coach ? user.sub : undefined;
 
     // Si es Admin quien hace la cita entonces se va a encargar de buscar un coach
-    const assigned_coach = await this.coach_assign(
+    const assigned_coach = await this.classScheduleService.coach_assign(
       clase_app.date,
       clase_app.time,
-      coach_id,
+      coach_id, // Ver si esta bien este id
     );
 
     // Creamos la cita con datos requeridos y la clase encontrada, posteriormente la guardamos
@@ -132,86 +124,11 @@ export class ClassScheduleRepository {
 
     return response;
   }
+  */
 
-  async class_appmnt_cancel(id: string) {
-    // Buscamos la clase agendada
-    await this.find_class_schedule_by_id(id);
+  async save_new_schedule(data: any) {
+    const created = this.classScheduleRepository.create(data);
 
-    await this.classScheduleRepository.update({ id }, { isActive: false });
-
-    return {
-      success: true,
-      message: 'Clase agendada cancelada correctamente',
-    };
-  }
-
-  time_valid(date_appt: Date, time_appt: string) {
-    // Normalizamos a la fecha para comparar dias (quitamos hora)
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    // date_appt ya es un objeto Date, pero por seguridad nos aseguramos
-    const scheduleDate = new Date(date_appt);
-    scheduleDate.setHours(0, 0, 0, 0);
-
-    // Validamos la fecha futura
-    if (scheduleDate <= today) {
-      throw new BadRequestException(
-        'La fecha debe ser posterior al día actual',
-      );
-    }
-
-    // Validacion de horario
-    const time_string = String(time_appt);
-
-    const hour_match = time_string.match(/^(\d{1,2})/);
-
-    if (!hour_match) {
-      throw new BadRequestException('Formato de hora inválido. Use HH:mm');
-    }
-
-    const hour = parseInt(hour_match[1], 10);
-    // Si el string no tiene el formato correcto, hour sera NaN
-
-    if (hour < 10 || hour >= 18) {
-      throw new BadRequestException(
-        'La clase solo puede agendarse entre las 10:00 y las 18:00 hs',
-      );
-    }
-  }
-
-  async coach_assign(date: Date, time: string, id?: string): Promise<User> {
-    let coach: User | null;
-
-    // Si el que creo la clase es Coach se asigna a el mismo
-    if (id) {
-      coach = await this.usersRepository.findOne({
-        where: { id, role: Role.Coach },
-      });
-
-      if (!coach) {
-        throw new NotFoundException(
-          `El coach con ID ${id} no existe o no tiene permisos de coach`,
-        );
-      }
-      return coach;
-    } else {
-      // Si no es Coach, o sea Admin se busca el 1er Coach que se encuentre
-      const coaches = await this.usersRepository.find({
-        where: { role: Role.Coach },
-      });
-
-      for (const candidate of coaches) {
-        const is_occupied = await this.classScheduleRepository.findOne({
-          where: { coach: { id: candidate.id }, date, time, isActive: true },
-        });
-
-        if (!is_occupied) return candidate;
-      }
-
-      throw new BadRequestException(
-        'No hay coaches disponibles para este horario',
-      );
-    }
+    return await this.classScheduleRepository.save(created);
   }
 }

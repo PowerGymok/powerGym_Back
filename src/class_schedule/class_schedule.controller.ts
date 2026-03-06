@@ -50,6 +50,6 @@ export class ClassesScheduleController {
   @Put('cancel/:id')
   @HttpCode(200)
   class_appointment_cancel(@Param('id', ParseUUIDPipe) id: string) {
-    return this.classScheduleService.class_cancel(id);
+    return this.classScheduleService.class_appmnt_cancel(id);
   }
 }

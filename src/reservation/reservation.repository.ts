@@ -27,8 +27,18 @@ export class ReservationRepository {
     private usersRepo: Repository<User>,
   ) {}
 
-  find_reservation_by_id(id: string) {
-    return this.reservationRepository.findOne({
+  async find_reservation_by_class_schedule(class_schedule_id: string) {
+    return await this.reservationRepository.find({
+      relations: ['users'],
+      where: {
+        class_schedule: { id: class_schedule_id }, // Tomamos su id
+        status: 'Confirmed', // Solo devolvemos a los no cancelados
+      },
+    });
+  }
+
+  async find_reservation_by_id(id: string) {
+    return await this.reservationRepository.findOne({
       where: { id },
       relations: ['class_schedule'],
       select: {
