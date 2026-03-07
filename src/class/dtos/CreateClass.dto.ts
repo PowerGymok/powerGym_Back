@@ -1,4 +1,6 @@
 import {
+  IsArray,
+  IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -39,8 +41,15 @@ export class CreateClass {
   })
   capacity: number;
 
-  @IsNotEmpty({
-    message: 'La intensidad no puede estar vacía. Debe ser alta, media o baja',
-  })
+  @IsEnum(Intensity)
   intensity: Intensity;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  benefits?: string[];
+
+  @IsOptional()
+  @IsString()
+  requirements?: string;
 }
