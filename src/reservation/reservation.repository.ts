@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   forwardRef,
   Inject,
   Injectable,
@@ -27,15 +28,17 @@ export class ReservationRepository {
     private usersRepo: Repository<User>,
   ) {}
 
-  find_reservation_by_id(id: string) {
-    return this.reservationRepository.findOne({
+  async find_reservation_by_id(id: string) {
+    return await this.reservationRepository.findOne({
       where: { id },
-      relations: ['class_schedule'],
+      relations: ['class_schedule', 'users'],
       select: {
         id: true,
         date: true,
         status: true,
-        users: true,
+        users: {
+          id: true,
+        },
       },
     });
   }
@@ -103,15 +106,19 @@ export class ReservationRepository {
     };
   }
 
-  async cancel_reserve(id: string) {
-    // Buscamos que exista la reservacion
+  async cancel_reserve(id: string, userId: string) {
     const find_reservation = await this.find_reservation_by_id(id);
 
     if (!find_reservation) {
       throw new NotFoundException('No se encontro una reservación');
     }
 
-    // Cambiamos el estado de la reservacion a cancelado
+    if (find_reservation.users.id !== userId) {
+      throw new ForbiddenException(
+        'No puedes cancelar una reserva que no es tuya',
+      );
+    }
+
     const a = await this.reservationRepository.update(
       { id },
       { status: 'Cancelled' },

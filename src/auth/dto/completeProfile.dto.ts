@@ -2,16 +2,12 @@ import {
   IsNotEmpty,
   IsString,
   MaxLength,
-  IsNumber,
   IsDateString,
   IsOptional,
 } from 'class-validator';
 
 export class CompleteProfileDto {
-  @IsNumber(
-    { allowInfinity: false, allowNaN: false },
-    { message: 'El teléfono debe ser un número' },
-  )
+  @IsString({ message: 'El teléfono debe ser una cadena de texto' })
   @IsNotEmpty({ message: 'El número de teléfono no puede estar vacío' })
   phone: string;
 

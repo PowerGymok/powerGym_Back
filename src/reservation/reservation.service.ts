@@ -12,8 +12,8 @@ export class ReservationService {
     );
   }
 
-  cancel_reserve_class(id: string) {
-    return this.reservationRepository.cancel_reserve(id);
+  cancel_reserve_class(id: string, userId: string) {
+    return this.reservationRepository.cancel_reserve(id, userId);
   }
 
   get_reservations() {

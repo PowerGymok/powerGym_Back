@@ -6,6 +6,8 @@ import { PurchaseMembershipDto } from './dto/purchase-membership.dto';
 import { PurchaseTokensDto } from './dto/spend-tokens.dto';
 import { SpendTokensDto } from './dto/spend-tokens.dto';
 import { RenewMembershipDto } from './dto/renew-membership.dto';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('Payments')
 @common.Controller('payments')
@@ -14,6 +16,7 @@ export class PaymentsController {
 
   // POST /payments/membership — Inicia el pago de una membresía
   // Devuelve el clientSecret que el frontend usa con Stripe.js para cobrar la tarjeta
+  @UseGuards(JwtAuthGuard)
   @common.Post('membership')
   @ApiOperation({ summary: 'Iniciar pago de membresía con Stripe' })
   createMembershipPayment(@common.Body() dto: PurchaseMembershipDto) {
@@ -24,6 +27,7 @@ export class PaymentsController {
   }
 
   // POST /payments/membership/renew — Renovar una membresía existente
+  @UseGuards(JwtAuthGuard)
   @common.Post('membership/renew')
   @ApiOperation({
     summary: 'Renovar membresía con Stripe (extiende o crea nueva)',
@@ -36,6 +40,7 @@ export class PaymentsController {
   }
 
   // POST /payments/tokens — Inicia la compra de un paquete de tokens
+  @UseGuards(JwtAuthGuard)
   @common.Post('tokens')
   @ApiOperation({ summary: 'Iniciar compra de paquete de tokens con Stripe' })
   createTokenPurchase(@common.Body() dto: PurchaseTokensDto) {
@@ -47,6 +52,7 @@ export class PaymentsController {
 
   // POST /payments/tokens/spend — Gasta tokens internamente (sin Stripe)
   // Ejemplo: reservar una clase especial que cuesta 50 tokens
+  @UseGuards(JwtAuthGuard)
   @common.Post('tokens/spend')
   @ApiOperation({ summary: 'Gastar tokens en la app (reservas, etc.)' })
   spendTokens(@common.Body() dto: SpendTokensDto) {
@@ -58,6 +64,7 @@ export class PaymentsController {
   }
 
   // GET /payments/history/:userId — Historial de transacciones del usuario
+  @UseGuards(JwtAuthGuard)
   @common.Get('history/:userId')
   @ApiOperation({ summary: 'Ver historial de transacciones de un usuario' })
   getHistory(@common.Param('userId', common.ParseUUIDPipe) userId: string) {
@@ -65,6 +72,7 @@ export class PaymentsController {
   }
 
   // GET /payments/status/:userId — Estado de membresía y tokens
+  @UseGuards(JwtAuthGuard)
   @common.Get('status/:userId')
   @ApiOperation({
     summary: 'Obtener estado de membresía activa y balance de tokens',
