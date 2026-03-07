@@ -29,6 +29,7 @@ export class ClassScheduleService {
     id_class: string,
     user: JwtPayload,
   ) {
+    console.log(user);
     // Buscamos la clase a la cual queremos hacerle una cita
     const find_class = await this.classRepository.find_class_by_id(id_class);
 
@@ -39,7 +40,8 @@ export class ClassScheduleService {
     this.time_valid(clase_app.date, clase_app.time, duration);
 
     // Asignamos coach (llamada local)
-    const coach_id = user.role === Role.Coach ? user.sub : undefined;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const coach_id = user.role === Role.Coach ? (user as any).id : undefined;
     const assigned_coach = await this.coach_assign(
       clase_app.date,
       clase_app.time,
