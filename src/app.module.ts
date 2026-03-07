@@ -33,13 +33,13 @@ import { FilesModule } from './files/files.module';
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        type: 'postgres',
+        type: 'postgres' as const,
         url: config.get<string>('DATABASE_URL'),
         // autoLoadEntities: true hace que TypeORM registre automáticamente
         // todas las entidades que aparezcan en TypeOrmModule.forFeature([...])
         // de cualquier módulo importado aca. No necesitamos listarlas manualmente.
         autoLoadEntities: true,
-        synchronize: false, // False solo en desarrollo, en producción usamos migraciones
+        synchronize: true, // False solo en desarrollo, en producción usamos migraciones
         ssl: { rejectUnauthorized: false },
       }),
     }),
