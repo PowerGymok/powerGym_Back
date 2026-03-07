@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { ReservationService } from './reservation.service';
@@ -14,6 +15,8 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/common/roles.enum';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import type { AuthenticatedRequest } from 'src/auth/interfaces/auth-request.interface';
+import { OwnerOrAdminGuard } from 'src/auth/guards/ownership.guard';
 
 @Controller('reservation')
 export class ReservationController {
@@ -24,29 +27,32 @@ export class ReservationController {
   @Post('reserve')
   @HttpCode(201)
   reserve_a_class(
-    @Query('id_user', ParseUUIDPipe) id_user: string,
+    @Req() req: AuthenticatedRequest,
     @Query('id_class_schedule', ParseUUIDPipe) id_class_schedule: string,
   ) {
+    const id_user = req.user.id;
     return this.reservationService.reserve_class(id_user, id_class_schedule);
   }
 
-  @Roles(Role.User, Role.Coach, Role.Admin)
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard)
   @Put('cancel/:id')
   @HttpCode(200)
-  cancel_a_reserve_class(@Param('id', ParseUUIDPipe) id: string) {
-    return this.reservationService.cancel_reserve_class(id);
+  cancel_a_reserve_class(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    const userId = req.user.id;
+    return this.reservationService.cancel_reserve_class(id, userId);
   }
 
-  @Roles(Role.User, Role.Coach, Role.Admin)
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, OwnerOrAdminGuard)
   @Get(':id')
   @HttpCode(200)
   get_history_reserves_by_id(@Param('id', ParseUUIDPipe) id: string) {
     return this.reservationService.get_reserves_by_id(id);
   }
 
-  @Roles(Role.User, Role.Coach, Role.Admin)
+  @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('/')
   @HttpCode(200)

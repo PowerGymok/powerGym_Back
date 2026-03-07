@@ -20,6 +20,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/common/roles.enum';
+import type { AuthenticatedRequest } from 'src/auth/interfaces/auth-request.interface';
 
 @ApiTags('Chat')
 @Controller('chat')
@@ -59,17 +60,14 @@ export class ChatController {
   }
 
   // GET /chat/conversations/:id/messages — Obtener mensajes de una conversación
-  // Nota: en producción deberías sacar el userId del token JWT, no del query param
   @Get('conversations/:id/messages')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Obtener todos los mensajes de una conversación' })
   getMessages(
     @Param('id', ParseUUIDPipe) conversationId: string,
-    @Req() req: any, // Aquí deberías usar el userId del JWT
+    @Req() req: AuthenticatedRequest,
   ) {
-    // TEMPORAL: asume que el userId viene en la query (?userId=xxx), debe venir en el jwt token
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const userId = req.query.userId as string;
+    const userId = req.user.id;
     return this.chatService.getConversationMessages(conversationId, userId);
   }
 
