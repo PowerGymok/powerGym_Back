@@ -95,7 +95,7 @@ export class ClassScheduleRepository {
 
     //Convertimos La duración a minutos (asumiendo que duración está en horas)
     // Ejemplo: "1" hora -> 60 minutos
-    const duration_in_minutes = parseFloat(find_class.duration) * 60;
+    const duration_in_minutes = parseFloat(find_class.duration);
 
     // Calculamos el final en minutos
     const end_total_minutes = start_total_minutes + duration_in_minutes;
