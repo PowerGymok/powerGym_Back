@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {
   ForbiddenException,
-  forwardRef,
   Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
+  forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Reservation } from './reservation.entity';
@@ -22,18 +23,19 @@ export class ReservationRepository {
     @Inject(forwardRef(() => usersRepository))
     private usersRepository: usersRepository,
     private readonly classScheduleRepository: ClassScheduleRepository,
-    @InjectRepository(Class)
-    private classRepository: Repository<Class>,
     @InjectRepository(User)
     private usersRepo: Repository<User>,
+    @InjectRepository(Class)
+    private classRepo: Repository<Class>,
   ) {}
 
+  // Devuelve todas las reservas Confirmed de un class_schedule específico
   async find_reservation_by_class_schedule(class_schedule_id: string) {
     return await this.reservationRepository.find({
       relations: ['users'],
       where: {
-        class_schedule: { id: class_schedule_id }, // Tomamos su id
-        status: 'Confirmed', // Solo devolvemos a los no cancelados
+        class_schedule: { id: class_schedule_id },
+        status: 'Confirmed',
       },
     });
   }
@@ -41,71 +43,65 @@ export class ReservationRepository {
   async find_reservation_by_id(id: string) {
     return await this.reservationRepository.findOne({
       where: { id },
-      relations: ['class_schedule', 'users'],
-      select: {
-        id: true,
-        date: true,
-        status: true,
-        users: {
-          id: true,
-        },
-      },
+      relations: ['class_schedule', 'class_schedule.class', 'users'],
     });
   }
 
   async create_reserve(id_user: string, id_class_schedule: string) {
-    // Buscamos si el usuario existe y esta activo ESTO ULTIMO AL FINAL IMPLEMENTAR
     const find_user = await this.usersRepository.getUserById(id_user);
-
-    // Buscamos si la cita de la clase existe
     const find_class_schedule =
       await this.classScheduleRepository.find_class_schedule_by_id(
         id_class_schedule,
       );
 
-    // Extraemos la capacidad de la clase con class_schedule
-    let find_class_by_schedule = find_class_schedule.class.capacity;
+    if (!find_class_schedule) {
+      throw new NotFoundException('La clase agendada no existe');
+    }
 
-    if (find_class_by_schedule <= 0) {
+    // Validar cupos — contamos reservas Confirmed activas para este schedule
+    // NO tocamos capacity — es el total original y no debe cambiar nunca
+    const confirmedCount = await this.reservationRepository.count({
+      where: {
+        class_schedule: { id: id_class_schedule },
+        status: 'Confirmed',
+      },
+    });
+
+    const capacity = parseInt(find_class_schedule.class.capacity as any, 10);
+    if (confirmedCount >= capacity) {
       throw new UnauthorizedException(
-        'No hay mas cupos disponibles para la clase',
+        'No hay más cupos disponibles para la clase',
       );
     }
 
-    // Extraemos el dato de el costo de tokens de la clase
+    // Validar tokens
     const class_cost_tokens = find_class_schedule.token;
-    let user_tokens = find_user.tokenBalance;
+    const user_tokens = find_user.tokenBalance;
 
-    // Chequeamos que el usuario tengo la cantidad de tokens suficientes para gastar en la clase
     if (user_tokens < class_cost_tokens) {
       throw new UnauthorizedException(
-        'No tiene tokens suficientes para acceder a esta clase',
+        'No tienes tokens suficientes para reservar esta clase',
       );
     }
 
-    // Si tiene los tokens suficientes le restamos tokens del usuario
-    user_tokens -= class_cost_tokens;
+    // Descontar tokens
     await this.usersRepo.update(find_user.id, {
-      tokenBalance: user_tokens,
+      tokenBalance: user_tokens - class_cost_tokens,
     });
 
-    // Restamos el espacio en la clase en - 1 si hay cupo
-    find_class_by_schedule -= 1;
-    await this.classRepository.update(find_class_schedule.class.id, {
-      capacity: find_class_by_schedule,
-    });
-
+    // Crear reserva
     const new_reservation = this.reservationRepository.create({
       date: new Date(),
       users: find_user,
       class_schedule: find_class_schedule,
-      status: 'Confirmed', // Ya puse en el default, pero no está de más
+      status: 'Confirmed',
     });
+
     await this.reservationRepository.save(new_reservation);
 
     return {
       success: true,
-      message: 'Se realizó la reservación de la clase correctamente',
+      message: 'Reservación realizada correctamente',
       reservation_id: new_reservation.id,
     };
   }
@@ -114,7 +110,7 @@ export class ReservationRepository {
     const find_reservation = await this.find_reservation_by_id(id);
 
     if (!find_reservation) {
-      throw new NotFoundException('No se encontro una reservación');
+      throw new NotFoundException('No se encontró la reservación');
     }
 
     if (find_reservation.users.id !== userId) {
@@ -123,23 +119,30 @@ export class ReservationRepository {
       );
     }
 
-    const a = await this.reservationRepository.update(
-      { id },
-      { status: 'Cancelled' },
-    );
-    console.log(a);
+    if (find_reservation.status === 'Cancelled') {
+      throw new ForbiddenException('La reserva ya fue cancelada anteriormente');
+    }
+
+    // Cancelar reserva
+    await this.reservationRepository.update({ id }, { status: 'Cancelled' });
+
+    // Devolver tokens con expresión SQL atómica
+    const tokens_to_refund = find_reservation.class_schedule.token;
+
+    await this.usersRepo.update(find_reservation.users.id, {
+      tokenBalance: () => `"tokenBalance" + ${tokens_to_refund}`,
+    });
 
     return {
       success: true,
-      message: 'Reservación cancelada correctamente',
+      message: 'Reservación cancelada. Tokens devueltos correctamente.',
+      tokens_refunded: tokens_to_refund,
     };
   }
 
   async get_by_id(id: string) {
     const reservations = await this.reservationRepository.find({
-      where: {
-        users: { id },
-      },
+      where: { users: { id } },
       relations: ['class_schedule'],
       select: {
         id: true,
@@ -155,16 +158,12 @@ export class ReservationRepository {
       },
     });
 
-    if (!reservations || reservations.length === 0) {
-      throw new NotFoundException('El usuario no tiene reservas registradas');
-    }
-
-    return reservations;
+    return reservations ?? [];
   }
 
   get_reserves() {
     return this.reservationRepository.find({
-      relations: ['class_schedule'],
+      relations: ['class_schedule', 'users'],
       select: {
         id: true,
         date: true,
@@ -176,6 +175,7 @@ export class ReservationRepository {
           token: true,
           isActive: true,
         },
+        users: { id: true },
       },
     });
   }
