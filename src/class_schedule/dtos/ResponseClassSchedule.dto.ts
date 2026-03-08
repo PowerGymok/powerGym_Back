@@ -1,5 +1,4 @@
-import { Type } from 'class-transformer';
-import { IsDate, IsNotEmpty, IsNumber, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsUUID } from 'class-validator';
 
 export class ResponseClassSchedule {
   @IsNotEmpty({ message: 'El id de la cita de una clase no puede estar vacío' })
@@ -7,9 +6,7 @@ export class ResponseClassSchedule {
   id: string;
 
   @IsNotEmpty({ message: 'La fecha de cita de la clase no puede estar vacía' })
-  @Type(() => Date)
-  @IsDate({ message: 'La fecha de cita de la clase debe tener formato "date"' })
-  date: Date;
+  date: string | null;
 
   @IsNotEmpty({
     message: 'El horario de la cita de la clase no puede estar vacía',
