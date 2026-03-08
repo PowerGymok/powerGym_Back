@@ -20,7 +20,9 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { OwnerOrAdminGuard } from 'src/auth/guards/ownership.guard';
 import { CompleteProfileDto } from 'src/auth/dto/completeProfile.dto';
 import type { AuthenticatedRequest } from '../auth/interfaces/auth-request.interface';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}

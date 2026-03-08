@@ -12,6 +12,7 @@ import { memoryStorage } from 'multer';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { FilesService } from './files.service';
 import { UsersService } from '../users/users.service';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('files')
 export class FilesController {
@@ -20,6 +21,7 @@ export class FilesController {
     private readonly usersService: UsersService,
   ) {}
 
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post('avatar')
   @UseInterceptors(

@@ -28,6 +28,7 @@ async function bootstrap() {
     .setTitle('PowerGym API')
     .setDescription('API del sistema de gimnasio con pagos y chat')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

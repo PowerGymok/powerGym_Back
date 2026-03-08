@@ -9,7 +9,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { MembershipService } from './membership.service';
 import { CreateMembershipDto } from './dto/create-membership.dto';
 import { UpdateMembershipDto } from './dto/update-membership.dto';
@@ -27,6 +27,7 @@ export class MembershipController {
 
   // POST /memberships — Crea un nuevo tipo de membresía
   // (en producción aquí irá un guard de admin)
+  @ApiBearerAuth()
   @Post()
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -43,6 +44,7 @@ export class MembershipController {
   }
 
   // GET /memberships/admin — Devuelve TODOS los planes incluyendo inactivos
+  @ApiBearerAuth()
   @Get('admin')
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -61,6 +63,7 @@ export class MembershipController {
 
   // PATCH /memberships/:id — Actualiza parcialmente una membresía
   // PATCH = actualización parcial (solo los campos que envíes), a diferencia de PUT que reemplaza todo
+  @ApiBearerAuth()
   @Patch(':id')
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -73,6 +76,7 @@ export class MembershipController {
   }
 
   // DELETE /memberships/:id — Desactiva la membresía (no la borra físicamente)
+  @ApiBearerAuth()
   @Delete(':id')
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)

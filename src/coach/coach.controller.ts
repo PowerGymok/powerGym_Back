@@ -16,7 +16,9 @@ import { Role } from 'src/common/roles.enum';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { OwnerOrAdminGuard } from 'src/auth/guards/ownership.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @Controller('coach')
 export class CoachController {
   constructor(private readonly coachService: CoachService) {}
