@@ -39,7 +39,7 @@ export class UsersService {
   async inactiveUser(id: string) {
     const user = await this.usersRepository.inactiveUser(id);
     await this.notificationsService.inactiveUserEmail(user.name, user.email);
-    return 'Su cuenta ha sido desactivda exitosamente';
+    return 'Su cuenta ha sido desactivada exitosamente';
   }
 
   getByEmail(email: GetByEmailDto) {
