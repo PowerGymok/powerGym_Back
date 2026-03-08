@@ -21,15 +21,20 @@ export class CoachService {
   }
 
   async updateCoach(id: string, newCoachData: UpdateCoachDto) {
-    if (newCoachData) {
-      if (newCoachData.password !== newCoachData.confirmPassword)
+    if (newCoachData.password) {
+      if (newCoachData.password !== newCoachData.confirmPassword) {
         throw new BadRequestException('Las contraseñas no coinciden');
+      }
+
       const hashedPassword = await bcrypt.hash(newCoachData.password, 10);
       newCoachData.password = hashedPassword;
     }
+
     delete newCoachData.confirmPassword;
+
     const coach = await this.coachRepository.updateCoach(id, newCoachData);
     await this.notificationsService.sendUpdateEmail(coach.name, coach.email);
+
     return 'El perfil se ha actualizado exitosamente';
   }
 

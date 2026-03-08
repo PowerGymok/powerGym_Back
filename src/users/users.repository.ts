@@ -26,7 +26,7 @@ export class usersRepository {
     const allUsers = await this.usersRepository.find({
       skip: skip,
       take: limit,
-      where: { role: Role.User },
+      where: { role: Role.User, isActive: true },
       relations: ['memberships'],
     });
 
@@ -35,7 +35,7 @@ export class usersRepository {
 
   async getUserById(id: string) {
     const user = await this.usersRepository.findOne({
-      where: { id: id, role: Role.User },
+      where: { id, role: Role.User, isActive: true },
     });
 
     if (!user)
@@ -63,11 +63,24 @@ export class usersRepository {
   }
 
   async inactiveUser(id: string) {
-    // Hace falta hacer borrado logico
-    const user = await this.usersRepository.findOneBy({ id });
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      relations: ['reservations'],
+    });
+
     if (!user || user.isActive !== true)
       throw new NotFoundException('No se encontró al usuario');
+
+    if (user.reservations && user.reservations.length > 0) {
+      for (const reservation of user.reservations) {
+        if (reservation.status === 'Confirmed') {
+          reservation.status = 'Cancelled';
+        }
+      }
+    }
+
     user.isActive = false;
+
     await this.usersRepository.save(user);
     return user;
   }
