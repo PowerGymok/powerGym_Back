@@ -68,7 +68,9 @@ export class ClassScheduleRepository {
     return result;
   }
 
-  async save_new_schedule(data: any) {
+  async save_new_schedule(
+    data: Partial<Class_schedule>,
+  ): Promise<Class_schedule> {
     const created = this.classScheduleRepository.create(data);
 
     return await this.classScheduleRepository.save(created);

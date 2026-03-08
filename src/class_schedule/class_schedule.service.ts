@@ -11,6 +11,8 @@ import { ClassRepository } from 'src/class/class.repository';
 import { ResponseClassSchedule } from './dtos/ResponseClassSchedule.dto';
 import { Role } from 'src/common/roles.enum';
 
+type CoachAssignment = Pick<User, 'id' | 'name' | 'email'>;
+
 @Injectable({})
 export class ClassScheduleService {
   constructor(
@@ -40,7 +42,7 @@ export class ClassScheduleService {
     this.time_valid(clase_app.date, clase_app.time, duration);
 
     // Asignamos coach (llamada local)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     const coach_id = user.role === Role.Coach ? (user as any).id : undefined;
     const assigned_coach = await this.coach_assign(
       clase_app.date,
@@ -49,10 +51,10 @@ export class ClassScheduleService {
     );
 
     // Guardamos usando el REPOSITORIO
-    const new_schedule = {
+    const new_schedule: Partial<Class_schedule> = {
       ...clase_app,
       class: find_class,
-      coach: assigned_coach,
+      coach: { id: assigned_coach.id } as User,
     };
 
     const saved_schedule =
@@ -63,14 +65,20 @@ export class ClassScheduleService {
   }
 
   // Método privado para limpiar la respuesta y no repetir código
-  private mapToResponse(schedule: any): ResponseClassSchedule {
+  private mapToResponse(
+    schedule: Partial<Class_schedule> & {
+      class: { id: string; name: string };
+      coach: { id: string; name: string; email: string };
+    },
+  ): ResponseClassSchedule {
     return {
-      // Falta tipado
-      id: schedule.id,
-      date: schedule.date ? new Date(schedule.date).toISOString().split('T')[0] : schedule.date,
-      time: schedule.time,
-      token: schedule.token,
-      isActive: schedule.isActive,
+      id: schedule.id!,
+      date: schedule.date
+        ? new Date(schedule.date).toISOString().split('T')[0]
+        : null,
+      time: schedule.time!,
+      token: schedule.token!,
+      isActive: schedule.isActive!,
       class: { id: schedule.class.id, name: schedule.class.name },
       coach: {
         id: schedule.coach.id,
@@ -161,11 +169,8 @@ export class ClassScheduleService {
     }
 
     const hours = parseInt(time_match[1], 10);
-    console.log('horas', hours);
     const minutes = parseInt(time_match[2], 10);
-    console.log('minutos', minutes);
     const start_total_minutes = hours * 60 + minutes;
-    console.log('start total minutes', start_total_minutes);
 
     // Validamos que la cita no empiece antes de las 10:00 (600 min)
     if (start_total_minutes < 600) {
@@ -191,7 +196,7 @@ export class ClassScheduleService {
     time: string,
     id?: string,
     exclude_id?: string,
-  ): Promise<Partial<User>> {
+  ): Promise<CoachAssignment> {
     // Si el que creo la clase es Coach
     if (id) {
       const coach = await this.coachRepository.getCoachById(id);

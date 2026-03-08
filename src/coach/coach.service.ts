@@ -102,7 +102,9 @@ export class CoachService {
         } else {
           // ¿Qué pasa si no hay coaches disponibles?
           // Podemos cancelar la clase o dejarla sin coach y enviar una alerta
-          console.warn(`No hay reemplazo para la clase ${classSchedule.id}`);
+          throw new BadRequestException(
+            `No hay reemplazo para la clase ${classSchedule.id}`,
+          );
         }
       }
 
