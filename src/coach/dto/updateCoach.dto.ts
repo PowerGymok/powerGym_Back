@@ -1,6 +1,5 @@
 import {
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsString,
   Length,
@@ -37,11 +36,8 @@ export class UpdateCoachDto {
   confirmPassword?: string;
 
   @IsOptional()
-  @IsNotEmpty({ message: 'El número de teléfono no puede estar vacio' })
-  @IsNumber(
-    { allowInfinity: false, allowNaN: false },
-    { message: 'El teléfono debe ser un número' },
-  )
+  @IsString({ message: 'El teléfono debe ser una cadena de texto' })
+  @IsNotEmpty({ message: 'El número de teléfono no puede estar vacío' })
   phone: string;
 
   @IsOptional()

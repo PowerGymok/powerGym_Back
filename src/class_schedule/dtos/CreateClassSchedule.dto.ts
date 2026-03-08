@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsDate, IsNotEmpty } from 'class-validator';
+import { IsDate, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateClassSchedule {
   @IsNotEmpty({ message: 'La fecha de cita de la clase no puede estar vacía' })
@@ -16,4 +16,8 @@ export class CreateClassSchedule {
     message: 'La clase citada tiene que decir cuantos token va a ocupar',
   })
   token: number;
+
+  @IsOptional()
+  @IsString()
+  id_coach?: string;
 }

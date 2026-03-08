@@ -57,6 +57,8 @@ export class ClassRepository {
         imgUrl: true, // 👈 agregado para que el front vea la imagen
         class_schedule: true,
         intensity: true,
+        benefits: true,
+        requirements: true,
       },
     });
   }
