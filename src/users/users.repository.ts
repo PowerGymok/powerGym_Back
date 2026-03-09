@@ -36,6 +36,12 @@ export class usersRepository {
   async getUserById(id: string) {
     const user = await this.usersRepository.findOne({
       where: { id, role: Role.User, isActive: true },
+      relations: [
+        'memberships',
+        'transactions',
+        'reservations',
+        'classSchedules',
+      ],
     });
 
     if (!user)
@@ -43,7 +49,7 @@ export class usersRepository {
 
     const { password, ...userNoPassword } = user;
     return userNoPassword;
-  } //Incluir las relaciones necesarias al traer el usuario. Por ejemplo, reservas de clases, id´s de chats.
+  }
 
   async updateUser(id: string, newUserData: UpdateUserDto) {
     const user = await this.usersRepository.findOneBy({ id });
