@@ -18,11 +18,13 @@ import { Role } from 'src/common/roles.enum';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { JwtPayload } from 'src/auth/interfaces/jwt-payload.interface';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('class_schedule')
 export class ClassesScheduleController {
   constructor(private readonly classScheduleService: ClassScheduleService) {}
 
+  @ApiBearerAuth()
   @Roles(Role.User, Role.Coach, Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('history')
@@ -31,6 +33,7 @@ export class ClassesScheduleController {
     return this.classScheduleService.classes_history();
   }
 
+  @ApiBearerAuth()
   @Roles(Role.Coach, Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Post('appointment')
@@ -49,6 +52,7 @@ export class ClassesScheduleController {
     );
   }
 
+  @ApiBearerAuth()
   @Roles(Role.Coach, Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Put('cancel/:id')

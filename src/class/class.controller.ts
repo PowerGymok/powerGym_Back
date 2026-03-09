@@ -23,6 +23,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('clases')
 export class ClassController {
@@ -34,6 +35,7 @@ export class ClassController {
     return this.classService.get_classes();
   }
 
+  @ApiBearerAuth()
   @Roles(Role.Coach, Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Post('create')
@@ -42,6 +44,7 @@ export class ClassController {
     return this.classService.create_new_class(clase);
   }
 
+  @ApiBearerAuth()
   @Roles(Role.Coach, Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Put(':id')
@@ -53,6 +56,7 @@ export class ClassController {
     return this.classService.update_class(id, clase);
   }
 
+  @ApiBearerAuth()
   @Roles(Role.Coach, Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch('delete/:id')
@@ -62,6 +66,7 @@ export class ClassController {
   }
 
   // SUBIR IMAGEN DE CLASE (Cloudinary)
+  @ApiBearerAuth()
   @Roles(Role.Coach, Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Post(':id/image')

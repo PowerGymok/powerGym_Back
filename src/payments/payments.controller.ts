@@ -1,5 +1,5 @@
 import * as common from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { PaymentsService } from './payments.service';
 import { PurchaseMembershipDto } from './dto/purchase-membership.dto';
@@ -16,6 +16,7 @@ export class PaymentsController {
 
   // POST /payments/membership — Inicia el pago de una membresía
   // Devuelve el clientSecret que el frontend usa con Stripe.js para cobrar la tarjeta
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @common.Post('membership')
   @ApiOperation({ summary: 'Iniciar pago de membresía con Stripe' })
@@ -27,6 +28,7 @@ export class PaymentsController {
   }
 
   // POST /payments/membership/renew — Renovar una membresía existente
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @common.Post('membership/renew')
   @ApiOperation({
@@ -40,6 +42,7 @@ export class PaymentsController {
   }
 
   // POST /payments/tokens — Inicia la compra de un paquete de tokens
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @common.Post('tokens')
   @ApiOperation({ summary: 'Iniciar compra de paquete de tokens con Stripe' })
@@ -52,6 +55,7 @@ export class PaymentsController {
 
   // POST /payments/tokens/spend — Gasta tokens internamente (sin Stripe)
   // Ejemplo: reservar una clase especial que cuesta 50 tokens
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @common.Post('tokens/spend')
   @ApiOperation({ summary: 'Gastar tokens en la app (reservas, etc.)' })
@@ -64,6 +68,7 @@ export class PaymentsController {
   }
 
   // GET /payments/history/:userId — Historial de transacciones del usuario
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @common.Get('history/:userId')
   @ApiOperation({ summary: 'Ver historial de transacciones de un usuario' })
@@ -72,6 +77,7 @@ export class PaymentsController {
   }
 
   // GET /payments/status/:userId — Estado de membresía y tokens
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @common.Get('status/:userId')
   @ApiOperation({
@@ -82,6 +88,7 @@ export class PaymentsController {
   ) {
     return this.paymentsService.getUserMembershipStatus(userId);
   }
+
   @common.Post('webhook')
   @ApiOperation({ summary: 'Webhook de Stripe (no llamar manualmente)' })
   handleWebhook(
