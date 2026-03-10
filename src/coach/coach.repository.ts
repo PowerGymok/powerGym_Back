@@ -30,11 +30,17 @@ export class coachRepository {
     return allCoaches.map(
       ({ password, ...coachNoPassword }) => coachNoPassword,
     );
-  } //Falta verificar si va a traer los coachs activos o los activos e inactivos
+  }
 
   async getCoachById(id: string) {
     const coach = await this.coachesRepository.findOne({
       where: { id: id, role: Role.Coach },
+      relations: [
+        'memberships',
+        'transactions',
+        'reservations',
+        'classSchedules',
+      ],
     });
 
     if (!coach)
@@ -42,7 +48,7 @@ export class coachRepository {
 
     const { password, ...coachNoPassword } = coach;
     return coachNoPassword;
-  } //Incluir las relaciones necesarias al traer el usuario. Por ejemplo, reservas de clases, id´s de chats.
+  }
 
   async updateCoach(id: string, newCoachData: UpdateCoachDto) {
     const coach = await this.coachesRepository.findOneBy({ id });

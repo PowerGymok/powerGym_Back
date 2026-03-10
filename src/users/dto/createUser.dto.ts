@@ -44,7 +44,7 @@ export class CreateUserDto {
   })
   confirmPassword: string;
 
-  @IsString({ message: 'El telefono debe tener más de 3 digitos' })
+  @IsString({ message: 'El telefono debe ser una cadena de texto' })
   @IsNotEmpty({ message: 'El número de teléfono no puede estar vacío' })
   phone: string;
 
