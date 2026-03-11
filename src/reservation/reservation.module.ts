@@ -11,10 +11,7 @@ import { ClassScheduleModule } from 'src/class_schedule/class_schedule.module';
 import { ClassModule } from 'src/class/class.module';
 import { Class } from 'src/class/class.entity';
 import { User } from 'src/users/users.entity';
-import { PaymentsModule } from 'src/payments/payments.module';
-import { MembershipModule } from 'src/membership/membership.module';
-import { PaymentsService } from 'src/payments/payments.service';
-import { TokenPackageModule } from 'src/token-package/token-package.module';
+import { ChatModule } from 'src/chat/chat.module';
 
 @Module({
   imports: [
@@ -24,9 +21,7 @@ import { TokenPackageModule } from 'src/token-package/token-package.module';
     forwardRef(() => JwtModule),
     ClassScheduleModule,
     ClassModule,
-    PaymentsModule,
-    MembershipModule,
-    TokenPackageModule,
+    ChatModule,
   ],
   controllers: [ReservationController],
   providers: [ReservationService, ReservationRepository, PaymentsService],
