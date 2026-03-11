@@ -24,7 +24,7 @@ import { ChatModule } from 'src/chat/chat.module';
     ChatModule,
   ],
   controllers: [ReservationController],
-  providers: [ReservationService, ReservationRepository],
+  providers: [ReservationService, ReservationRepository, PaymentsService],
   exports: [ReservationRepository],
 })
 export class ReservationModule {}

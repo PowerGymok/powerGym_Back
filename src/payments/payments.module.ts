@@ -27,5 +27,6 @@ import { UsersModule } from 'src/users/users.module';
   ],
   controllers: [PaymentsController],
   providers: [PaymentsService],
+  exports: [PaymentsService, TypeOrmModule],
 })
 export class PaymentsModule {}

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {
+  BadRequestException,
   ForbiddenException,
   Inject,
   Injectable,
@@ -28,6 +29,7 @@ export class ReservationRepository {
     private usersRepo: Repository<User>,
     @InjectRepository(Class)
     private classRepo: Repository<Class>,
+=======
     private readonly chatService: ChatService,
   ) {}
 
@@ -43,63 +45,42 @@ export class ReservationRepository {
   }
 
   async find_reservation_by_id(id: string) {
-    return await this.reservationRepository.findOne({
+    const find_reservation = await this.reservationRepository.findOne({
       where: { id },
       relations: ['class_schedule', 'class_schedule.class', 'users'],
     });
-  }
 
-  async create_reserve(id_user: string, id_class_schedule: string) {
-    const find_user = await this.usersRepository.getUserById(id_user);
-    const find_class_schedule =
-      await this.classScheduleRepository.find_class_schedule_by_id(
-        id_class_schedule,
+    if (!find_reservation) {
+      throw new NotFoundException(
+        `No se encontro la reservación con el id ${id}`,
       );
-
-    if (!find_class_schedule) {
-      throw new NotFoundException('La clase agendada no existe');
     }
 
-    // Validar cupos — contamos reservas Confirmed activas para este schedule
-    // NO tocamos capacity — es el total original y no debe cambiar nunca
-    const confirmedCount = await this.reservationRepository.count({
+    if (find_reservation.status === 'Cancelled') {
+      throw new BadRequestException(
+        `La reservación que intenta buscar con el id ${id} fue cancelada`,
+      );
+    }
+
+    return find_reservation;
+  }
+
+  async find_exist_reservation(id_user: string, id_class_schedule: string) {
+    const existing_reservation = await this.reservationRepository.findOne({
       where: {
+        users: { id: id_user },
         class_schedule: { id: id_class_schedule },
         status: 'Confirmed',
       },
     });
 
-    const capacity = parseInt(find_class_schedule.class.capacity as any, 10);
-    if (confirmedCount >= capacity) {
-      throw new UnauthorizedException(
-        'No hay más cupos disponibles para la clase',
-      );
+    if (existing_reservation) {
+      throw new BadRequestException('Ya tenés una reserva para esta clase');
     }
+  }
 
-    // Validar tokens
-    const class_cost_tokens = find_class_schedule.token;
-    const user_tokens = find_user.tokenBalance;
-
-    if (user_tokens < class_cost_tokens) {
-      throw new UnauthorizedException(
-        'No tienes tokens suficientes para reservar esta clase',
-      );
-    }
-
-    // Descontar tokens
-    await this.usersRepo.update(find_user.id, {
-      tokenBalance: user_tokens - class_cost_tokens,
-    });
-
-    // Crear reserva
-    const new_reservation = this.reservationRepository.create({
-      date: new Date(),
-      users: find_user,
-      class_schedule: find_class_schedule,
-      status: 'Confirmed',
-    });
-
-    await this.reservationRepository.save(new_reservation);
+  async save_reservation(data: Partial<Reservation>): Promise<Reservation> {
+    const created = this.reservationRepository.create(data);
 
     await this.chatService.createConversationIfNotExists(
       find_user.id,
@@ -118,7 +99,9 @@ export class ReservationRepository {
     const find_reservation = await this.find_reservation_by_id(id);
 
     if (!find_reservation) {
-      throw new NotFoundException('No se encontró la reservación');
+      throw new NotFoundException(
+        `No se encontro una reservación con id ${id}`,
+      );
     }
 
     if (find_reservation.users.id !== userId) {
