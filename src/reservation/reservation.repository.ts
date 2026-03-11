@@ -1,8 +1,17 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {
   BadRequestException,
   ForbiddenException,
+<<<<<<< HEAD
   Injectable,
   NotFoundException,
+=======
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+  forwardRef,
+>>>>>>> develop
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Reservation } from './reservation.entity';
@@ -13,14 +22,25 @@ export class ReservationRepository {
   constructor(
     @InjectRepository(Reservation)
     private readonly reservationRepository: Repository<Reservation>,
+<<<<<<< HEAD
+=======
+    @Inject(forwardRef(() => usersRepository))
+    private usersRepository: usersRepository,
+    private readonly classScheduleRepository: ClassScheduleRepository,
+    @InjectRepository(User)
+    private usersRepo: Repository<User>,
+    @InjectRepository(Class)
+    private classRepo: Repository<Class>,
+>>>>>>> develop
   ) {}
 
+  // Devuelve todas las reservas Confirmed de un class_schedule específico
   async find_reservation_by_class_schedule(class_schedule_id: string) {
     return await this.reservationRepository.find({
       relations: ['users'],
       where: {
-        class_schedule: { id: class_schedule_id }, // Tomamos su id
-        status: 'Confirmed', // Solo devolvemos a los no cancelados
+        class_schedule: { id: class_schedule_id },
+        status: 'Confirmed',
       },
     });
   }
@@ -28,15 +48,7 @@ export class ReservationRepository {
   async find_reservation_by_id(id: string) {
     const find_reservation = await this.reservationRepository.findOne({
       where: { id },
-      relations: ['class_schedule', 'users'],
-      select: {
-        id: true,
-        date: true,
-        status: true,
-        users: {
-          id: true,
-        },
-      },
+      relations: ['class_schedule', 'class_schedule.class', 'users'],
     });
 
     if (!find_reservation) {
@@ -89,23 +101,30 @@ export class ReservationRepository {
       );
     }
 
-    const a = await this.reservationRepository.update(
-      { id },
-      { status: 'Cancelled' },
-    );
-    console.log(a);
+    if (find_reservation.status === 'Cancelled') {
+      throw new ForbiddenException('La reserva ya fue cancelada anteriormente');
+    }
+
+    // Cancelar reserva
+    await this.reservationRepository.update({ id }, { status: 'Cancelled' });
+
+    // Devolver tokens con expresión SQL atómica
+    const tokens_to_refund = find_reservation.class_schedule.token;
+
+    await this.usersRepo.update(find_reservation.users.id, {
+      tokenBalance: () => `"tokenBalance" + ${tokens_to_refund}`,
+    });
 
     return {
       success: true,
-      message: 'Reservación cancelada correctamente',
+      message: 'Reservación cancelada. Tokens devueltos correctamente.',
+      tokens_refunded: tokens_to_refund,
     };
   }
 
   async get_by_id(id: string) {
     const reservations = await this.reservationRepository.find({
-      where: {
-        users: { id },
-      },
+      where: { users: { id } },
       relations: ['class_schedule'],
       select: {
         id: true,
@@ -121,16 +140,12 @@ export class ReservationRepository {
       },
     });
 
-    if (!reservations || reservations.length === 0) {
-      throw new NotFoundException('El usuario no tiene reservas registradas');
-    }
-
-    return reservations;
+    return reservations ?? [];
   }
 
   get_reserves() {
     return this.reservationRepository.find({
-      relations: ['class_schedule'],
+      relations: ['class_schedule', 'users'],
       select: {
         id: true,
         date: true,
@@ -142,6 +157,7 @@ export class ReservationRepository {
           token: true,
           isActive: true,
         },
+        users: { id: true },
       },
     });
   }

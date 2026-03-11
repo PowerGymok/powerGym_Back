@@ -8,7 +8,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { TokenPackageService } from './token-package.service';
 import { CreateTokenPackageDto } from './dto/create-token-package.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
@@ -22,6 +22,7 @@ export class TokenPackageController {
   constructor(private readonly tokenPackageService: TokenPackageService) {}
 
   // POST /token-packages — Crea un paquete nuevo (Admin)
+  @ApiBearerAuth()
   @Post()
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -38,6 +39,7 @@ export class TokenPackageController {
   }
 
   // DELETE /token-packages/:id — Desactiva un paquete
+  @ApiBearerAuth()
   @Delete(':id')
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)

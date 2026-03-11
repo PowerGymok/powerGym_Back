@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ClassScheduleRepository } from './class_schedule.repository';
 import { CreateClassSchedule } from './dtos/CreateClassSchedule.dto';

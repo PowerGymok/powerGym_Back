@@ -39,7 +39,7 @@ import { FilesModule } from './files/files.module';
         // todas las entidades que aparezcan en TypeOrmModule.forFeature([...])
         // de cualquier módulo importado aca. No necesitamos listarlas manualmente.
         autoLoadEntities: true,
-        synchronize: true, // False solo en desarrollo, en producción usamos migraciones
+        synchronize: config.get<string>('NODE_ENV') !== 'production',
         ssl: { rejectUnauthorized: false },
       }),
     }),

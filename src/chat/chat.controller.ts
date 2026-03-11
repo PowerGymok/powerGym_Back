@@ -10,7 +10,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ChatService } from './chat.service';
 import { ChatbotService } from './chatbot.service';
 import { CreateConversationDto } from './dto/create-conversation.dto';
@@ -33,6 +33,7 @@ export class ChatController {
   // ─── CONVERSACIONES ──────────────────────────────────────────────────────
 
   // POST /chat/conversations — Crear conversación (Admin asigna coach)
+  @ApiBearerAuth()
   @Post('conversations')
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -44,6 +45,7 @@ export class ChatController {
   }
 
   // GET /chat/conversations/user/:userId — Listar conversaciones del usuario
+  @ApiBearerAuth()
   @Get('conversations/user/:userId')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Listar conversaciones de un usuario' })
@@ -52,6 +54,7 @@ export class ChatController {
   }
 
   // GET /chat/conversations/coach/:coachId — Listar conversaciones del coach
+  @ApiBearerAuth()
   @Get('conversations/coach/:coachId')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Listar conversaciones asignadas a un coach' })
@@ -60,6 +63,7 @@ export class ChatController {
   }
 
   // GET /chat/conversations/:id/messages — Obtener mensajes de una conversación
+  @ApiBearerAuth()
   @Get('conversations/:id/messages')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Obtener todos los mensajes de una conversación' })
@@ -72,6 +76,7 @@ export class ChatController {
   }
 
   // PATCH /chat/conversations/:id/close — Cerrar conversación
+  @ApiBearerAuth()
   @Patch('conversations/:id/close')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Cerrar una conversación' })
@@ -82,6 +87,7 @@ export class ChatController {
   // ─── CHATBOT FAQs (Admin) ────────────────────────────────────────────────
 
   // POST /chat/faqs — Crear respuesta automática
+  @ApiBearerAuth()
   @Post('faqs')
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -98,6 +104,7 @@ export class ChatController {
   }
 
   // PATCH /chat/faqs/:id — Actualizar FAQ
+  @ApiBearerAuth()
   @Patch('faqs/:id')
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -107,6 +114,7 @@ export class ChatController {
   }
 
   // DELETE /chat/faqs/:id — Eliminar FAQ
+  @ApiBearerAuth()
   @Delete('faqs/:id')
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)

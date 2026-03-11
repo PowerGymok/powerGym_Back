@@ -17,7 +17,9 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import type { AuthenticatedRequest } from 'src/auth/interfaces/auth-request.interface';
 import { OwnerOrAdminGuard } from 'src/auth/guards/ownership.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @Controller('reservation')
 export class ReservationController {
   constructor(private readonly reservationService: ReservationService) {}
@@ -45,18 +47,21 @@ export class ReservationController {
     return this.reservationService.cancel_reserve_class(id, userId);
   }
 
+  // GET 'all' debe ir ANTES de GET ':id'
+  // NestJS evalúa rutas en orden de declaración — si ':id' va primero,
+  // el string 'all' se interpreta como un UUID y falla con ParseUUIDPipe
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('all')
+  @HttpCode(200)
+  get_all_reservations() {
+    return this.reservationService.get_reservations();
+  }
+
   @UseGuards(JwtAuthGuard, OwnerOrAdminGuard)
   @Get(':id')
   @HttpCode(200)
   get_history_reserves_by_id(@Param('id', ParseUUIDPipe) id: string) {
     return this.reservationService.get_reserves_by_id(id);
-  }
-
-  @Roles(Role.Admin)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get('/')
-  @HttpCode(200)
-  get_all_reservations() {
-    return this.reservationService.get_reservations();
   }
 }
