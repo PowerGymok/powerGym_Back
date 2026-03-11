@@ -55,7 +55,7 @@ export class Conversation {
   @JoinColumn({ name: 'coachId' })
   coach: User;
 
-  @ManyToOne(() => Class_schedule, { nullable: false })
+  @ManyToOne(() => Class_schedule, { nullable: true })
   @JoinColumn({ name: 'classScheduleId' })
   class_schedule: Class_schedule;
 
