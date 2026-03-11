@@ -11,6 +11,10 @@ import { ClassScheduleModule } from 'src/class_schedule/class_schedule.module';
 import { ClassModule } from 'src/class/class.module';
 import { Class } from 'src/class/class.entity';
 import { User } from 'src/users/users.entity';
+import { PaymentsModule } from 'src/payments/payments.module';
+import { MembershipModule } from 'src/membership/membership.module';
+import { PaymentsService } from 'src/payments/payments.service';
+import { TokenPackageModule } from 'src/token-package/token-package.module';
 
 @Module({
   imports: [
@@ -20,9 +24,12 @@ import { User } from 'src/users/users.entity';
     forwardRef(() => JwtModule),
     ClassScheduleModule,
     ClassModule,
+    PaymentsModule,
+    MembershipModule,
+    TokenPackageModule,
   ],
   controllers: [ReservationController],
-  providers: [ReservationService, ReservationRepository],
+  providers: [ReservationService, ReservationRepository, PaymentsService],
   exports: [ReservationRepository],
 })
 export class ReservationModule {}

@@ -1,31 +1,18 @@
 import {
+  BadRequestException,
   ForbiddenException,
-  forwardRef,
-  Inject,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Reservation } from './reservation.entity';
 import { Repository } from 'typeorm';
-import { usersRepository } from 'src/users/users.repository';
-import { ClassScheduleRepository } from 'src/class_schedule/class_schedule.repository';
-import { User } from 'src/users/users.entity';
-import { Class } from 'src/class/class.entity';
 
 @Injectable({})
 export class ReservationRepository {
   constructor(
     @InjectRepository(Reservation)
     private readonly reservationRepository: Repository<Reservation>,
-    @Inject(forwardRef(() => usersRepository))
-    private usersRepository: usersRepository,
-    private readonly classScheduleRepository: ClassScheduleRepository,
-    @InjectRepository(Class)
-    private classRepository: Repository<Class>,
-    @InjectRepository(User)
-    private usersRepo: Repository<User>,
   ) {}
 
   async find_reservation_by_class_schedule(class_schedule_id: string) {
@@ -39,7 +26,7 @@ export class ReservationRepository {
   }
 
   async find_reservation_by_id(id: string) {
-    return await this.reservationRepository.findOne({
+    const find_reservation = await this.reservationRepository.findOne({
       where: { id },
       relations: ['class_schedule', 'users'],
       select: {
@@ -51,70 +38,49 @@ export class ReservationRepository {
         },
       },
     });
+
+    if (!find_reservation) {
+      throw new NotFoundException(
+        `No se encontro la reservación con el id ${id}`,
+      );
+    }
+
+    if (find_reservation.status === 'Cancelled') {
+      throw new BadRequestException(
+        `La reservación que intenta buscar con el id ${id} fue cancelada`,
+      );
+    }
+
+    return find_reservation;
   }
 
-  async create_reserve(id_user: string, id_class_schedule: string) {
-    // Buscamos si el usuario existe y esta activo ESTO ULTIMO AL FINAL IMPLEMENTAR
-    const find_user = await this.usersRepository.getUserById(id_user);
+  async find_exist_reservation(id_user: string, id_class_schedule: string) {
+    const existing_reservation = await this.reservationRepository.findOne({
+      where: {
+        users: { id: id_user },
+        class_schedule: { id: id_class_schedule },
+        status: 'Confirmed',
+      },
+    });
 
-    // Buscamos si la cita de la clase existe
-    const find_class_schedule =
-      await this.classScheduleRepository.find_class_schedule_by_id(
-        id_class_schedule,
-      );
-
-    // Extraemos la capacidad de la clase con class_schedule
-    let find_class_by_schedule = find_class_schedule.class.capacity;
-
-    if (find_class_by_schedule <= 0) {
-      throw new UnauthorizedException(
-        'No hay mas cupos disponibles para la clase',
-      );
+    if (existing_reservation) {
+      throw new BadRequestException('Ya tenés una reserva para esta clase');
     }
+  }
 
-    // Extraemos el dato de el costo de tokens de la clase
-    const class_cost_tokens = find_class_schedule.token;
-    let user_tokens = find_user.tokenBalance;
+  async save_reservation(data: Partial<Reservation>): Promise<Reservation> {
+    const created = this.reservationRepository.create(data);
 
-    // Chequeamos que el usuario tengo la cantidad de tokens suficientes para gastar en la clase
-    if (user_tokens < class_cost_tokens) {
-      throw new UnauthorizedException(
-        'No tiene tokens suficientes para acceder a esta clase',
-      );
-    }
-
-    // Si tiene los tokens suficientes le restamos tokens del usuario
-    user_tokens -= class_cost_tokens;
-    await this.usersRepo.update(find_user.id, {
-      tokenBalance: user_tokens,
-    });
-
-    // Restamos el espacio en la clase en - 1 si hay cupo
-    find_class_by_schedule -= 1;
-    await this.classRepository.update(find_class_schedule.class.id, {
-      capacity: find_class_by_schedule,
-    });
-
-    const new_reservation = this.reservationRepository.create({
-      date: new Date(),
-      users: find_user,
-      class_schedule: find_class_schedule,
-      status: 'Confirmed', // Ya puse en el default, pero no está de más
-    });
-    await this.reservationRepository.save(new_reservation);
-
-    return {
-      success: true,
-      message: 'Se realizó la reservación de la clase correctamente',
-      reservation_id: new_reservation.id,
-    };
+    return await this.reservationRepository.save(created);
   }
 
   async cancel_reserve(id: string, userId: string) {
     const find_reservation = await this.find_reservation_by_id(id);
 
     if (!find_reservation) {
-      throw new NotFoundException('No se encontro una reservación');
+      throw new NotFoundException(
+        `No se encontro una reservación con id ${id}`,
+      );
     }
 
     if (find_reservation.users.id !== userId) {

@@ -31,7 +31,7 @@ export class ReservationController {
     @Query('id_class_schedule', ParseUUIDPipe) id_class_schedule: string,
   ) {
     const id_user = req.user.id;
-    return this.reservationService.reserve_class(id_user, id_class_schedule);
+    return this.reservationService.reserve(id_user, id_class_schedule);
   }
 
   @UseGuards(JwtAuthGuard)
