@@ -105,6 +105,37 @@ export class ChatService {
     return saved;
   }
 
+  async createConversationIfNotExists(
+    userId: string,
+    coachId: string,
+    classScheduleId: string,
+  ) {
+    const existing = await this.conversationRepository.findOne({
+      where: {
+        user: { id: userId },
+        coach: { id: coachId },
+        class_schedule: { id: classScheduleId },
+      },
+    });
+    if (existing) return existing;
+
+    const conversation = this.conversationRepository.create({
+      user: { id: userId },
+      coach: { id: coachId },
+      class_schedule: { id: classScheduleId },
+      status: ConversationStatus.ACTIVE,
+    });
+
+    const saved = await this.conversationRepository.save(conversation);
+
+    await this.createSystemMessage(
+      saved.id,
+      'Tu chat con el coach ha comenzado',
+    );
+
+    return saved;
+  }
+
   // ─── ENVIAR MENSAJE ──────────────────────────────────────────────────────
 
   // Guarda un mensaje en la base de datos y actualiza la conversación
@@ -129,9 +160,9 @@ export class ChatService {
     }
 
     // Verificar que el remitente es parte de la conversación
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+
     const isUser = conversation.user?.id === senderId;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+
     const isCoach = conversation.coach?.id === senderId;
 
     if (
@@ -184,7 +215,7 @@ export class ChatService {
     const message = this.messageRepository.create({
       content,
       type: MessageType.SYSTEM,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
       sender: conversation.user,
       conversation: { id: conversationId } as Conversation,
       isRead: true, // Los mensajes del sistema se marcan como leídos
@@ -209,7 +240,7 @@ export class ChatService {
     const message = this.messageRepository.create({
       content,
       type: MessageType.BOT,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
       sender: conversation.user,
       conversation: { id: conversationId } as Conversation,
       isRead: false,
@@ -255,7 +286,6 @@ export class ChatService {
     }
 
     const hasAccess =
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       conversation.user?.id === userId || conversation.coach?.id === userId;
 
     if (!hasAccess) {

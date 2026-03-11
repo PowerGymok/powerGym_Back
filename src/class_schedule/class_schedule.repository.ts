@@ -13,7 +13,7 @@ export class ClassScheduleRepository {
   async find_class_schedule_by_id(id: string) {
     const class_schedule = await this.classScheduleRepository.findOne({
       where: { id },
-      relations: ['class'],
+      relations: ['coach', 'class'],
     });
 
     if (!class_schedule)
@@ -44,6 +44,7 @@ export class ClassScheduleRepository {
           name: true,
           duration: true,
           capacity: true,
+          intensity: true,
         },
         coach: {
           id: true,

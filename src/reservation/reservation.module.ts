@@ -11,6 +11,7 @@ import { ClassScheduleModule } from 'src/class_schedule/class_schedule.module';
 import { ClassModule } from 'src/class/class.module';
 import { Class } from 'src/class/class.entity';
 import { User } from 'src/users/users.entity';
+import { ChatModule } from 'src/chat/chat.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { User } from 'src/users/users.entity';
     forwardRef(() => JwtModule),
     ClassScheduleModule,
     ClassModule,
+    ChatModule,
   ],
   controllers: [ReservationController],
   providers: [ReservationService, ReservationRepository],

@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { User } from '../../users/users.entity';
 import { Message } from './message.entity';
+import { Class_schedule } from 'src/class_schedule/class_schedule.entity';
 
 // Estado de la conversación
 export enum ConversationStatus {
@@ -53,6 +54,10 @@ export class Conversation {
   @ManyToOne(() => User, { nullable: false })
   @JoinColumn({ name: 'coachId' })
   coach: User;
+
+  @ManyToOne(() => Class_schedule, { nullable: false })
+  @JoinColumn({ name: 'classScheduleId' })
+  class_schedule: Class_schedule;
 
   // OneToMany = una conversación → muchos mensajes
   // cascade: true = al borrar la conversación, se borran todos sus mensajes
