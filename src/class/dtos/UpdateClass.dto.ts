@@ -47,4 +47,13 @@ export class UpdateClass {
     message: 'La intensidad no puede estar vacía. Debe ser alta, media o baja',
   })
   intensity?: Intensity;
+
+  @IsOptional()
+  @IsString({ each: true, message: 'Cada beneficio debe ser texto' })
+  benefits?: string[];
+
+  @IsOptional()
+  @IsString({ each: true, message: 'Los requisitos deben ser texto' })
+  @Length(0, 300)
+  requirements?: string;
 }
