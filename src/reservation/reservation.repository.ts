@@ -29,7 +29,6 @@ export class ReservationRepository {
     private usersRepo: Repository<User>,
     @InjectRepository(Class)
     private classRepo: Repository<Class>,
-=======
     private readonly chatService: ChatService,
   ) {}
 
@@ -81,18 +80,15 @@ export class ReservationRepository {
 
   async save_reservation(data: Partial<Reservation>): Promise<Reservation> {
     const created = this.reservationRepository.create(data);
+    const saved = await this.reservationRepository.save(created);
 
     await this.chatService.createConversationIfNotExists(
-      find_user.id,
-      find_class_schedule.coach.id,
-      find_class_schedule.id,
+      (data.users as User).id,
+      (data.class_schedule as any).coach.id,
+      (data.class_schedule as any).id,
     );
 
-    return {
-      success: true,
-      message: 'Reservación realizada correctamente',
-      reservation_id: new_reservation.id,
-    };
+    return saved;
   }
 
   async cancel_reserve(id: string, userId: string) {

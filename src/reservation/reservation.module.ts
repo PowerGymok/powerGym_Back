@@ -12,6 +12,7 @@ import { ClassModule } from 'src/class/class.module';
 import { Class } from 'src/class/class.entity';
 import { User } from 'src/users/users.entity';
 import { ChatModule } from 'src/chat/chat.module';
+import { PaymentsModule } from 'src/payments/payments.module';
 
 @Module({
   imports: [
@@ -22,9 +23,10 @@ import { ChatModule } from 'src/chat/chat.module';
     ClassScheduleModule,
     ClassModule,
     ChatModule,
+    forwardRef(() => PaymentsModule),
   ],
   controllers: [ReservationController],
-  providers: [ReservationService, ReservationRepository, PaymentsService],
+  providers: [ReservationService, ReservationRepository],
   exports: [ReservationRepository],
 })
 export class ReservationModule {}
