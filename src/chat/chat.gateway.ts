@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {
   WebSocketGateway,
   WebSocketServer,
@@ -11,6 +12,7 @@ import { Server, Socket } from 'socket.io';
 import { ChatService } from './chat.service';
 import { ChatbotService } from './chatbot.service';
 import { MessageType } from './entities/message.entity';
+import { Role } from 'src/common/roles.enum';
 
 // @WebSocketGateway configura el servidor de WebSockets
 // cors: true permite conexiones desde el frontend (ajusta en producción)
@@ -28,7 +30,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {}
 
   private getUserIdFromSocket(client: Socket): string | null {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return (client.data?.userId as string | undefined) ?? null;
   }
 
@@ -47,18 +48,30 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     // Verificar que el usuario tiene acceso al chat
-    const hasAccess = await this.chatService.canUserAccessChat(userId);
-    if (!hasAccess) {
-      console.log(`Usuario ${userId} sin acceso al chat, desconectando...`);
-      client.emit('error', {
-        message: 'No tienes una membresía activa con chat incluido',
-      });
+    const user = await this.chatService['userRepository'].findOne({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      console.log(`Usuario ${userId} no encontrado`);
       client.disconnect();
       return;
     }
 
+    if (user.role === Role.User) {
+      const hasAccess = await this.chatService.canUserAccessChat(userId);
+      if (!hasAccess) {
+        console.log(`Usuario ${userId} sin acceso al chat, desconectando...`);
+        client.emit('error', {
+          message: 'No tienes una membresía activa con chat incluido',
+        });
+        client.disconnect();
+        return;
+      }
+    }
+
     // Guardar el userId en el socket para usarlo después
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+
     client.data.userId = userId;
 
     // Unir al cliente a sus "rooms" (conversaciones)

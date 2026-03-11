@@ -23,4 +23,8 @@ export class ReservationService {
   get_reserves_by_id(id: string) {
     return this.reservationRepository.get_by_id(id);
   }
+
+  get_reservations_by_coach(coachId: string) {
+    return this.reservationRepository.get_reservation_by_coach(coachId);
+  }
 }
