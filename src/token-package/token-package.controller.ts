@@ -49,6 +49,9 @@ export class TokenPackageController {
     return this.tokenPackageService.deactivate(id);
   }
 
+  @ApiBearerAuth()
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch('active/:id')
   activatePkg(@Param('id', ParseUUIDPipe) id: string) {
     return this.tokenPackageService.activatePkg(id);
