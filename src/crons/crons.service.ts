@@ -27,6 +27,21 @@ export class CronsService {
     );
   }
 
+  @Cron('0 20 21 * * 4', {
+    name: 'active-users-report',
+    timeZone: 'America/Argentina/Buenos_Aires',
+  })
+  async sendActiveUsersReportTryout() {
+    const users = await this.usersService.getAllUsers(1, 100);
+    const activeUsers = users.filter(
+      (user) => user.role === Role.User && user.isActive === true,
+    );
+    await this.notificationsService.sendActiveUsersReport(
+      activeUsers,
+      'gympower.ok@gmail.com',
+    );
+  }
+
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
     name: 'expired-membership',
     timeZone: 'America/Argentina/Buenos_Aires',

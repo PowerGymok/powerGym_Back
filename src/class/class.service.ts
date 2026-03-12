@@ -27,6 +27,10 @@ export class ClassService {
     return this.classRepository.deleted_class(id);
   }
 
+  activeClass(id: string) {
+    return this.classRepository.activeClass(id);
+  }
+
   // SUBIR IMAGEN DE CLASE (Cloudinary)
   // Flujo: traer clase -> subir nueva -> borrar anterior -> guardar url + publicId
   async uploadClassImage(id: string, file: Express.Multer.File) {

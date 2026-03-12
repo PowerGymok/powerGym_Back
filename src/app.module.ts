@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
@@ -16,6 +16,7 @@ import { ReservationModule } from './reservation/reservation.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CronsModule } from './crons/crons.module';
 import { FilesModule } from './files/files.module';
+import { LoggerGlobal } from './middleware/logger.middleware';
 
 @Module({
   imports: [
@@ -67,4 +68,8 @@ import { FilesModule } from './files/files.module';
     FilesModule,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerGlobal).forRoutes('*');
+  }
+}
