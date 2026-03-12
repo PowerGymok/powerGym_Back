@@ -2,28 +2,24 @@
 import {
   BadRequestException,
   ForbiddenException,
-<<<<<<< HEAD
-  Injectable,
-  NotFoundException,
-=======
+  forwardRef,
   Inject,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
-  forwardRef,
->>>>>>> develop
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Reservation } from './reservation.entity';
 import { Repository } from 'typeorm';
+import { Class } from 'src/class/class.entity';
+import { User } from 'src/users/users.entity';
+import { ClassScheduleRepository } from 'src/class_schedule/class_schedule.repository';
+import { usersRepository } from 'src/users/users.repository';
 
 @Injectable({})
 export class ReservationRepository {
   constructor(
     @InjectRepository(Reservation)
     private readonly reservationRepository: Repository<Reservation>,
-<<<<<<< HEAD
-=======
     @Inject(forwardRef(() => usersRepository))
     private usersRepository: usersRepository,
     private readonly classScheduleRepository: ClassScheduleRepository,
@@ -31,7 +27,6 @@ export class ReservationRepository {
     private usersRepo: Repository<User>,
     @InjectRepository(Class)
     private classRepo: Repository<Class>,
->>>>>>> develop
   ) {}
 
   // Devuelve todas las reservas Confirmed de un class_schedule específico
