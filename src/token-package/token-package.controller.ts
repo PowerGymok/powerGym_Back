@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -46,5 +47,10 @@ export class TokenPackageController {
   @ApiOperation({ summary: 'Desactivar paquete de tokens (Admin)' })
   deactivate(@Param('id', ParseUUIDPipe) id: string) {
     return this.tokenPackageService.deactivate(id);
+  }
+
+  @Patch('active/:id')
+  activatePkg(@Param('id', ParseUUIDPipe) id: string) {
+    return this.tokenPackageService.activatePkg(id);
   }
 }

@@ -84,4 +84,12 @@ export class MembershipController {
   deactivate(@Param('id', ParseUUIDPipe) id: string) {
     return this.membershipService.deactivate(id);
   }
+
+  @ApiBearerAuth()
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Patch('active/:id')
+  activateMembership(@Param('id', ParseUUIDPipe) id: string) {
+    return this.membershipService.activateMembership(id);
+  }
 }

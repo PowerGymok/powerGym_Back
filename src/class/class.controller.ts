@@ -65,6 +65,14 @@ export class ClassController {
     return this.classService.delete_class(id);
   }
 
+  @ApiBearerAuth()
+  @Roles(Role.Coach, Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Patch('active/:id')
+  activeClass(@Param('id', ParseUUIDPipe) id: string) {
+    return this.classService.activeClass(id);
+  }
+
   // SUBIR IMAGEN DE CLASE (Cloudinary)
   @ApiBearerAuth()
   @Roles(Role.Coach, Role.Admin)

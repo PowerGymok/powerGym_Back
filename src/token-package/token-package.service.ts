@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TokenPackage } from './token-package.entity';
@@ -41,5 +45,20 @@ export class TokenPackageService {
     const pkg = await this.findOne(id);
     pkg.isActive = false;
     return this.tokenPackageRepository.save(pkg);
+  }
+
+  async activatePkg(id: string) {
+    const pkg = await this.tokenPackageRepository.findOne({
+      where: { id },
+      select: { id: true, name: true, price: true, isActive: true },
+    });
+    if (!pkg || pkg.isActive === true)
+      throw new BadRequestException(
+        'El paquete de tokens no existe o ya se encuentra activo',
+      );
+
+    pkg.isActive = true;
+    const pkgSaved = await this.tokenPackageRepository.save(pkg);
+    return pkgSaved;
   }
 }
