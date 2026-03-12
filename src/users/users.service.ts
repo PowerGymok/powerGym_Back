@@ -76,4 +76,9 @@ export class UsersService {
   ) {
     return this.usersRepository.updateUserImage(id, data);
   }
+
+  async activateUser(id: string) {
+    await this.usersRepository.activateUser(id);
+    return 'Su cuenta ha sido activada exitosamente';
+  }
 }

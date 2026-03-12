@@ -88,10 +88,14 @@ export class AuthService {
       password: passwordHasheada,
     });
 
-    await this.notificationsService.sendWelcomeEmail(
-      created.name,
-      created.email,
-    );
+    try {
+      await this.notificationsService.sendWelcomeEmail(
+        created.name,
+        created.email,
+      );
+    } catch (error) {
+      console.error('Error enviando welcome email:', error);
+    }
 
     return await this.login({
       id: created.id,
@@ -130,7 +134,11 @@ export class AuthService {
     }
 
     if (isNew) {
-      await this.notificationsService.sendWelcomeEmail(user.name, user.email);
+      try {
+        await this.notificationsService.sendWelcomeEmail(user.name, user.email);
+      } catch (error) {
+        console.error('Error enviando welcome email:', error);
+      }
     }
 
     const payload = {

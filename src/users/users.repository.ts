@@ -224,4 +224,21 @@ export class usersRepository {
     user.cloudinaryId = data.cloudinaryId;
     return this.usersRepository.save(user);
   }
+
+  async activateUser(id: string) {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+    });
+
+    if (!user) throw new NotFoundException('No se encontró al usuario');
+
+    if (user.isActive === true)
+      throw new BadRequestException('El usuario ya está activo');
+
+    user.isActive = true;
+
+    await this.usersRepository.save(user);
+
+    return user;
+  }
 }
