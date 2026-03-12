@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {
   BadRequestException,
@@ -5,7 +6,6 @@ import {
   Inject,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
   forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';

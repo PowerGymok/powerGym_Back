@@ -43,7 +43,6 @@ export class Message {
 
   // ManyToOne = muchos mensajes → un remitente (User)
   // El remitente puede ser el usuario cliente O el coach, según el 'type'
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   @ManyToOne(() => User, { nullable: false })
   @JoinColumn({ name: 'senderId' })
   sender: User;
