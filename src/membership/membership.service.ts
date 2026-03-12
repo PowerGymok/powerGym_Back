@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Membership } from './membership.entity';
@@ -64,5 +68,21 @@ export class MembershipService {
     const membership = await this.findOne(id);
     membership.isActive = false;
     return this.membershipRepository.save(membership);
+  }
+
+  async activateMembership(id: string) {
+    const membership = await this.membershipRepository.findOne({
+      where: { id },
+      select: { id: true, name: true, price: true, isActive: true },
+    });
+    if (!membership || membership.isActive === true)
+      throw new BadRequestException(
+        'La membresía ya está activa o no fue encontrada',
+      );
+
+    membership.isActive = true;
+
+    const savedMembership = await this.membershipRepository.save(membership);
+    return savedMembership;
   }
 }
