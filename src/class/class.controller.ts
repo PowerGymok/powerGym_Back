@@ -38,6 +38,15 @@ export class ClassController {
   @ApiBearerAuth()
   @Roles(Role.Coach, Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('all')
+  @HttpCode(200)
+  get_all_classes_admin() {
+    return this.classService.get_all_classes();
+  }
+
+  @ApiBearerAuth()
+  @Roles(Role.Coach, Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post('create')
   @HttpCode(201)
   create_new_class(@Body() clase: CreateClass) {
@@ -86,7 +95,7 @@ export class ClassController {
         const ok = /image\/(jpeg|jpg|png|webp)/.test(file.mimetype);
         if (!ok) {
           return cb(
-            new BadRequestException('Formato de imagen inválido'),
+            new BadRequestException('Formato de imagen invÃ¡lido'),
             false,
           );
         }

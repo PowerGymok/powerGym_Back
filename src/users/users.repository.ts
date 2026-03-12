@@ -26,7 +26,7 @@ export class usersRepository {
     const allUsers = await this.usersRepository.find({
       skip: skip,
       take: limit,
-      where: { role: Role.User, isActive: true },
+      where: { role: Role.User },
       relations: ['memberships'],
     });
 
@@ -35,7 +35,7 @@ export class usersRepository {
 
   async getUserById(id: string) {
     const user = await this.usersRepository.findOne({
-      where: { id, role: Role.User, isActive: true },
+      where: { id, role: Role.User },
       relations: [
         'memberships',
         'transactions',

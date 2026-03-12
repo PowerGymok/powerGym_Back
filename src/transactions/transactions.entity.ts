@@ -65,7 +65,6 @@ export class Transaction {
   createdAt: Date;
 
   // ManyToOne = muchas transacciones → un usuario
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   @ManyToOne(() => User, (user) => user.transactions, { nullable: false })
   @JoinColumn({ name: 'userId' })
   user: User;

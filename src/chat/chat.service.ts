@@ -81,11 +81,7 @@ export class ChatService {
       },
     });
 
-    if (existing) {
-      throw new BadRequestException(
-        'Ya existe una conversación activa entre este usuario y coach',
-      );
-    }
+    if (existing) return existing;
 
     // Crear la conversación
     const conversation = this.conversationRepository.create({

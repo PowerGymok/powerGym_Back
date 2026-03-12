@@ -48,6 +48,24 @@ export class ClassRepository {
     return find_class;
   }
 
+  get_all_classes() {
+    return this.classRepository.find({
+      select: {
+        id: true,
+        name: true,
+        duration: true,
+        description: true,
+        capacity: true,
+        isActive: true,
+        imgUrl: true,
+        intensity: true,
+        benefits: true,
+        requirements: true,
+      },
+      order: { isActive: 'DESC', name: 'ASC' },
+    });
+  }
+
   get_classes() {
     return this.classRepository.find({
       relations: ['class_schedule'],

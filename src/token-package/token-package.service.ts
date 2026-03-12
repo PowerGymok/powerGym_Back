@@ -25,7 +25,13 @@ export class TokenPackageService {
   async findAllActive(): Promise<TokenPackage[]> {
     return this.tokenPackageRepository.find({
       where: { isActive: true },
-      order: { price: 'ASC' }, // De más barato a más caro
+      order: { price: 'ASC' },
+    });
+  }
+
+  async findAll(): Promise<TokenPackage[]> {
+    return this.tokenPackageRepository.find({
+      order: { isActive: 'DESC', price: 'ASC' },
     });
   }
 

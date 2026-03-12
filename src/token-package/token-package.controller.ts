@@ -39,6 +39,17 @@ export class TokenPackageController {
     return this.tokenPackageService.findAllActive();
   }
 
+  @ApiBearerAuth()
+  @Get('all')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({
+    summary: 'Listar todos los paquetes incluyendo inactivos (Admin)',
+  })
+  findAllAdmin() {
+    return this.tokenPackageService.findAll();
+  }
+
   // DELETE /token-packages/:id — Desactiva un paquete
   @ApiBearerAuth()
   @Delete(':id')
