@@ -56,7 +56,7 @@ export class AuthController {
 
     const FRONT_URL = process.env.FRONT_URL;
 
-    const redirectUrl = `${FRONT_URL}?token=${encodeURIComponent(result.accessToken)}&isProfileComplete=${result.user.isProfileComplete}`;
+    const redirectUrl = `${FRONT_URL}/auth/callback?token=${encodeURIComponent(result.accessToken)}&isProfileComplete=${result.user.isProfileComplete}`;
 
     return res.redirect(redirectUrl);
   }
