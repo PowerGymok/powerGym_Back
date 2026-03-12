@@ -12,7 +12,7 @@ export class CronsService {
     private readonly notificationsService: NotificationsService,
   ) {}
 
-  @Cron('0 20 21 * * 5', {
+  @Cron('0 20 22 * * 5', {
     name: 'active-users-report',
     timeZone: 'America/Argentina/Buenos_Aires',
   })
