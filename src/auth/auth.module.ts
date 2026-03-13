@@ -23,7 +23,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'dev_secret',
-      signOptions: { expiresIn: '20min' },
+      signOptions: { expiresIn: '1h' },
     }),
   ],
   controllers: [AuthController],
