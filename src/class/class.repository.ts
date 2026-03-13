@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Class } from './class.entity';
 import { Repository } from 'typeorm';
@@ -23,7 +27,7 @@ export class ClassRepository {
         description: true,
         capacity: true,
         isActive: true,
-        imgUrl: true, // 👈 agregado para que el front vea la imagen
+        imgUrl: true,
         class_schedule: true,
         intensity: true,
       },
@@ -42,6 +46,24 @@ export class ClassRepository {
     }
 
     return find_class;
+  }
+
+  get_all_classes() {
+    return this.classRepository.find({
+      select: {
+        id: true,
+        name: true,
+        duration: true,
+        description: true,
+        capacity: true,
+        isActive: true,
+        imgUrl: true,
+        intensity: true,
+        benefits: true,
+        requirements: true,
+      },
+      order: { isActive: 'DESC', name: 'ASC' },
+    });
   }
 
   get_classes() {
@@ -103,6 +125,31 @@ export class ClassRepository {
       success: true,
       message: 'Clase borrada correctamente',
     };
+  }
+
+  async activeClass(id: string) {
+    const findClass = await this.classRepository.findOne({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        duration: true,
+        description: true,
+        capacity: true,
+        isActive: true,
+      },
+    });
+    if (!findClass)
+      throw new NotFoundException(
+        'La clase que está buscando no pudo ser encontrada',
+      );
+    if (findClass.isActive === true)
+      throw new BadRequestException('La clase ya está activa');
+
+    findClass.isActive = true;
+    const savedClass = await this.classRepository.save(findClass);
+
+    return savedClass;
   }
 
   // =========================

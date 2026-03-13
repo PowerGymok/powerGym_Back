@@ -43,7 +43,6 @@ export class Membership {
 
   // Relación: un tipo de membresía puede tener muchos usuarios suscritos
   // OneToMany = un registro aquí → muchos en UserMembership
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   @OneToMany(() => UserMembership, (um) => um.membership, { cascade: true })
   userMemberships: UserMembership[];
 }

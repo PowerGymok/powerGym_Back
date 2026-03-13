@@ -1,19 +1,21 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {
   BadRequestException,
   ForbiddenException,
-  forwardRef,
   Inject,
   Injectable,
   NotFoundException,
+  forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Reservation } from './reservation.entity';
 import { Repository } from 'typeorm';
-import { Class } from 'src/class/class.entity';
-import { User } from 'src/users/users.entity';
-import { ClassScheduleRepository } from 'src/class_schedule/class_schedule.repository';
 import { usersRepository } from 'src/users/users.repository';
+import { ClassScheduleRepository } from 'src/class_schedule/class_schedule.repository';
+import { User } from 'src/users/users.entity';
+import { Class } from 'src/class/class.entity';
+import { ChatService } from 'src/chat/chat.service';
 
 @Injectable({})
 export class ReservationRepository {
@@ -27,6 +29,7 @@ export class ReservationRepository {
     private usersRepo: Repository<User>,
     @InjectRepository(Class)
     private classRepo: Repository<Class>,
+    private readonly chatService: ChatService,
   ) {}
 
   // Devuelve todas las reservas Confirmed de un class_schedule específico
@@ -77,8 +80,16 @@ export class ReservationRepository {
 
   async save_reservation(data: Partial<Reservation>): Promise<Reservation> {
     const created = this.reservationRepository.create(data);
+    const saved = await this.reservationRepository.save(created);
 
-    return await this.reservationRepository.save(created);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    await this.chatService.createConversationIfNotExists(
+      (data.users as User).id,
+      (data.class_schedule as any).coach.id,
+      (data.class_schedule as any).id,
+    );
+
+    return saved;
   }
 
   async cancel_reserve(id: string, userId: string) {
@@ -131,6 +142,50 @@ export class ReservationRepository {
           time: true,
           token: true,
           isActive: true,
+          coach: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
+
+    return reservations ?? [];
+  }
+
+  async get_reservation_by_coach(coachId: string) {
+    const reservations = await this.reservationRepository.find({
+      where: {
+        class_schedule: {
+          coach: { id: coachId },
+        },
+        status: 'Confirmed',
+      },
+      relations: [
+        'users',
+        'Class_schedule',
+        'Class_schedule.class',
+        'Class_schedule.coach',
+      ],
+      select: {
+        id: true,
+        date: true,
+        status: true,
+        users: {
+          id: true,
+          name: true,
+          email: true,
+        },
+        class_schedule: {
+          id: true,
+          date: true,
+          time: true,
+          coach: { id: true, name: true },
+          class: {
+            id: true,
+            name: true,
+          },
         },
       },
     });

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-// import { Role } from 'src/common/roles.enum';
+import { Role } from 'src/common/roles.enum';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { MembershipStatus } from 'src/user-membership/user-membership.entity';
 import { UsersService } from 'src/users/users.service';
@@ -12,20 +12,35 @@ export class CronsService {
     private readonly notificationsService: NotificationsService,
   ) {}
 
-  // @Cron('0 * * * * *', {
-  //   name: 'active-users-report',
-  //   timeZone: 'America/Argentina/Buenos_Aires',
-  // })
-  // async sendActiveUsersReport() {
-  //   const users = await this.usersService.getAllUsers(1, 100);
-  //   const activeUsers = users.filter(
-  //     (user) => user.role === Role.User && user.isActive === true,
-  //   );
-  //   await this.notificationsService.sendActiveUsersReport(
-  //     activeUsers,
-  //     'gympower.ok@gmail.com',
-  //   );
-  // }
+  @Cron('0 20 22 * * 5', {
+    name: 'active-users-report',
+    timeZone: 'America/Argentina/Buenos_Aires',
+  })
+  async sendActiveUsersReport() {
+    const users = await this.usersService.getAllUsers(1, 100);
+    const activeUsers = users.filter(
+      (user) => user.role === Role.User && user.isActive === true,
+    );
+    await this.notificationsService.sendActiveUsersReport(
+      activeUsers,
+      'gympower.ok@gmail.com',
+    );
+  }
+
+  @Cron('0 20 21 * * 4', {
+    name: 'active-users-report',
+    timeZone: 'America/Argentina/Buenos_Aires',
+  })
+  async sendActiveUsersReportTryout() {
+    const users = await this.usersService.getAllUsers(1, 100);
+    const activeUsers = users.filter(
+      (user) => user.role === Role.User && user.isActive === true,
+    );
+    await this.notificationsService.sendActiveUsersReport(
+      activeUsers,
+      'gympower.ok@gmail.com',
+    );
+  }
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
     name: 'expired-membership',

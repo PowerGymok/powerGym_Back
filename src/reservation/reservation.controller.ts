@@ -58,6 +58,13 @@ export class ReservationController {
     return this.reservationService.get_reservations();
   }
 
+  @Roles(Role.Coach, Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('coach/:coachId')
+  get_reservations_by_coach(@Param('coachId', ParseUUIDPipe) coachId: string) {
+    return this.reservationService.get_reserves_by_id(coachId);
+  }
+
   @UseGuards(JwtAuthGuard, OwnerOrAdminGuard)
   @Get(':id')
   @HttpCode(200)

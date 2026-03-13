@@ -26,7 +26,7 @@ export class usersRepository {
     const allUsers = await this.usersRepository.find({
       skip: skip,
       take: limit,
-      where: { role: Role.User, isActive: true },
+      where: { role: Role.User },
       relations: ['memberships'],
     });
 
@@ -35,7 +35,7 @@ export class usersRepository {
 
   async getUserById(id: string) {
     const user = await this.usersRepository.findOne({
-      where: { id, role: Role.User, isActive: true },
+      where: { id, role: Role.User },
       relations: [
         'memberships',
         'transactions',
@@ -223,5 +223,22 @@ export class usersRepository {
     user.profileImg = data.profileImg;
     user.cloudinaryId = data.cloudinaryId;
     return this.usersRepository.save(user);
+  }
+
+  async activateUser(id: string) {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+    });
+
+    if (!user) throw new NotFoundException('No se encontró al usuario');
+
+    if (user.isActive === true)
+      throw new BadRequestException('El usuario ya está activo');
+
+    user.isActive = true;
+
+    await this.usersRepository.save(user);
+
+    return user;
   }
 }

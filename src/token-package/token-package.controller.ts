@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -38,6 +39,17 @@ export class TokenPackageController {
     return this.tokenPackageService.findAllActive();
   }
 
+  @ApiBearerAuth()
+  @Get('all')
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({
+    summary: 'Listar todos los paquetes incluyendo inactivos (Admin)',
+  })
+  findAllAdmin() {
+    return this.tokenPackageService.findAll();
+  }
+
   // DELETE /token-packages/:id — Desactiva un paquete
   @ApiBearerAuth()
   @Delete(':id')
@@ -46,5 +58,13 @@ export class TokenPackageController {
   @ApiOperation({ summary: 'Desactivar paquete de tokens (Admin)' })
   deactivate(@Param('id', ParseUUIDPipe) id: string) {
     return this.tokenPackageService.deactivate(id);
+  }
+
+  @ApiBearerAuth()
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Patch('active/:id')
+  activatePkg(@Param('id', ParseUUIDPipe) id: string) {
+    return this.tokenPackageService.activatePkg(id);
   }
 }

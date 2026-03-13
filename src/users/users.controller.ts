@@ -84,4 +84,10 @@ export class UsersController {
     const userId = req.user.id;
     return this.usersService.completeGoogleProfile(userId, dto);
   }
+
+  @Put('active/:id')
+  @UseGuards(JwtAuthGuard, OwnerOrAdminGuard)
+  activateUser(@Param('id', ParseUUIDPipe) id: string) {
+    return this.usersService.activateUser(id);
+  }
 }

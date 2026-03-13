@@ -38,6 +38,15 @@ export class ClassController {
   @ApiBearerAuth()
   @Roles(Role.Coach, Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('all')
+  @HttpCode(200)
+  get_all_classes_admin() {
+    return this.classService.get_all_classes();
+  }
+
+  @ApiBearerAuth()
+  @Roles(Role.Coach, Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post('create')
   @HttpCode(201)
   create_new_class(@Body() clase: CreateClass) {
@@ -65,6 +74,14 @@ export class ClassController {
     return this.classService.delete_class(id);
   }
 
+  @ApiBearerAuth()
+  @Roles(Role.Coach, Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Patch('active/:id')
+  activeClass(@Param('id', ParseUUIDPipe) id: string) {
+    return this.classService.activeClass(id);
+  }
+
   // SUBIR IMAGEN DE CLASE (Cloudinary)
   @ApiBearerAuth()
   @Roles(Role.Coach, Role.Admin)
@@ -78,7 +95,7 @@ export class ClassController {
         const ok = /image\/(jpeg|jpg|png|webp)/.test(file.mimetype);
         if (!ok) {
           return cb(
-            new BadRequestException('Formato de imagen inválido'),
+            new BadRequestException('Formato de imagen invÃ¡lido'),
             false,
           );
         }
