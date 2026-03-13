@@ -9,10 +9,14 @@ import { GoogleUser } from './interfaces/google-user.interface';
 import { Res } from '@nestjs/common';
 import type { Response } from 'express';
 import * as authRequestInterface from './interfaces/auth-request.interface';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly configService: ConfigService,
+  ) {}
 
   // LOGIN
   @Post('login')
@@ -54,9 +58,10 @@ export class AuthController {
   ) {
     const result = await this.authService.googleLogin(req.user);
 
-    const FRONT_URL = process.env.FRONT_URL;
+    const FRONT_URL =
+      this.configService.get<string>('FRONTEND_URL') + '/auth/callback';
 
-    const redirectUrl = `${FRONT_URL}/auth/callback?token=${encodeURIComponent(result.accessToken)}&isProfileComplete=${result.user.isProfileComplete}`;
+    const redirectUrl = `${FRONT_URL}?token=${encodeURIComponent(result.accessToken)}&isProfileComplete=${result.user.isProfileComplete}`;
 
     return res.redirect(redirectUrl);
   }
