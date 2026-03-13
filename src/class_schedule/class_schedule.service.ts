@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ClassScheduleRepository } from './class_schedule.repository';
 import { CreateClassSchedule } from './dtos/CreateClassSchedule.dto';
@@ -32,7 +31,6 @@ export class ClassScheduleService {
     id_class: string,
     user: JwtPayload,
   ) {
-    console.log(user);
     // Buscamos la clase a la cual queremos hacerle una cita
     const find_class = await this.classRepository.find_class_by_id(id_class);
 
@@ -42,14 +40,34 @@ export class ClassScheduleService {
     // Validamos que la fecha y la hora de clase que se va a agendar sea válida
     this.time_valid(clase_app.date, clase_app.time, duration);
 
-    // Asignamos coach (llamada local)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-    const coach_id = user.role === Role.Coach ? (user as any).id : undefined;
-    const assigned_coach = await this.coach_assign(
-      clase_app.date,
-      clase_app.time,
-      coach_id,
-    );
+    let assigned_coach: { id: string };
+
+    // CASO 1: Si el que agenda es un coach
+    if (user.role === Role.Coach) {
+      assigned_coach = await this.coach_assign(
+        clase_app.date,
+        clase_app.time,
+        user.sub, // id del coach logueado
+      );
+    }
+
+    // CASO 2: Admin que envía coach específico
+    else if (user.role === Role.Admin && clase_app.id_coach) {
+      assigned_coach = await this.coach_assign(
+        clase_app.date,
+        clase_app.time,
+        clase_app.id_coach,
+      );
+    }
+
+    // CASO 3: Admin sin coach → asignación automática
+    else {
+      assigned_coach = await this.coach_assign(
+        clase_app.date,
+        clase_app.time,
+        undefined,
+      );
+    }
 
     // Guardamos usando el REPOSITORIO
     const new_schedule: Partial<Class_schedule> = {
