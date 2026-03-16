@@ -112,12 +112,11 @@ http://localhost:3000/api
 ---
 ## 👥 Equipo
 
-Proyecto desarrollado en equipo utilizando metodología **SCRUM**.
+Proyecto desarrollado en equipo utilizando metodología **SCRUM** durante el Bootcamp Soy Henry.
+
+### Integrantes
 
 - Mauro Francisco Gaetan
-- Nombre Compañero 1
-- Nombre Compañero 2
-- Nombre Compañero 3
-Full Stack Developers
-Node.js | NestJS | PostgreSQL
+- ...
+- ...
 
