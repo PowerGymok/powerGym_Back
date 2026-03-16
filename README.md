@@ -110,17 +110,14 @@ http://localhost:3000/api
 ```
 
 ---
-
-# Equipo
+## 👥 Equipo
 
 Proyecto desarrollado en equipo utilizando metodología **SCRUM**.
 
----
-
-# Autor
-
-**Mauro Francisco Gaetan**
-
-Full Stack Developer
+- Mauro Francisco Gaetan
+- Nombre Compañero 1
+- Nombre Compañero 2
+- Nombre Compañero 3
+Full Stack Developers
 Node.js | NestJS | PostgreSQL
 
