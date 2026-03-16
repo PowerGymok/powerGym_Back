@@ -4,8 +4,6 @@
   </a>
 </p>
 
-# PowerGym API
-
 # 🏋️ PowerGym API
 
 API backend desarrollada con **Node.js y NestJS** para la gestión de gimnasios.
@@ -14,12 +12,28 @@ Permite administrar usuarios, membresías y autenticación mediante **JWT**, uti
 
 ---
 
+## 🌐 Deploy
+
+API desplegada en Render:
+
+```
+https://powergym-back-1s39.onrender.com
+```
+
+Swagger disponible en:
+
+```
+https://powergym-back-1s39.onrender.com/api
+```
+
+---
+
 ## 🚀 Tecnologías utilizadas
 
 - Node.js
 - NestJS
 - TypeScript
-- PostgreSQL
+- PostgreSQL (Supabase)
 - TypeORM
 - JWT Authentication
 - REST API
@@ -36,7 +50,9 @@ Permite administrar usuarios, membresías y autenticación mediante **JWT**, uti
 - Arquitectura modular con NestJS
 - Documentación de endpoints con Swagger
 
-# Instalación
+---
+
+## 📦 Instalación
 
 Clonar el repositorio
 
@@ -46,25 +62,25 @@ git clone https://github.com/PowerGymok/powerGym_Back.git
 
 Entrar al proyecto
 
-```bash id="k1zv3q"
+```bash
 cd powerGym_Back
 ```
 
 Instalar dependencias
 
-```bash id="r4s8lx"
+```bash
 npm install
 ```
 
 ---
 
-# Variables de entorno
+## 🔑 Variables de entorno
 
 Crear un archivo `.env` basado en `.env.example`.
 
 Ejemplo:
 
-```env id="a7p9nm"
+```env
 # APP
 NODE_ENV=development
 PORT=3000
@@ -85,38 +101,38 @@ JWT_EXPIRES_IN=1h
 
 ---
 
-# Ejecutar el proyecto
+## ▶️ Ejecutar el proyecto
 
 Modo desarrollo
 
-```bash id="m6x0ps"
+```bash
 npm run start:dev
 ```
 
 Modo producción
 
-```bash id="s9t2dw"
+```bash
 npm run start:prod
 ```
 
 ---
 
-# Documentación de la API
+## 📚 Documentación de la API
 
 Swagger disponible en:
 
 ```
-http://localhost:3000/api
+https://powergym-back-1s39.onrender.com/api
 ```
 
 ---
+
 ## 👥 Equipo
 
-Proyecto desarrollado en equipo utilizando metodología **SCRUM** durante el Bootcamp Soy Henry.
+Proyecto desarrollado en equipo utilizando metodología **SCRUM** durante el Bootcamp **Soy Henry**.
 
 ### Integrantes
 
 - Mauro Francisco Gaetan
 - ...
 - ...
-
